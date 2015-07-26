@@ -60,6 +60,8 @@ public class ContentManagerTabController {
   private void handleUpload(){
     Connector connector = ApplicationData.getConnector();
     connector.uploadMediaFiles(listView.getItems());
+    listView.getItems().clear();
+    this.rootPageController.showInfoMessage("Upload finished");
   }
 
   @FXML

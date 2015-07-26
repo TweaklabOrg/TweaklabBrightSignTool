@@ -144,7 +144,15 @@ public class RootPageController {
     alert.setHeaderText("An Error Occured");
     alert.setContentText(errorMessage);
     alert.showAndWait();
+  }
   
+  public void showInfoMessage(String message){
+    Alert alert = new Alert(AlertType.INFORMATION);
+    alert.initOwner(dialogStage);
+    alert.setTitle("Information");
+    alert.setHeaderText("Information");
+    alert.setContentText(message);
+    alert.showAndWait();
   }
   
   

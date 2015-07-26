@@ -2,6 +2,7 @@ package ch.tweaklab.ip6.connector;
 
 import java.io.File;
 import java.net.HttpURLConnection;
+import java.net.ProtocolException;
 import java.net.URL;
 import java.util.List;
 
@@ -39,6 +40,7 @@ public class BrightSignWebConnector extends Connector {
   public boolean uploadMediaFiles(List<File> files) {
     try {
       for (File file : files) {
+        deleteFile(file);
         uploadFile("/", file);
       }
 
@@ -48,8 +50,7 @@ public class BrightSignWebConnector extends Connector {
     }
   }
   
-  private Boolean uploadFile(String destinationFolder, File file){
-    try{
+  private Boolean uploadFile(String destinationFolder, File file) throws Exception{
     MultipartEntityBuilder multiPartBuilder = MultipartEntityBuilder.create();
     multiPartBuilder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
 
@@ -64,11 +65,19 @@ public class BrightSignWebConnector extends Connector {
     HttpResponse response = client.execute(request);
     
     System.out.println(response.getStatusLine());
-    }
-    catch(Exception e){
-      return false;
-    }
     return true;
+  }
+  
+  private Boolean deleteFile(File file) throws Exception{
+  String urlFileName = file.getName().replace(" ", "+");
+  String deleteUrl =  "http://" + hostname + "/delete?filename=sd%2F"+ urlFileName + "&delete=Delete";
+  
+  URL u = new URL(deleteUrl);
+  HttpURLConnection huc = (HttpURLConnection) u.openConnection();
+  huc.setRequestMethod("GET"); // OR huc.setRequestMethod ("HEAD");
+  huc.connect();
+  System.out.println(huc.getResponseMessage());
+  return true;
   }
 
 }
