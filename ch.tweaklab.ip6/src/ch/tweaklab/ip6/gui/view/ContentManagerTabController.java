@@ -1,21 +1,13 @@
 package ch.tweaklab.ip6.gui.view;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
-import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.TransferMode;
 import javafx.stage.FileChooser;
 import ch.tweaklab.ip6.application.model.ApplicationData;
 import ch.tweaklab.ip6.connector.Connector;
-import ch.tweaklab.ip6.gui.model.*;
 public class ContentManagerTabController {
 
   

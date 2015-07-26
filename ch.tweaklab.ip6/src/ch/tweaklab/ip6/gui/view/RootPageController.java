@@ -15,7 +15,6 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import ch.tweaklab.ip6.application.model.ApplicationData;
 import ch.tweaklab.ip6.connector.Connector;
@@ -28,7 +27,7 @@ public class RootPageController {
 
   @FXML
   private SplitPane splitPane;
-  
+
   @FXML
   private Button connectionMenuButton;
 
@@ -43,7 +42,7 @@ public class RootPageController {
 
   @FXML
   private TabPane tabPane;
-  
+
   private Boolean connectMenuOpen = true;
   private Stage dialogStage;
 
@@ -58,7 +57,6 @@ public class RootPageController {
     connectorChoice.setItems(FXCollections.observableArrayList(webConnector));
     connectorChoice.getSelectionModel().selectFirst();
   }
-
 
   /**
    * Parse Class Name and invoke connect-method of choosen connector class
@@ -119,25 +117,24 @@ public class RootPageController {
   private void addTabs() {
     try {
       tabPane.getTabs().clear();
-      
-       FXMLLoader loader = new FXMLLoader(this.getClass().getResource("ContentManagerTab.fxml"));
-      //add MediaContent Tab
+
+      FXMLLoader loader = new FXMLLoader(this.getClass().getResource("ContentManagerTab.fxml"));
+      // add MediaContent Tab
       Tab contentTab = new Tab();
       contentTab.setText("Content Manager");
       tabPane.getTabs().add(contentTab);
       contentTab.setContent((Node) loader.load());
       ContentManagerTabController contentTabController = loader.getController();
       contentTabController.setRootPageController(this);
-      
-      
+
     } catch (IOException e) {
       showErrorMessage(e.getMessage());
       e.printStackTrace();
     }
 
   }
-  
-  public void showErrorMessage(String errorMessage){
+
+  public void showErrorMessage(String errorMessage) {
     Alert alert = new Alert(AlertType.WARNING);
     alert.initOwner(dialogStage);
     alert.setTitle("Error!");
@@ -145,8 +142,8 @@ public class RootPageController {
     alert.setContentText(errorMessage);
     alert.showAndWait();
   }
-  
-  public void showInfoMessage(String message){
+
+  public void showInfoMessage(String message) {
     Alert alert = new Alert(AlertType.INFORMATION);
     alert.initOwner(dialogStage);
     alert.setTitle("Information");
@@ -154,12 +151,10 @@ public class RootPageController {
     alert.setContentText(message);
     alert.showAndWait();
   }
-  
-  
+
   public Stage getDialogStage() {
     return dialogStage;
   }
-
 
   public void setDialogStage(Stage dialogStage) {
     this.dialogStage = dialogStage;
