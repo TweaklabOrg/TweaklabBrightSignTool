@@ -10,7 +10,7 @@ public abstract class Connector {
   
   public abstract boolean connect(String hostname);
   
-  public abstract boolean uploadFiles(List<File> files);
+  public abstract boolean uploadMediaFiles(List<File> files);
 
   public Boolean getIsConnected() {
     return isConnected;

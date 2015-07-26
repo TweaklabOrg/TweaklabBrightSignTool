@@ -15,12 +15,12 @@ import org.apache.http.impl.client.DefaultHttpClient;
 
 public class BrightSignWebConnector extends Connector {
 
-  private String uploadUrl;
+  private String uploadRootUrl;
 
   public boolean connect(String hostname) {
     isConnected = true;
     this.hostname = hostname;
-    uploadUrl = "http://" + hostname + "/upload.html?rp=sd";
+    uploadRootUrl = "http://" + hostname + "/upload.html?rp=sd";
     try {
       URL u = new URL("http://" + hostname);
       HttpURLConnection huc = (HttpURLConnection) u.openConnection();
@@ -36,31 +36,39 @@ public class BrightSignWebConnector extends Connector {
     return true;
   }
 
-  public boolean uploadFiles(List<File> files) {
+  public boolean uploadMediaFiles(List<File> files) {
     try {
-      files.forEach(file -> System.out.println(file.getName()));
-      System.out.println("files uploaded");
-
-      MultipartEntityBuilder multiPartBuilder = MultipartEntityBuilder.create();
-      multiPartBuilder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
-
-      FileBody fileBody;
       for (File file : files) {
-        fileBody = new FileBody(file);
-        multiPartBuilder.addPart(file.getName(), fileBody);
+        uploadFile("/", file);
       }
-
-      HttpPost request = new HttpPost(uploadUrl);
-      request.setEntity(multiPartBuilder.build());
-
-      HttpClient client = new DefaultHttpClient();
-      HttpResponse response = client.execute(request);
-      System.out.println(response);
 
       return true;
     } catch (Exception e) {
       return false;
     }
+  }
+  
+  private Boolean uploadFile(String destinationFolder, File file){
+    try{
+    MultipartEntityBuilder multiPartBuilder = MultipartEntityBuilder.create();
+    multiPartBuilder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
+
+    FileBody fileBody = new FileBody(file);
+    multiPartBuilder.addPart(file.getName(), fileBody);
+
+    HttpPost request = new HttpPost(uploadRootUrl + destinationFolder);
+    
+    request.setEntity(multiPartBuilder.build());
+
+    HttpClient client = new DefaultHttpClient();
+    HttpResponse response = client.execute(request);
+    
+    System.out.println(response.getStatusLine());
+    }
+    catch(Exception e){
+      return false;
+    }
+    return true;
   }
 
 }

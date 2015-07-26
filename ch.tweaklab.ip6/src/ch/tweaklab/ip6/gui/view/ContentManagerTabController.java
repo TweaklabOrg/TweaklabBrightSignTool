@@ -59,7 +59,7 @@ public class ContentManagerTabController {
   @FXML
   private void handleUpload(){
     Connector connector = ApplicationData.getConnector();
-    connector.uploadFiles(listView.getItems());
+    connector.uploadMediaFiles(listView.getItems());
   }
 
   @FXML
