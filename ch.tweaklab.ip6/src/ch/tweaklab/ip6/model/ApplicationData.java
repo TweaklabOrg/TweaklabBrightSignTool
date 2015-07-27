@@ -1,7 +1,11 @@
 package ch.tweaklab.ip6.model;
 
 import ch.tweaklab.ip6.connector.Connector;
-
+/**
+ * Static class which contains the current used connector class.
+ * @author Alf
+ *
+ */
 public class ApplicationData {
 
   

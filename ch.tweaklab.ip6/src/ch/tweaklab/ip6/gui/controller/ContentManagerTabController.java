@@ -1,36 +1,29 @@
 package ch.tweaklab.ip6.gui.controller;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Collections;
-import java.util.concurrent.ExecutionException;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
-import javafx.concurrent.WorkerStateEvent;
-import javafx.event.ActionEvent;
-import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 import ch.tweaklab.ip6.connector.Connector;
 import ch.tweaklab.ip6.gui.MainApp;
 import ch.tweaklab.ip6.gui.view.WaitScreen;
 import ch.tweaklab.ip6.model.ApplicationData;
 import ch.tweaklab.ip6.model.MediaFile;
 import ch.tweaklab.ip6.model.MediaType;
-
+/**
+ * Controller Class for ContentManagerTab.fxml
+ * Manages Upload of a playlist to device
+ * @author Alf
+ *
+ */
 public class ContentManagerTabController {
 
   @FXML
@@ -106,7 +99,7 @@ public class ContentManagerTabController {
       // Create Upload Task and add Events
       Connector connector = ApplicationData.getConnector();
       uploadTask = connector.getUploadMediaFilesTask(listView.getItems());
-      
+
       uploadTask.setOnSucceeded(event -> uploadTaskSucceedFinish());
       uploadTask.setOnCancelled(event -> uploadTaskAbortFinish());
       uploadTask.setOnFailed(event -> uploadTaskAbortFinish());
@@ -119,16 +112,15 @@ public class ContentManagerTabController {
     }
   }
 
-  private void uploadTaskSucceedFinish(){
-    try{
-    if (uploadTask.get()) {
-      waitScreen.closeScreen();
-      MainApp.showInfoMessage("Upload finished!");
-    } else {
-      uploadTaskAbortFinish();
-    }
-    }
-    catch(Exception e){
+  private void uploadTaskSucceedFinish() {
+    try {
+      if (uploadTask.get()) {
+        waitScreen.closeScreen();
+        MainApp.showInfoMessage("Upload finished!");
+      } else {
+        uploadTaskAbortFinish();
+      }
+    } catch (Exception e) {
       MainApp.showExceptionMessage(e);
     }
   }

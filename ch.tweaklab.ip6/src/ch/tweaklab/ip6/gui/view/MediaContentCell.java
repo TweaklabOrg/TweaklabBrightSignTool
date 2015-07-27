@@ -1,5 +1,8 @@
 package ch.tweaklab.ip6.gui.view;
-
+/**
+ * Not Used currently
+ * Custom Cell for listView for Drag and Drop
+ */
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;

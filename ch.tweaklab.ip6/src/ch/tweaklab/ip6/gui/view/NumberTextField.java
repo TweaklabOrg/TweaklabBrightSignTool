@@ -1,5 +1,8 @@
 package ch.tweaklab.ip6.gui.view;
-
+/**
+ * Custom TextField which accepts only numbers.
+ * Used in ContentManagerTab for displayTimeField
+ */
 import javafx.scene.control.TextField;
 
 public class NumberTextField extends TextField

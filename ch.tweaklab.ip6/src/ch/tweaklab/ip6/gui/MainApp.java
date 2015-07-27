@@ -8,15 +8,18 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.stage.Stage;
-import ch.tweaklab.ip6.gui.controller.RootPageController;
-
+/**
+ * Starts the GUI
+ * @author Alf
+ *
+ */
 public class MainApp extends Application {
 
   public static Stage primaryStage;
@@ -50,9 +53,11 @@ public class MainApp extends Application {
     }
   }
 
-
-  
-  public static void showExceptionMessage(Exception e){
+  /**
+   * Shows an Dialog Windows with the Exception stacktrace
+   * @param e
+   */
+  public static void showExceptionMessage(Exception e) {
     e.printStackTrace();
     Alert alert = new Alert(AlertType.ERROR);
     alert.setTitle("Exception Dialog");
@@ -87,7 +92,11 @@ public class MainApp extends Application {
     alert.showAndWait();
 
   }
-  
+
+  /**
+   * shows an error dialog
+   * @param errorMessage
+   */
   public static void showErrorMessage(String errorMessage) {
     Alert alert = new Alert(AlertType.WARNING);
     alert.initOwner(MainApp.primaryStage);
@@ -97,6 +106,10 @@ public class MainApp extends Application {
     alert.showAndWait();
   }
 
+  /**
+   * shows an information dialog
+   * @param message
+   */
   public static void showInfoMessage(String message) {
     Alert alert = new Alert(AlertType.INFORMATION);
     alert.initOwner(MainApp.primaryStage);
@@ -105,7 +118,7 @@ public class MainApp extends Application {
     alert.setContentText(message);
     alert.showAndWait();
   }
-  
+
   public static void main(String[] args) {
     launch(args);
   }

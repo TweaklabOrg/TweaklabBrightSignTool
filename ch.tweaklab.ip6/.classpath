@@ -10,5 +10,6 @@
 	<classpathentry kind="lib" path="lib/httpclient-win-4.5.jar"/>
 	<classpathentry kind="lib" path="lib/httpcore-4.4.1.jar"/>
 	<classpathentry kind="lib" path="lib/httpmime-4.5.jar"/>
+	<classpathentry kind="lib" path="lib/jsch-0.1.53.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

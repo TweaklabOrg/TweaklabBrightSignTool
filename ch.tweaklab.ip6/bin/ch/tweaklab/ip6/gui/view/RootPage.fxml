@@ -25,7 +25,7 @@
                   <Button fx:id="connectionMenuButton" layoutX="1113.0" layoutY="9.0" mnemonicParsing="false" onAction="#showOrCloseConnectionMenu" text="less.." />
                   <Button layoutX="120.0" layoutY="137.0" mnemonicParsing="false" onAction="#handleConnect" prefHeight="31.0" prefWidth="185.0" text="connect" />
                   <Label layoutX="14.0" layoutY="57.0" text="Hostname:" />
-                  <TextField fx:id="hostnameField" layoutX="120.0" layoutY="52.0" text="192.168.0.66" />
+                  <TextField fx:id="hostnameField" layoutX="120.0" layoutY="52.0" text="" />
                   <Label layoutX="14.0" layoutY="93.0" text="Connector:" />
                   <ChoiceBox fx:id="connectorChoice" layoutX="120.0" layoutY="88.0" prefHeight="31.0" prefWidth="187.0" />
                   <Label layoutX="813.0" layoutY="14.0" text="    |    " />

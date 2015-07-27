@@ -13,12 +13,16 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
-import javafx.stage.Stage;
 import ch.tweaklab.ip6.connector.Connector;
 import ch.tweaklab.ip6.gui.MainApp;
 import ch.tweaklab.ip6.model.ApplicationData;
 import ch.tweaklab.ip6.util.KeyValueData;
-
+/**
+ * Controler of RootPage.fxml
+ * Contains Connections Components and Tabview
+ * @author Alf
+ *
+ */
 public class RootPageController {
 
   @FXML
@@ -53,7 +57,6 @@ public class RootPageController {
     KeyValueData webConnector = new KeyValueData("Bright Sign Web", "ch.tweaklab.ip6.connector.BrightSignWebConnector");
     connectorChoice.setItems(FXCollections.observableArrayList(webConnector));
     connectorChoice.getSelectionModel().selectFirst();
-    this.hostnameField.setText("192.168.0.66");
   }
 
   /**

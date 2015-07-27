@@ -3,7 +3,6 @@ package ch.tweaklab.ip6.gui.view;
 import java.io.IOException;
 
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -13,14 +12,19 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import ch.tweaklab.ip6.gui.MainApp;
-
+/**
+ * This class contains a window with a wait screen and blocks the main windows.
+ * 
+ * @author Alf
+ *
+ */
 public class WaitScreen {
 
-  
   Stage stage;
   Button button;
-  public WaitScreen(){
-    
+
+  public WaitScreen() {
+
     AnchorPane layout;
     stage = new Stage();
     stage.setResizable(false);
@@ -40,21 +44,34 @@ public class WaitScreen {
       MainApp.showExceptionMessage(e);
     }
   }
-  
-  
-  public void closeScreen(){
+
+  /**
+   * show the wait windows
+   */
+  public void closeScreen() {
     stage.close();
   }
-  public void showScreen(){
+
+  /**
+   * close the wait window
+   */
+  public void showScreen() {
     stage.show();
   }
-  public void setOnCancel(EventHandler<ActionEvent> handler){
+
+  /**
+   * Set an eventhandler for the Cancel Button
+   * @param handler
+   */
+  public void setOnCancel(EventHandler<ActionEvent> handler) {
     button.setOnAction(handler);
   }
-  public void setOnClose(EventHandler<WindowEvent> handler){
+/**
+ * Set an eventhandler for closing of the window
+ * @param handler
+ */
+  public void setOnClose(EventHandler<WindowEvent> handler) {
     stage.setOnCloseRequest(handler);
   }
-
-
 
 }

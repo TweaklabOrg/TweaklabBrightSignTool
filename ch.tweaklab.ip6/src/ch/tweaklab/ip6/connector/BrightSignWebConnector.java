@@ -1,8 +1,16 @@
 package ch.tweaklab.ip6.connector;
-
+/**
+ * Implementation of Connector.
+ * Connects to a BrightSign Device via HTTP and SSH
+ */
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
+import java.util.Properties;
 
 import javafx.concurrent.Task;
 
@@ -14,19 +22,38 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.HttpClientBuilder;
 
+import com.jcraft.jsch.ChannelExec;
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.Session;
+
+import ch.tweaklab.ip6.gui.MainApp;
 import ch.tweaklab.ip6.model.MediaFile;
 
 public class BrightSignWebConnector extends Connector {
 
   private String uploadRootUrl;
+  Properties configFile;
 
-  public boolean connect(String hostname) throws Exception {
-    this.hostname = hostname;
-    uploadRootUrl = "http://" + hostname + "/upload.html?rp=sd";
-    this.isConnected = sendGetRequest("http://" + hostname);
+  
+  public BrightSignWebConnector(){
+    configFile = new Properties();
+    try {
+      configFile.load(this.getClass().getClassLoader().getResourceAsStream("config.properties"));
+    } catch (IOException e) {
+      MainApp.showExceptionMessage(e);
+    }
+      
+  }
+  public boolean connect(String host) throws Exception {
+    this.host = host;
+    uploadRootUrl = "http://" + host + "/upload.html?rp=sd";
+    this.isConnected = sendGetRequest("http://" + host);
     return this.isConnected;
   }
 
+  /**
+   * Creates a task which upload the specified media files. the current files on the device will be deleted.
+   */
   public Task<Boolean> getUploadMediaFilesTask(List<MediaFile> mediaFiles) throws Exception {
     Task<Boolean> uploadTask = new Task<Boolean>() {
       @Override
@@ -35,7 +62,7 @@ public class BrightSignWebConnector extends Connector {
         for (MediaFile mediaFile : mediaFiles) {
           if (this.isCancelled()) return false;
           boolean return1 = deleteFile(mediaFile);
-          boolean return2 = uploadFile("/", mediaFile);
+          boolean return2 = uploadFile("/media", mediaFile);
           if (return1 == false || return2 == false) {
             success = false;
           }
@@ -47,6 +74,7 @@ public class BrightSignWebConnector extends Connector {
 
   }
 
+  
   private Boolean uploadFile(String destinationFolder, MediaFile mediaFile) throws Exception {
 
     MultipartEntityBuilder multiPartBuilder = MultipartEntityBuilder.create();
@@ -65,7 +93,7 @@ public class BrightSignWebConnector extends Connector {
 
   private Boolean deleteFile(MediaFile mediaFile) throws Exception {
     String urlFileName = mediaFile.getFile().getName().replace(" ", "+");
-    String deleteUrl = "http://" + hostname + "/delete?filename=sd%2F" + urlFileName + "&delete=Delete";
+    String deleteUrl = "http://" + host + "/delete?filename=sd%2F" + urlFileName + "&delete=Delete";
     return sendGetRequest(deleteUrl);
   }
 
@@ -79,6 +107,49 @@ public class BrightSignWebConnector extends Connector {
       return false;
     }
     return true;
+  }
+  
+  
+  /**
+   * Start a Bright Sign Script over SSH
+   * 
+   * @param scriptName --> full path to script
+   * @throws Exception
+   */
+  private void runScriptOnDevice(String scriptName) throws Exception{
+
+    String user = configFile.getProperty("ssh_user");
+    String password = configFile.getProperty("ssh_password");
+    int port=Integer.parseInt(configFile.getProperty("ssh_port"));
+
+        JSch jsch = new JSch();
+        Session session = jsch.getSession(user, host, port);
+            session.setPassword(password);
+            session.setConfig("StrictHostKeyChecking", "no");
+        System.out.println("Establishing Connection...");
+        session.connect();
+        System.out.println("Connection established.");
+        ChannelExec channelExec = (ChannelExec)session.openChannel("exec");
+
+        InputStream in = channelExec.getInputStream();
+
+        channelExec.setCommand("script " + scriptName);
+        channelExec.connect();
+
+        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+        String line;
+        int index = 0;
+
+        while ((line = reader.readLine()) != null)
+        {
+            System.out.println(++index + " : " + line);
+        }
+
+        channelExec.disconnect();
+        session.disconnect();
+
+        System.out.println("Done!");
+  
   }
 
 
