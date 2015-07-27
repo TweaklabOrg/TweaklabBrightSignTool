@@ -1,4 +1,4 @@
-package ch.tweaklab.ip6.gui.view;
+package ch.tweaklab.ip6.gui.controller;
 
 import java.io.IOException;
 
@@ -6,8 +6,6 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
@@ -16,8 +14,9 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import ch.tweaklab.ip6.application.model.ApplicationData;
 import ch.tweaklab.ip6.connector.Connector;
+import ch.tweaklab.ip6.gui.MainApp;
+import ch.tweaklab.ip6.model.ApplicationData;
 import ch.tweaklab.ip6.util.KeyValueData;
 
 public class RootPageController {
@@ -44,7 +43,6 @@ public class RootPageController {
   private TabPane tabPane;
 
   private Boolean connectMenuOpen = true;
-  private Stage dialogStage;
 
   /**
    * Initializes the controller class. This method is automatically called after the fxml file has
@@ -53,9 +51,9 @@ public class RootPageController {
   @FXML
   private void initialize() {
     KeyValueData webConnector = new KeyValueData("Bright Sign Web", "ch.tweaklab.ip6.connector.BrightSignWebConnector");
-
     connectorChoice.setItems(FXCollections.observableArrayList(webConnector));
     connectorChoice.getSelectionModel().selectFirst();
+    this.hostnameField.setText("192.168.0.66");
   }
 
   /**
@@ -67,7 +65,7 @@ public class RootPageController {
     String hostname = hostnameField.getText();
 
     if (hostname.length() < 1) {
-      showErrorMessage("Hostname not valid!");
+      MainApp.showErrorMessage("Hostname not valid!");
       return;
     }
 
@@ -87,10 +85,10 @@ public class RootPageController {
         addTabs();
         showOrCloseConnectionMenu();
       } else {
-        showErrorMessage("Connector Class " + className + " not valid. Class must implement Connector Interface");
+        MainApp.showErrorMessage("Connector Class " + className + " not valid. Class must implement Connector Interface");
       }
     } catch (Exception e) {
-      showErrorMessage(e.getMessage());
+      MainApp.showErrorMessage(e.getMessage());
       e.printStackTrace();
     }
     if (ApplicationData.getConnector().getIsConnected()) {
@@ -117,47 +115,16 @@ public class RootPageController {
   private void addTabs() {
     try {
       tabPane.getTabs().clear();
-
-      FXMLLoader loader = new FXMLLoader(this.getClass().getResource("ContentManagerTab.fxml"));
       // add MediaContent Tab
       Tab contentTab = new Tab();
       contentTab.setText("Content Manager");
       tabPane.getTabs().add(contentTab);
-      contentTab.setContent((Node) loader.load());
-      ContentManagerTabController contentTabController = loader.getController();
-      contentTabController.setRootPageController(this);
+      contentTab.setContent((Node) FXMLLoader.load(getClass().getResource("../view/ContentManagerTab.fxml")));
 
     } catch (IOException e) {
-      showErrorMessage(e.getMessage());
-      e.printStackTrace();
+      MainApp.showExceptionMessage(e);
     }
 
-  }
-
-  public void showErrorMessage(String errorMessage) {
-    Alert alert = new Alert(AlertType.WARNING);
-    alert.initOwner(dialogStage);
-    alert.setTitle("Error!");
-    alert.setHeaderText("An Error Occured");
-    alert.setContentText(errorMessage);
-    alert.showAndWait();
-  }
-
-  public void showInfoMessage(String message) {
-    Alert alert = new Alert(AlertType.INFORMATION);
-    alert.initOwner(dialogStage);
-    alert.setTitle("Information");
-    alert.setHeaderText("Information");
-    alert.setContentText(message);
-    alert.showAndWait();
-  }
-
-  public Stage getDialogStage() {
-    return dialogStage;
-  }
-
-  public void setDialogStage(Stage dialogStage) {
-    this.dialogStage = dialogStage;
   }
 
   public void setHostNameLabelText(String hostNameLabelText) {

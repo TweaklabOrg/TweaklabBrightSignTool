@@ -11,98 +11,95 @@ import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
+
 /**
- * Cell Class for ListView in MediaContent Page. 
- * Needed for Drag and Drop
- * @author 
+ * Cell Class for ListView in MediaContent Page. Needed for Drag and Drop
+ * 
+ * @author
  *
  */
 public class MediaContentCell extends ListCell<File> {
-  
 
   public MediaContentCell() {
-      ListCell thisCell = this;
+    ListCell thisCell = this;
 
-      setOnDragDetected(event -> {
-          if (getItem() == null) {
-              return;
-          }
+    setOnDragDetected(event -> {
+      if (getItem() == null) {
+        return;
+      }
 
-          Dragboard dragboard = startDragAndDrop(TransferMode.MOVE);
-          ClipboardContent content = new ClipboardContent();
-          content.putString(getItem().getName());
-          List<File> fileList = new ArrayList<File>();
-          fileList.add(getItem());
-          content.putFiles(fileList);
-          
-          dragboard.setDragView(
-              //set an image
-              null
-          );
-          dragboard.setContent(content);
+      Dragboard dragboard = startDragAndDrop(TransferMode.MOVE);
+      ClipboardContent content = new ClipboardContent();
+      content.putString(getItem().getName());
+      List<File> fileList = new ArrayList<File>();
+      fileList.add(getItem());
+      content.putFiles(fileList);
 
-          event.consume();
-      });
+      dragboard.setDragView(
+      // set an image
+          null);
+      dragboard.setContent(content);
 
-      setOnDragOver(event -> {
-          if (event.getGestureSource() != thisCell &&
-                 event.getDragboard().hasString()) {
-              event.acceptTransferModes(TransferMode.MOVE);
-          }
+      event.consume();
+    });
 
-          event.consume();
-      });
+    setOnDragOver(event -> {
+      if (event.getGestureSource() != thisCell && event.getDragboard().hasString()) {
+        event.acceptTransferModes(TransferMode.MOVE);
+      }
 
-      setOnDragEntered(event -> {
-          if (event.getGestureSource() != thisCell &&
-                  event.getDragboard().hasString()) {
-              setOpacity(0.3);
-          }
-      });
+      event.consume();
+    });
 
-      setOnDragExited(event -> {
-          if (event.getGestureSource() != thisCell &&
-                  event.getDragboard().hasString()) {
-              setOpacity(1);
-          }
-      });
+    setOnDragEntered(event -> {
+      if (event.getGestureSource() != thisCell && event.getDragboard().hasString()) {
+        setOpacity(0.3);
+      }
+    });
 
-      setOnDragDropped(event -> {
-          if (getItem() == null) {
-              return;
-          }
+    setOnDragExited(event -> {
+      if (event.getGestureSource() != thisCell && event.getDragboard().hasString()) {
+        setOpacity(1);
+      }
+    });
 
-          Dragboard db = event.getDragboard();
-          boolean success = false;
+    setOnDragDropped(event -> {
+      if (getItem() == null) {
+        return;
+      }
 
-          if (db.hasFiles()) {
-              ObservableList<File> itemsCopy = getListView().getItems();
-              int draggedIdx = itemsCopy.indexOf(db.getFiles().get(0));
-              int thisIdx = itemsCopy.indexOf(getItem());
-             
-              File temp = itemsCopy.get(draggedIdx);
-              itemsCopy.set(draggedIdx, getItem());
-              itemsCopy.set(thisIdx, temp);
+      Dragboard db = event.getDragboard();
+      boolean success = false;
 
-              success = true;
-          }
-          event.setDropCompleted(success);
+      if (db.hasFiles()) {
+        ObservableList<File> itemsCopy = getListView().getItems();
+        int draggedIdx = itemsCopy.indexOf(db.getFiles().get(0));
+        int thisIdx = itemsCopy.indexOf(getItem());
 
-          event.consume();
-      });
+        File temp = itemsCopy.get(draggedIdx);
+        itemsCopy.set(draggedIdx, getItem());
+        itemsCopy.set(thisIdx, temp);
+
+        success = true;
+      }
+      event.setDropCompleted(success);
+
+      event.consume();
+    });
 
     setOnDragDone(DragEvent::consume);
   }
+
   @Override
   protected void updateItem(File item, boolean empty) {
-      super.updateItem(item, empty);
+    super.updateItem(item, empty);
 
-      if (empty || item == null) {
-          setGraphic(null);
-      } else {
-       Label label = new Label(item.getName());
-         setGraphic(label);
-      }
+    if (empty || item == null) {
+      setGraphic(null);
+    } else {
+      Label label = new Label(item.getName());
+      setGraphic(label);
+    }
   }
 
 }

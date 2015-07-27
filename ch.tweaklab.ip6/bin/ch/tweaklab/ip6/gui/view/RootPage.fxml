@@ -6,17 +6,17 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<BorderPane prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.tweaklab.ip6.gui.view.RootPageController">
+<BorderPane prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.tweaklab.ip6.gui.controller.RootPageController">
    <center>
       <SplitPane fx:id="splitPane" dividerPositions="0.2506527415143603" orientation="VERTICAL" prefHeight="600.0" prefWidth="800.0">
         <items>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="207.0" prefWidth="798.0">
                <children>
-                  <Label layoutX="651.0" layoutY="14.0" text="Current Player:">
+                  <Label layoutX="563.0" layoutY="14.0" text="Current Player:">
                      <font>
                         <Font name="System Bold" size="15.0" />
                      </font></Label>
-                  <Label fx:id="hostNameLabel" layoutX="767.0" layoutY="14.0" text="none" />
+                  <Label fx:id="hostNameLabel" layoutX="676.0" layoutY="14.0" text="none" />
                   <Label layoutX="850.0" layoutY="14.0" prefHeight="21.0" prefWidth="137.0" text="Connection Status:">
                      <font>
                         <Font name="System Bold" size="15.0" />
@@ -25,7 +25,7 @@
                   <Button fx:id="connectionMenuButton" layoutX="1113.0" layoutY="9.0" mnemonicParsing="false" onAction="#showOrCloseConnectionMenu" text="less.." />
                   <Button layoutX="120.0" layoutY="137.0" mnemonicParsing="false" onAction="#handleConnect" prefHeight="31.0" prefWidth="185.0" text="connect" />
                   <Label layoutX="14.0" layoutY="57.0" text="Hostname:" />
-                  <TextField fx:id="hostnameField" layoutX="120.0" layoutY="52.0" />
+                  <TextField fx:id="hostnameField" layoutX="120.0" layoutY="52.0" text="192.168.0.66" />
                   <Label layoutX="14.0" layoutY="93.0" text="Connector:" />
                   <ChoiceBox fx:id="connectorChoice" layoutX="120.0" layoutY="88.0" prefHeight="31.0" prefWidth="187.0" />
                   <Label layoutX="813.0" layoutY="14.0" text="    |    " />

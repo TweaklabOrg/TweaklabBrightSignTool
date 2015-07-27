@@ -1,4 +1,4 @@
-package ch.tweaklab.ip6.application.model;
+package ch.tweaklab.ip6.model;
 
 import ch.tweaklab.ip6.connector.Connector;
 
@@ -6,6 +6,7 @@ public class ApplicationData {
 
   
  private static Connector connector;
+
 
 public static Connector getConnector() {
   return connector;

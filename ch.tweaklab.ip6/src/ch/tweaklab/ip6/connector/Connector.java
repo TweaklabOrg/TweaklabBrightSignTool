@@ -1,16 +1,18 @@
 package ch.tweaklab.ip6.connector;
 
-import java.io.File;
 import java.util.List;
+
+import javafx.concurrent.Task;
+import ch.tweaklab.ip6.model.MediaFile;
 
 public abstract class Connector {
 
- protected Boolean isConnected;
- protected String hostname;
+ protected Boolean isConnected = false;
+ protected String hostname = "";
   
-  public abstract boolean connect(String hostname);
+  public abstract boolean connect(String hostname) throws Exception; 
   
-  public abstract boolean uploadMediaFiles(List<File> files);
+  public abstract Task<Boolean> getUploadMediaFilesTask(List<MediaFile> mediaFiles) throws Exception;
 
   public Boolean getIsConnected() {
     return isConnected;
