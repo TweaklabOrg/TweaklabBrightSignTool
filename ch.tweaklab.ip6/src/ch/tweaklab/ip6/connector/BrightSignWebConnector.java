@@ -35,7 +35,7 @@ public class BrightSignWebConnector extends Connector {
 
   private String uploadRootUrl;
   Properties configFile;
-  private final String mediaFolder = "/media";
+  private final String mediaFolder = "";
   private final String resetMediaFolderScriptName = "resetMediaFolder.brs";
 
   public BrightSignWebConnector() {
@@ -74,8 +74,9 @@ public class BrightSignWebConnector extends Connector {
             return false;
           }
           boolean return1 = RunScriptOverSSH(resetMediaFolderScriptName);
-          boolean return2 = uploadFile(mediaFolder, mediaFile);
-          if (return1 == false || return2 == false) {
+          boolean return2 = deleteFile(mediaFile);
+          boolean return3 = uploadFile(mediaFolder, mediaFile);
+          if (return1 == false || return2 == false || return3== false) {
             success = false;
           }
         }
@@ -101,6 +102,14 @@ public class BrightSignWebConnector extends Connector {
     }
     return true;
   }
+  
+  private Boolean deleteFile(MediaFile mediaFile) throws Exception {
+    String urlFileName = mediaFile.getFile().getName().replace(" ", "+");
+    String urlFilePath = mediaFolder.replace("/","%2F") + "%2F" + urlFileName;
+    String deleteUrl = "http://" + target + "/delete?filename=sd" + urlFilePath + "&delete=Delete";
+    return sendGetRequest(deleteUrl);
+  }
+
 
   private Boolean sendGetRequest(String url) throws Exception {
     URL u = new URL(url);
