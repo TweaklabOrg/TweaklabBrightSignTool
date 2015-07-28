@@ -35,7 +35,7 @@ public class BrightSignWebConnector extends Connector {
 
   private String uploadRootUrl;
   Properties configFile;
-  private final String mediaFolder = "";
+  private final String mediaFolder = "/media";
   private final String resetMediaFolderScriptName = "resetMediaFolder.brs";
 
   public BrightSignWebConnector() {
