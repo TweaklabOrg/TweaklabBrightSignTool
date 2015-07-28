@@ -36,8 +36,8 @@ public class WaitScreen {
       button = new Button();
       button.setText("Cancel Upload");
       layout.getChildren().add(button);
-      button.setLayoutX(100);
-      button.setLayoutY(220);
+      button.setLayoutX(90);
+      button.setLayoutY(200);
       stage.setScene(scene);
       stage.show();
     } catch (IOException e) {

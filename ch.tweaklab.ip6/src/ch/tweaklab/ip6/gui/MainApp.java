@@ -29,6 +29,7 @@ public class MainApp extends Application {
   public void start(Stage primaryStage) {
     MainApp.primaryStage = primaryStage;
     MainApp.primaryStage.setTitle("Tweaklab IP6");
+    MainApp.primaryStage.setResizable(false);
 
     initRootLayout();
   }
@@ -62,6 +63,7 @@ public class MainApp extends Application {
     Alert alert = new Alert(AlertType.ERROR);
     alert.setTitle("Exception Dialog");
     alert.setHeaderText("An Exception occured!");
+    alert.setContentText(e.getMessage());
     alert.initOwner(MainApp.primaryStage);
 
     // Create expandable Exception.
@@ -97,12 +99,12 @@ public class MainApp extends Application {
    * shows an error dialog
    * @param errorMessage
    */
-  public static void showErrorMessage(String errorMessage) {
+  public static void showErrorMessage(String header, String content) {
     Alert alert = new Alert(AlertType.WARNING);
     alert.initOwner(MainApp.primaryStage);
     alert.setTitle("Error!");
-    alert.setHeaderText("An Error Occured!");
-    alert.setContentText(errorMessage);
+    alert.setHeaderText(header);
+    alert.setContentText(content);
     alert.showAndWait();
   }
 

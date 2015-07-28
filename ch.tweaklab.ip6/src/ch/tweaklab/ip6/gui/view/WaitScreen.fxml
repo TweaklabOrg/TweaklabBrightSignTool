@@ -5,9 +5,9 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="254.0" prefWidth="301.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane prefHeight="250.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <Label layoutX="13.0" layoutY="62.0" text="Please wait while the files are uploading..." />
-      <ProgressIndicator layoutX="114.0" layoutY="93.0" />
+      <ProgressIndicator layoutX="117.0" layoutY="101.0" />
    </children>
 </AnchorPane>

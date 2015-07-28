@@ -13,15 +13,15 @@ import ch.tweaklab.ip6.model.MediaFile;
 public abstract class Connector {
 
  protected Boolean isConnected = false;
- protected String host = "";
-  
+ protected String target = "";
+
  /**
   * connect to a device
   * @param host
   * @return
   * @throws Exception
   */
-  public abstract boolean connect(String host) throws Exception; 
+  public abstract boolean connect(String target); 
   
   /**
    * create a Task which handles upload of files and doesnt block the GUI
@@ -29,7 +29,7 @@ public abstract class Connector {
    * @return
    * @throws Exception
    */
-  public abstract Task<Boolean> getUploadMediaFilesTask(List<MediaFile> mediaFiles) throws Exception;
+  public abstract Task<Boolean> uploadMediaFiles(List<MediaFile> mediaFiles) throws Exception;
 
   /**
    * Check if Device is currently connected
@@ -43,9 +43,12 @@ public abstract class Connector {
    * get the current host
    * @return
    */
-  public String getHost() {
-    return host;
+  public String getTarget() {
+    return target;
   }
+
+  public abstract List<String> getPossibleTargets();
+
 
   
 

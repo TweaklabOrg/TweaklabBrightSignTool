@@ -1,4 +1,5 @@
 package ch.tweaklab.ip6.connector;
+
 /**
  * Implementation of Connector.
  * Connects to a BrightSign Device via HTTP and SSH
@@ -22,45 +23,54 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.HttpClientBuilder;
 
+import ch.tweaklab.ip6.gui.MainApp;
+import ch.tweaklab.ip6.model.MediaFile;
+import ch.tweaklab.ip6.util.PortScanner;
+
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
-
-import ch.tweaklab.ip6.gui.MainApp;
-import ch.tweaklab.ip6.model.MediaFile;
 
 public class BrightSignWebConnector extends Connector {
 
   private String uploadRootUrl;
   Properties configFile;
 
-  
-  public BrightSignWebConnector(){
+  public BrightSignWebConnector() {
+
     configFile = new Properties();
     try {
       configFile.load(this.getClass().getClassLoader().getResourceAsStream("config.properties"));
     } catch (IOException e) {
       MainApp.showExceptionMessage(e);
     }
-      
+
   }
-  public boolean connect(String host) throws Exception {
-    this.host = host;
-    uploadRootUrl = "http://" + host + "/upload.html?rp=sd";
-    this.isConnected = sendGetRequest("http://" + host);
+
+  public boolean connect(String host) {
+    try {
+      this.target = host;
+      uploadRootUrl = "http://" + host + "/upload.html?rp=sd";
+      this.isConnected = sendGetRequest("http://" + host);
+    } catch (Exception e) {
+      this.isConnected = false;
+    }
     return this.isConnected;
   }
 
   /**
-   * Creates a task which upload the specified media files. the current files on the device will be deleted.
+   * Creates a task which upload the specified media files. the current files on the device will be
+   * deleted.
    */
-  public Task<Boolean> getUploadMediaFilesTask(List<MediaFile> mediaFiles) throws Exception {
+  public Task<Boolean> uploadMediaFiles(List<MediaFile> mediaFiles) throws Exception {
     Task<Boolean> uploadTask = new Task<Boolean>() {
       @Override
       public Boolean call() throws Exception {
         Boolean success = true;
         for (MediaFile mediaFile : mediaFiles) {
-          if (this.isCancelled()) return false;
+          if (this.isCancelled()){
+            return false;
+          }
           boolean return1 = deleteFile(mediaFile);
           boolean return2 = uploadFile("/media", mediaFile);
           if (return1 == false || return2 == false) {
@@ -74,7 +84,6 @@ public class BrightSignWebConnector extends Connector {
 
   }
 
-  
   private Boolean uploadFile(String destinationFolder, MediaFile mediaFile) throws Exception {
 
     MultipartEntityBuilder multiPartBuilder = MultipartEntityBuilder.create();
@@ -93,14 +102,15 @@ public class BrightSignWebConnector extends Connector {
 
   private Boolean deleteFile(MediaFile mediaFile) throws Exception {
     String urlFileName = mediaFile.getFile().getName().replace(" ", "+");
-    String deleteUrl = "http://" + host + "/delete?filename=sd%2F" + urlFileName + "&delete=Delete";
+    String deleteUrl = "http://" + target + "/delete?filename=sd%2F" + urlFileName + "&delete=Delete";
     return sendGetRequest(deleteUrl);
   }
 
   private Boolean sendGetRequest(String url) throws Exception {
     URL u = new URL(url);
     HttpURLConnection huc = (HttpURLConnection) u.openConnection();
-    huc.setRequestMethod("GET"); // OR huc.setRequestMethod ("HEAD");
+    huc.setRequestMethod("GET");
+    huc.setConnectTimeout(15 * 100);
     huc.connect();
     int returnCode = huc.getResponseCode();
     if (returnCode != 200) {
@@ -108,49 +118,52 @@ public class BrightSignWebConnector extends Connector {
     }
     return true;
   }
-  
-  
+
   /**
    * Start a Bright Sign Script over SSH
    * 
    * @param scriptName --> full path to script
    * @throws Exception
    */
-  private void runScriptOnDevice(String scriptName) throws Exception{
+  private void runScriptOnDevice(String scriptName) throws Exception {
 
     String user = configFile.getProperty("ssh_user");
     String password = configFile.getProperty("ssh_password");
-    int port=Integer.parseInt(configFile.getProperty("ssh_port"));
+    int port = Integer.parseInt(configFile.getProperty("ssh_port"));
 
-        JSch jsch = new JSch();
-        Session session = jsch.getSession(user, host, port);
-            session.setPassword(password);
-            session.setConfig("StrictHostKeyChecking", "no");
-        System.out.println("Establishing Connection...");
-        session.connect();
-        System.out.println("Connection established.");
-        ChannelExec channelExec = (ChannelExec)session.openChannel("exec");
+    JSch jsch = new JSch();
+    Session session = jsch.getSession(user, target, port);
+    session.setPassword(password);
+    session.setConfig("StrictHostKeyChecking", "no");
+    System.out.println("Establishing Connection...");
+    session.connect();
+    System.out.println("Connection established.");
+    ChannelExec channelExec = (ChannelExec) session.openChannel("exec");
 
-        InputStream in = channelExec.getInputStream();
+    InputStream in = channelExec.getInputStream();
 
-        channelExec.setCommand("script " + scriptName);
-        channelExec.connect();
+    channelExec.setCommand("script " + scriptName);
+    channelExec.connect();
 
-        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-        String line;
-        int index = 0;
+    BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+    String line;
+    int index = 0;
 
-        while ((line = reader.readLine()) != null)
-        {
-            System.out.println(++index + " : " + line);
-        }
+    while ((line = reader.readLine()) != null) {
+      System.out.println(++index + " : " + line);
+    }
 
-        channelExec.disconnect();
-        session.disconnect();
+    channelExec.disconnect();
+    session.disconnect();
 
-        System.out.println("Done!");
-  
+    System.out.println("Done!");
+
   }
 
+  @Override
+  public List<String> getPossibleTargets() {
+    PortScanner portScanner = new PortScanner();
+    return portScanner.getAllIpWithOpenPortInLocalSubnet(80);
+  }
 
 }
