@@ -12,6 +12,8 @@ import javafx.concurrent.Task;
 
 import javax.swing.filechooser.FileSystemView;
 
+import org.apache.commons.io.FileUtils;
+
 import ch.tweaklab.ip6.model.MediaFile;
 import ch.tweaklab.ip6.util.OSValidator;
 
@@ -23,6 +25,9 @@ import ch.tweaklab.ip6.util.OSValidator;
  */
 public class BrightSignSdCardConnector extends Connector {
 
+  private final String mediaFolder = "\\media\\";
+  
+  
   public BrightSignSdCardConnector() {
 
   }
@@ -36,6 +41,7 @@ public class BrightSignSdCardConnector extends Connector {
 
   @Override
   public Task<Boolean> uploadMediaFiles(List<MediaFile> mediaFiles) throws Exception {
+    if (OSValidator.isWindows()) {
     Task<Boolean> uploadTask = new Task<Boolean>() {
       Boolean success;
 
@@ -49,11 +55,15 @@ public class BrightSignSdCardConnector extends Connector {
             return false;
           }
           try {
-            returnValue = replaceFile(m.getFile(), target + "/");
+            File mediaFolderFile = new File(target + mediaFolder);
+            FileUtils.deleteDirectory(mediaFolderFile);
+           mediaFolderFile.createNewFile();
+            returnValue = replaceFileOnWindows(m.getFile(), target + mediaFolder);
             if (returnValue == false) {
               success = false;
             }
           } catch (Exception e) {
+            e.printStackTrace();
             success = false;
           }
         }
@@ -61,6 +71,10 @@ public class BrightSignSdCardConnector extends Connector {
       }
     };
     return uploadTask;
+    }
+    else{
+      return null;
+    }
   }
 
   @Override
@@ -90,9 +104,9 @@ public class BrightSignSdCardConnector extends Connector {
     return targetList;
   }
 
-  private Boolean replaceFile(File sourceFile, String destPath) throws IOException {
-    if (!destPath.endsWith("/")) {
-      destPath = destPath + "/";
+  private Boolean replaceFileOnWindows(File sourceFile, String destPath) throws IOException {
+    if (!destPath.endsWith("\\")) {
+      destPath = destPath + "\\";
     }
     File destFile = new File(destPath + sourceFile.getName());
     if (!destFile.exists()) {

@@ -92,6 +92,8 @@ public class PlaylistTabController {
       MediaFile mediaFile = new MediaFile(choosenFile);
       listView.getItems().add(mediaFile);
       uploadButton.setDisable(false);
+      listView.getSelectionModel().selectLast();
+      handleMouseClickedInListView();
     }
   }
 

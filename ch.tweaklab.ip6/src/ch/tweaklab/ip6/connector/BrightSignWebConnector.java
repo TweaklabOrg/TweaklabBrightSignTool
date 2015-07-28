@@ -4,10 +4,10 @@ package ch.tweaklab.ip6.connector;
  * Implementation of Connector.
  * Connects to a BrightSign Device via HTTP and SSH
  */
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
+import java.io.PrintStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
@@ -27,7 +27,7 @@ import ch.tweaklab.ip6.gui.MainApp;
 import ch.tweaklab.ip6.model.MediaFile;
 import ch.tweaklab.ip6.util.PortScanner;
 
-import com.jcraft.jsch.ChannelExec;
+import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
 
@@ -35,6 +35,8 @@ public class BrightSignWebConnector extends Connector {
 
   private String uploadRootUrl;
   Properties configFile;
+  private final String mediaFolder = "/media";
+  private final String resetMediaFolderScriptName = "resetMediaFolder.brs";
 
   public BrightSignWebConnector() {
 
@@ -68,11 +70,11 @@ public class BrightSignWebConnector extends Connector {
       public Boolean call() throws Exception {
         Boolean success = true;
         for (MediaFile mediaFile : mediaFiles) {
-          if (this.isCancelled()){
+          if (this.isCancelled()) {
             return false;
           }
-          boolean return1 = deleteFile(mediaFile);
-          boolean return2 = uploadFile("/media", mediaFile);
+          boolean return1 = RunScriptOverSSH(resetMediaFolderScriptName);
+          boolean return2 = uploadFile(mediaFolder, mediaFile);
           if (return1 == false || return2 == false) {
             success = false;
           }
@@ -100,12 +102,6 @@ public class BrightSignWebConnector extends Connector {
     return true;
   }
 
-  private Boolean deleteFile(MediaFile mediaFile) throws Exception {
-    String urlFileName = mediaFile.getFile().getName().replace(" ", "+");
-    String deleteUrl = "http://" + target + "/delete?filename=sd%2F" + urlFileName + "&delete=Delete";
-    return sendGetRequest(deleteUrl);
-  }
-
   private Boolean sendGetRequest(String url) throws Exception {
     URL u = new URL(url);
     HttpURLConnection huc = (HttpURLConnection) u.openConnection();
@@ -125,39 +121,39 @@ public class BrightSignWebConnector extends Connector {
    * @param scriptName --> full path to script
    * @throws Exception
    */
-  private void runScriptOnDevice(String scriptName) throws Exception {
+  private Boolean RunScriptOverSSH(String scriptName) {
 
-    String user = configFile.getProperty("ssh_user");
-    String password = configFile.getProperty("ssh_password");
-    int port = Integer.parseInt(configFile.getProperty("ssh_port"));
+    try {
+      String user = configFile.getProperty("ssh_user");
+      String password = configFile.getProperty("ssh_password");
+      int port = Integer.parseInt(configFile.getProperty("ssh_port"));
 
-    JSch jsch = new JSch();
-    Session session = jsch.getSession(user, target, port);
-    session.setPassword(password);
-    session.setConfig("StrictHostKeyChecking", "no");
-    System.out.println("Establishing Connection...");
-    session.connect();
-    System.out.println("Connection established.");
-    ChannelExec channelExec = (ChannelExec) session.openChannel("exec");
+      JSch jsch = new JSch();
+      Session session = jsch.getSession(user, target, port);
+      session.setPassword(password);
 
-    InputStream in = channelExec.getInputStream();
+      session.setConfig("StrictHostKeyChecking", "no");
 
-    channelExec.setCommand("script " + scriptName);
-    channelExec.connect();
+      session.connect(); // making a connection with timeout.
+      Channel channel = session.openChannel("shell");
 
-    BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-    String line;
-    int index = 0;
+      PipedInputStream pip = new PipedInputStream(40);
+      channel.setInputStream(pip);
 
-    while ((line = reader.readLine()) != null) {
-      System.out.println(++index + " : " + line);
+      PipedOutputStream pop = new PipedOutputStream(pip);
+      PrintStream print = new PrintStream(pop);
+      channel.setOutputStream(System.out);
+
+      channel.connect();
+      print.println("script " + scriptName);
+      Thread.sleep(1000);
+      channel.disconnect();
+      session.disconnect();
+    } catch (Exception e) {
+      System.out.println(e);
     }
 
-    channelExec.disconnect();
-    session.disconnect();
-
-    System.out.println("Done!");
-
+    return true;
   }
 
   @Override
