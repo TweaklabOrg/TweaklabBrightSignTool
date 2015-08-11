@@ -27,7 +27,7 @@ public class TestUtil {
     mediaFile = new MediaFile(new File(path.getFile()));
     mediaFiles.add(mediaFile);
     
-    path = mediaFile.getClass().getClassLoader().getResource("test-music.mp3");
+    path = mediaFile.getClass().getClassLoader().getResource("test-audio.mp3");
     mediaFile = new MediaFile(new File(path.getFile()));
     mediaFiles.add(mediaFile);
     

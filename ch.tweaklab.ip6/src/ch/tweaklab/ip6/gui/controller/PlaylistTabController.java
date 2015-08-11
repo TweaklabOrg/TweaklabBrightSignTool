@@ -2,7 +2,6 @@ package ch.tweaklab.ip6.gui.controller;
 
 import java.io.File;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.Collections;
 
 import javafx.beans.value.ChangeListener;
