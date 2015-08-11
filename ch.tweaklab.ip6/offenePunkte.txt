@@ -1,0 +1,2 @@
+-Anzahl threads bei portscanner?
+-xml config als file oder stream?

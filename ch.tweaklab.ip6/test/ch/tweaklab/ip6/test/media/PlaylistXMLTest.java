@@ -1,17 +1,13 @@
 package ch.tweaklab.ip6.test.media;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.List;
-import java.util.Properties;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.Assert;
 
-import ch.tweaklab.ip6.connector.BrightSignWebConnector;
 import ch.tweaklab.ip6.media.MediaFile;
 import ch.tweaklab.ip6.media.XMLConfigCreator;
 import ch.tweaklab.ip6.test.util.TestUtil;
@@ -22,7 +18,6 @@ public class PlaylistXMLTest {
 
   @Before
   public void setUp() throws Exception {
-
 
   }
 

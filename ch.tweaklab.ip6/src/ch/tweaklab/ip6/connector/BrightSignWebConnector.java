@@ -46,7 +46,7 @@ public class BrightSignWebConnector extends Connector {
     try {
       configFile.load(this.getClass().getClassLoader().getResourceAsStream("config.properties"));
       resetMediaFolderScriptName = configFile.getProperty("resetMediaFolderScriptName");
-      mediaFolder = configFile.getProperty("mediaFolder");
+      mediaFolder = "/" + configFile.getProperty("mediaFolder");
 
     } catch (IOException e) {
       MainApp.showExceptionMessage(e);
@@ -147,8 +147,7 @@ public class BrightSignWebConnector extends Connector {
    * 
    * @param scriptName --> full path to script
    */
-  public Boolean RunScriptOverSSH(String scriptName) {
-    // TODO: zzAlain: change to private
+  private Boolean RunScriptOverSSH(String scriptName) {
     final ByteArrayOutputStream baos = new ByteArrayOutputStream();
     try {
       String user = configFile.getProperty("ssh_user");

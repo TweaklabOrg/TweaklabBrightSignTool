@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
+import java.util.concurrent.Callable;
 
 import javafx.concurrent.Task;
 
@@ -14,7 +16,9 @@ import javax.swing.filechooser.FileSystemView;
 
 import org.apache.commons.io.FileUtils;
 
+import ch.tweaklab.ip6.gui.MainApp;
 import ch.tweaklab.ip6.media.MediaFile;
+import ch.tweaklab.ip6.media.XMLConfigCreator;
 import ch.tweaklab.ip6.util.OSValidator;
 
 /**
@@ -25,9 +29,19 @@ import ch.tweaklab.ip6.util.OSValidator;
  */
 public class BrightSignSdCardConnector extends Connector {
 
-  private final String MEDIA_FOLDER_PATH = "\\media\\";
+  private String mediaFolderPath;
+  private Properties configFile;
 
   public BrightSignSdCardConnector() {
+
+    configFile = new Properties();
+    try {
+      configFile.load(this.getClass().getClassLoader().getResourceAsStream("config.properties"));
+      mediaFolderPath = configFile.getProperty("mediaFolder");
+
+    } catch (IOException e) {
+      MainApp.showExceptionMessage(e);
+    }
 
   }
 
@@ -47,26 +61,24 @@ public class BrightSignSdCardConnector extends Connector {
         @Override
         public Boolean call() throws Exception {
           success = true;
-          Boolean returnValue;
 
+          //reset media folder on sd card
+          File mediaFolder = new File(target + mediaFolderPath);
+          if (mediaFolder.exists()) {
+            FileUtils.deleteDirectory(mediaFolder);
+          }
+          mediaFolder.mkdir();
+          
+          //copy xml config file
+          File xmlConfigFile = XMLConfigCreator.createPlayListXML(mediaFiles);
+          copyOrReplaceFileOnWindows(xmlConfigFile, mediaFolder.getPath());
+          
+          //copy each mediafile
           for (MediaFile mediaFile : mediaFiles) {
             if (this.isCancelled()) {
               return false;
             }
-            try {
-              File mediaFolder = new File(target + MEDIA_FOLDER_PATH);
-             
-                FileUtils.deleteDirectory(mediaFolder);
-            
-              mediaFolder.mkdir();
-              returnValue = copyOrReplaceFileOnWindows(mediaFile.getFile(), target + MEDIA_FOLDER_PATH);
-              if (returnValue == false) {
-                success = false;
-              }
-            } catch (Exception e) {
-              e.printStackTrace();
-              success = false;
-            }
+            copyOrReplaceFileOnWindows(mediaFile.getFile(), mediaFolder.getPath());
           }
           return success;
         }
@@ -104,35 +116,29 @@ public class BrightSignSdCardConnector extends Connector {
     return targetList;
   }
 
-  private Boolean copyOrReplaceFileOnWindows(File sourceFile, String destPath) throws IOException {
-    if (!destPath.endsWith("\\")) {
-      destPath = destPath + "\\";
+  private void copyOrReplaceFileOnWindows(File sourceFile, String destPath) throws Exception {
+    if (!destPath.endsWith("/")) {
+      destPath = destPath + "/";
     }
     File destFile = new File(destPath + sourceFile.getName());
-    if (!destFile.exists()) {
+    if (destFile.exists()) {
       destFile.delete();
-      destFile.createNewFile();
     }
+    destFile.createNewFile();
 
     FileChannel source = null;
     FileChannel destination = null;
 
-    try {
-      source = new FileInputStream(sourceFile).getChannel();
-      destination = new FileOutputStream(destFile).getChannel();
-      destination.transferFrom(source, 0, source.size());
-    } catch (Exception e) {
-      return false;
-    } finally {
-    }
+    source = new FileInputStream(sourceFile).getChannel();
+    destination = new FileOutputStream(destFile).getChannel();
+    destination.transferFrom(source, 0, source.size());
+
     if (source != null) {
       source.close();
     }
     if (destination != null) {
       destination.close();
     }
-
-    return true;
   }
 
 }

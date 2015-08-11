@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<playlist date="10 Aug 2015 15:57:20 GMT">
+<playlist date="11 Aug 2015 07:00:52 GMT">
   <files>
     <file>
       <filename>test-image.jpg</filename>
       <type>IMAGE</type>
-      <displaytime>10</displaytime>
+      <displaytime>20</displaytime>
     </file>
     <file>
       <filename>test-movie.mp4</filename>
       <type>VIDEO</type>
     </file>
     <file>
-      <filename>test-unknown.txt</filename>
+      <filename>Hallo_Stephan2.txt</filename>
       <type>UNKNOWN</type>
     </file>
     <file>
-      <filename>test-music.mp3</filename>
-      <type>AUDIO</type>
+      <filename>unterschriftenbogen-DE-A4.pdf</filename>
+      <type>UNKNOWN</type>
     </file>
   </files>
 </playlist>
