@@ -6,6 +6,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
+import javafx.scene.control.Button;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
@@ -96,4 +98,81 @@ public class XMLConfigCreator {
     return xmlFile;
 
   }
+  
+  
+  /**
+   * Creates an button xml config file and stores it in work folder
+   * @param mediaFiles
+   * @return
+   */
+  public static File createButtontXML(MediaFile[] mediaFiles) {
+    File xmlFile= null;
+    
+    try {
+      //create file in workfolder
+      xmlFile = new File(WORK_DIRECTORY + "/buttons.xml");
+      if(xmlFile.exists()){
+        xmlFile.delete();
+      }
+      xmlFile.createNewFile();
+      
+      
+      //xml factory
+      DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+      DocumentBuilder docBuilder = null;
+      docBuilder = docFactory.newDocumentBuilder();
+
+      // root elements
+      Document doc = docBuilder.newDocument();
+      Element rootElement = doc.createElement("buttons");
+      doc.appendChild(rootElement);
+      
+      rootElement.setAttribute("date", new Date().toGMTString());
+
+      for (int i = 0; i < mediaFiles.length; i ++){
+
+          if(mediaFiles[i] != null){
+            Element button = doc.createElement("button");
+            button.setAttribute("com", String.valueOf(i));
+            rootElement.appendChild(button);
+            
+           Element file = doc.createElement("file");
+           button.appendChild(file);
+    
+    
+            
+            Element filename = doc.createElement("filename");
+            filename.appendChild(doc.createTextNode(mediaFiles[i].getFile().getName()));
+            file.appendChild(filename);
+    
+            Element mediaType = doc.createElement("type");
+            mediaType.appendChild(doc.createTextNode(mediaFiles[i].getMediaType().toString()));
+            file.appendChild(mediaType);
+        }
+
+      }
+      // write the content to the stream
+      TransformerFactory transformerFactory = TransformerFactory.newInstance();
+      Transformer transformer = null;
+
+      transformer = transformerFactory.newTransformer();
+      transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+      transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+
+      DOMSource source = new DOMSource(doc);
+      StreamResult result = new StreamResult(xmlFile);
+
+      transformer.transform(source, result);
+
+    } catch (Exception e) {
+      e.printStackTrace();
+      return null;
+    }
+
+    return xmlFile;
+
+  }
+  
+  
+  
 }

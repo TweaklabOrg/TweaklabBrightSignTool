@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<playlist date="11 Aug 2015 07:31:13 GMT">
+<playlist date="11 Aug 2015 09:56:27 GMT">
   <files>
     <file>
       <filename>test-image.jpg</filename>
@@ -15,7 +15,7 @@
       <type>UNKNOWN</type>
     </file>
     <file>
-      <filename>test-music.mp3</filename>
+      <filename>test-audio.mp3</filename>
       <type>AUDIO</type>
     </file>
   </files>

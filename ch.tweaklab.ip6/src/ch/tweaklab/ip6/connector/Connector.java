@@ -49,7 +49,7 @@ public abstract class Connector {
     return target;
   }
 
-  public abstract List<String> getPossibleTargets();
+  public abstract Task<List<String>> getPossibleTargets();
 
 
   

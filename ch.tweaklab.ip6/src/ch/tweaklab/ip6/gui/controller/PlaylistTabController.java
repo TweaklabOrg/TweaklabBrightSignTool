@@ -16,8 +16,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 import ch.tweaklab.ip6.connector.Connector;
-import ch.tweaklab.ip6.gui.ApplicationData;
-import ch.tweaklab.ip6.gui.MainApp;
+import ch.tweaklab.ip6.gui.model.Context;
 import ch.tweaklab.ip6.gui.view.WaitScreen;
 import ch.tweaklab.ip6.media.MediaFile;
 import ch.tweaklab.ip6.media.MediaType;
@@ -80,10 +79,6 @@ public class PlaylistTabController {
 
   }
 
-  private void addTabs() {
-    // TODO Auto-generated method stub
-
-  }
 
   @FXML
   private void handleAddFileToListView() {
@@ -121,7 +116,7 @@ public class PlaylistTabController {
       waitScreen.setOnClose(event -> uploadTask.cancel());
 
       // Create Upload Task and add Events
-      Connector connector = ApplicationData.getConnector();
+      Connector connector = Context.getConnector();
       File configFile = XMLConfigCreator.createPlayListXML(listView.getItems());
       uploadTask = connector.uploadMediaFiles(listView.getItems(), configFile);
 
@@ -130,7 +125,6 @@ public class PlaylistTabController {
       uploadTask.setOnFailed(event -> uploadTaskAbortFinish());
 
       uploadThread = new Thread(uploadTask);
-      uploadThread.setDaemon(false);
       uploadThread.start();
     } catch (Exception e) {
       MainApp.showExceptionMessage(e);
@@ -139,7 +133,7 @@ public class PlaylistTabController {
 
   private Boolean validateData() {
     // validate data
-    if (ApplicationData.getConnector() == null || ApplicationData.getConnector().getIsConnected() == false) {
+    if (Context.getConnector() == null || Context.getConnector().getIsConnected() == false) {
       MainApp.showErrorMessage("Not connected!", "You are currently not connected to a device. Please connect before upload");
       return false;
     }
@@ -165,10 +159,10 @@ public class PlaylistTabController {
     MainApp.showErrorMessage("Upload Failed", "An error occured during upload. Some files are not uploaded!");
   }
 
-  @FXML
-  private void handleWaitScreenCancelButton() {
-    uploadTask.cancel();
-  }
+//  @FXML
+//  private void handleWaitScreenCancelButton() {
+//    uploadTask.cancel();
+//  }
 
   @FXML
   private void moveItemUp() {

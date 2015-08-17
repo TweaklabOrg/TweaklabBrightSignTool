@@ -2,26 +2,29 @@ package ch.tweaklab.ip6.gui.controller;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.concurrent.Task;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.control.TextField;
 import ch.tweaklab.ip6.connector.Connector;
-import ch.tweaklab.ip6.gui.ApplicationData;
-import ch.tweaklab.ip6.gui.MainApp;
+import ch.tweaklab.ip6.gui.model.Context;
 import ch.tweaklab.ip6.util.KeyValueData;
 
 /**
- * Controler of RootPage.fxml Contains Connections Components and Tabview
+ * Controller of RootPage.fxml Contains Connections Components and Tabview
  * 
  * @author Alf
  *
@@ -47,6 +50,9 @@ public class RootPageController {
   private TabPane tabPane;
 
   @FXML
+  private Button getTargetButton;
+
+  @FXML
   private ComboBox<String> targetComboBox;
 
   private Boolean connectMenuOpen = true;
@@ -57,13 +63,34 @@ public class RootPageController {
    */
   @FXML
   private void initialize() {
-    KeyValueData webConnector = new KeyValueData("BrightSign Web", "ch.tweaklab.ip6.connector.BrightSignWebConnector");
+
     KeyValueData sdConnector = new KeyValueData("BrightSign SD Card", "ch.tweaklab.ip6.connector.BrightSignSdCardConnector");
+    KeyValueData webConnector = new KeyValueData("BrightSign Web", "ch.tweaklab.ip6.connector.BrightSignWebConnector");
 
     connectorComboBox.setItems(FXCollections.observableArrayList(webConnector, sdConnector));
     connectorComboBox.getSelectionModel().selectFirst();
 
     handleChangeConnector();
+
+  }
+
+  @FXML
+  private void scanPossibleTargets(){
+    MainApp.primaryStage.getScene().setCursor(Cursor.WAIT);
+    Task<List<String>> possibleTargetsTask =  Context.getConnector().getPossibleTargets();   
+    possibleTargetsTask.setOnSucceeded(event -> ScanTargetFinished(possibleTargetsTask));
+    Thread uploadThread = new Thread(possibleTargetsTask);
+    uploadThread.start();
+  }
+
+  private void ScanTargetFinished(Task<List<String>> possibleTargetsTask) {
+    try {
+      targetComboBox.getItems().setAll(possibleTargetsTask.get());
+      targetComboBox.getSelectionModel().selectFirst();
+      MainApp.primaryStage.getScene().setCursor(Cursor.DEFAULT);
+    } catch (Exception e) {
+      MainApp.showExceptionMessage(e);
+    }
   }
 
   @FXML
@@ -76,13 +103,11 @@ public class RootPageController {
     try {
       clazz = Class.forName(className);
       Connector connector = (Connector) clazz.newInstance();
-      ApplicationData.setConnector(connector);
-      List<String> possibleTargets = connector.getPossibleTargets();
-      targetComboBox.getItems().setAll(possibleTargets);
-      targetComboBox.getSelectionModel().selectFirst();
+      Context.setConnector(connector);
     } catch (Exception e) {
       MainApp.showExceptionMessage(e);
     }
+
   }
 
   /**
@@ -100,7 +125,7 @@ public class RootPageController {
     Boolean isConnected = false;
 
     try {
-      isConnected = ApplicationData.getConnector().connect(target);
+      isConnected = Context.getConnector().connect(target);
     } catch (Exception e) {
       MainApp.showExceptionMessage(e);
     }
@@ -133,11 +158,16 @@ public class RootPageController {
   private void addTabs() {
     try {
       tabPane.getTabs().clear();
-      // add MediaContent Tab
-      Tab contentTab = new Tab();
-      contentTab.setText("Content Manager");
-      tabPane.getTabs().add(contentTab);
-      contentTab.setContent((Node) FXMLLoader.load(getClass().getResource("../view/PlaylistTab.fxml")));
+      // add playlist Tab
+      Tab playlistTab = new Tab();
+      playlistTab.setText("Playlist");
+      tabPane.getTabs().add(playlistTab);
+      playlistTab.setContent((Node) FXMLLoader.load(getClass().getResource("../view/PlaylistTab.fxml")));
+
+      Tab buttonTab = new Tab();
+      buttonTab.setText("Buttons");
+      tabPane.getTabs().add(buttonTab);
+      buttonTab.setContent((Node) FXMLLoader.load(getClass().getResource("../view/ButtonTab.fxml")));
 
     } catch (IOException e) {
       MainApp.showExceptionMessage(e);

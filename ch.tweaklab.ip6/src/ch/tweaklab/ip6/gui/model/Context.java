@@ -1,4 +1,4 @@
-package ch.tweaklab.ip6.gui;
+package ch.tweaklab.ip6.gui.model;
 
 import ch.tweaklab.ip6.connector.Connector;
 /**
@@ -6,18 +6,19 @@ import ch.tweaklab.ip6.connector.Connector;
  * @author Alf
  *
  */
-public class ApplicationData {
+public class Context {
 
   
  private static Connector connector;
 
+ 
 
 public static Connector getConnector() {
   return connector;
 }
 
 public static void setConnector(Connector connector) {
-  ApplicationData.connector = connector;
+  Context.connector = connector;
 }
   
   

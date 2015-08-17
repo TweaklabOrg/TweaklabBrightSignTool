@@ -1,4 +1,4 @@
-package ch.tweaklab.ip6.gui;
+package ch.tweaklab.ip6.gui.controller;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -41,7 +41,7 @@ public class MainApp extends Application {
     try {
       // Load root layout from fxml file.
       FXMLLoader loader = new FXMLLoader();
-      loader.setLocation(this.getClass().getResource("view/RootPage.fxml"));
+      loader.setLocation(this.getClass().getResource("../view/RootPage.fxml"));
       rootLayout = (BorderPane) loader.load();
 
       // Show the scene containing the root layout.

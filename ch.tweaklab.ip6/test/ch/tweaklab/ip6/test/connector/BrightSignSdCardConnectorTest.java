@@ -7,6 +7,8 @@ import java.util.List;
 
 import javafx.application.Application;
 import javafx.concurrent.Task;
+import javafx.fxml.FXML;
+import javafx.scene.Cursor;
 import javafx.stage.Stage;
 
 import org.junit.Before;
@@ -14,6 +16,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import ch.tweaklab.ip6.connector.BrightSignSdCardConnector;
+import ch.tweaklab.ip6.gui.controller.MainApp;
+import ch.tweaklab.ip6.gui.model.Context;
 import ch.tweaklab.ip6.media.MediaFile;
 import ch.tweaklab.ip6.media.XMLConfigCreator;
 import ch.tweaklab.ip6.test.util.TestUtil;
@@ -22,7 +26,7 @@ public class BrightSignSdCardConnectorTest {
 
   BrightSignSdCardConnector sdConnector;
   boolean success = true;
-
+  List<String> targetList;
   
   public static class AsNonApp extends Application {
     @Override
@@ -51,23 +55,38 @@ public static void initJFX() {
   }
   
   
-  
-  
+
+
+ 
 
   @Test
   public void connect() {
-    String target;
-    List<String> targetList = sdConnector.getPossibleTargets();
-    if(targetList.size() > 0){
-      target = targetList.get(0);
-    }
-    else{
-      target = "D:\\";
-    }
-    Boolean connected = sdConnector.connect(target);
-    assertTrue(connected);
-
+    Task<List<String>> possibleTargetsTask =  Context.getConnector().getPossibleTargets();   
+    possibleTargetsTask.setOnSucceeded(event -> ScanTargetFinished(possibleTargetsTask));
+    Thread uploadThread = new Thread(possibleTargetsTask);
+    uploadThread.start();
   }
+  private void ScanTargetFinished(Task<List<String>> possibleTargetsTask) {
+    try {
+       
+      String target;
+      List<String> targetList = possibleTargetsTask.get();
+      if(targetList.size() > 0){
+        target = targetList.get(0);
+      }
+      else{
+        target = "D:\\";
+      }
+      Boolean connected = sdConnector.connect(target);
+      assertTrue(connected);
+    } catch (Exception e) {
+      MainApp.showExceptionMessage(e);
+    }
+  }
+  
+  
+  
+  
 
   @Test
   public void uploadFiles() {

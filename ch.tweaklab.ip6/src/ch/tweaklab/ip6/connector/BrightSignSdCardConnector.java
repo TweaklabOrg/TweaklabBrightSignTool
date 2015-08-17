@@ -16,10 +16,11 @@ import javax.swing.filechooser.FileSystemView;
 
 import org.apache.commons.io.FileUtils;
 
-import ch.tweaklab.ip6.gui.MainApp;
+import ch.tweaklab.ip6.gui.controller.MainApp;
 import ch.tweaklab.ip6.media.MediaFile;
 import ch.tweaklab.ip6.media.XMLConfigCreator;
 import ch.tweaklab.ip6.util.OSValidator;
+import ch.tweaklab.ip6.util.PortScanner;
 
 /**
  * Connects to a SD Card of Bright Sign Device
@@ -62,23 +63,25 @@ public class BrightSignSdCardConnector extends Connector {
         public Boolean call() throws Exception {
           success = true;
 
-          //reset media folder on sd card
+          // reset media folder on sd card
           File mediaFolder = new File(target + mediaFolderPath);
           if (mediaFolder.exists()) {
             FileUtils.deleteDirectory(mediaFolder);
           }
           mediaFolder.mkdir();
-          
-          //copy xml config file
+
+          // copy xml config file
           File xmlConfigFile = XMLConfigCreator.createPlayListXML(mediaFiles);
-          copyOrReplaceFileOnWindows(xmlConfigFile, mediaFolder.getPath());
-          
-          //copy each mediafile
+          copyOrReplaceFile(xmlConfigFile, mediaFolder.getPath());
+
+          // copy each mediafile
           for (MediaFile mediaFile : mediaFiles) {
             if (this.isCancelled()) {
               return false;
             }
-            copyOrReplaceFileOnWindows(mediaFile.getFile(), mediaFolder.getPath());
+            if (mediaFile != null) {
+              copyOrReplaceFile(mediaFile.getFile(), mediaFolder.getPath());
+            }
           }
           return success;
         }
@@ -90,33 +93,39 @@ public class BrightSignSdCardConnector extends Connector {
   }
 
   @Override
-  public List<String> getPossibleTargets() {
-    List<String> targetList = new ArrayList<String>();
+  public Task<List<String>> getPossibleTargets() {
 
-    if (OSValidator.isWindows()) {
-      File[] paths;
-      FileSystemView fsv = FileSystemView.getFileSystemView();
+    Task<List<String>> getTargetTask = new Task<List<String>>() {
+      @Override
+      public List<String> call() throws Exception {
+        List<String> targetList = new ArrayList<String>();
 
-      paths = File.listRoots();
-      for (File path : paths) {
-        String description = fsv.getSystemTypeDescription(path);
-        if (description.equals("Removable Disk")) {
-          targetList.add(path.getAbsolutePath());
+        if (OSValidator.isWindows()) {
+          File[] paths;
+          FileSystemView fsv = FileSystemView.getFileSystemView();
+
+          paths = File.listRoots();
+          for (File path : paths) {
+            String description = fsv.getSystemTypeDescription(path);
+            if (description.equals("Removable Disk")) {
+              targetList.add(path.getAbsolutePath());
+            }
+          }
+
+        } else if (OSValidator.isMac()) {
+          File volumes = new File("/Volumes");
+          File files[] = volumes.listFiles();
+          for (File f : files) {
+            targetList.add(f.getAbsolutePath());
+          }
         }
+        return targetList;
       }
-
-    } else if (OSValidator.isMac()) {
-      File volumes = new File("/Volumes");
-      File files[] = volumes.listFiles();
-      for (File f : files) {
-        targetList.add(f.getAbsolutePath());
-      }
-    }
-
-    return targetList;
+    };
+    return getTargetTask;
   }
 
-  private void copyOrReplaceFileOnWindows(File sourceFile, String destPath) throws Exception {
+  private void copyOrReplaceFile(File sourceFile, String destPath) throws Exception {
     if (!destPath.endsWith("/")) {
       destPath = destPath + "/";
     }

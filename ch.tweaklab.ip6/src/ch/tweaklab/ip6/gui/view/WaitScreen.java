@@ -11,7 +11,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import ch.tweaklab.ip6.gui.MainApp;
+import ch.tweaklab.ip6.gui.controller.MainApp;
 /**
  * This class contains a window with a wait screen and blocks the main windows.
  * 
@@ -46,14 +46,14 @@ public class WaitScreen {
   }
 
   /**
-   * show the wait windows
+   * close the wait windows
    */
   public void closeScreen() {
     stage.close();
   }
 
   /**
-   * close the wait window
+   * show the wait window
    */
   public void showScreen() {
     stage.show();

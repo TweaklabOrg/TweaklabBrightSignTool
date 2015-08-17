@@ -12,7 +12,7 @@ import ch.tweaklab.ip6.media.MediaFile;
 import ch.tweaklab.ip6.media.XMLConfigCreator;
 import ch.tweaklab.ip6.test.util.TestUtil;
 
-public class PlaylistXMLTest {
+public class XMLTest {
 
   String workDirectory = "work";
 
@@ -35,4 +35,24 @@ public class PlaylistXMLTest {
     assertTrue(xmlFile.exists());
 
   }
+  
+  @Test
+  public void createButtonXML() {
+
+    File xmlFile = new File(workDirectory + "/button.xml");
+    if (xmlFile.exists()) {
+      xmlFile.delete();
+    }
+    List<MediaFile> mediaFiles = TestUtil.getMediaFiles();
+    MediaFile[] mediaFilesArray = new MediaFile[10];
+    for(int i = 0; i < mediaFiles.size(); i++){
+      mediaFilesArray[i] = mediaFiles.get(i);
+    }
+
+    xmlFile = XMLConfigCreator.createButtontXML(mediaFilesArray);
+
+    assertTrue(xmlFile.exists());
+
+  }
+  
 }

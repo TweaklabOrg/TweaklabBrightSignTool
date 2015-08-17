@@ -25,7 +25,7 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.HttpClientBuilder;
 
-import ch.tweaklab.ip6.gui.MainApp;
+import ch.tweaklab.ip6.gui.controller.MainApp;
 import ch.tweaklab.ip6.media.MediaFile;
 import ch.tweaklab.ip6.util.PortScanner;
 
@@ -79,7 +79,7 @@ public class BrightSignWebConnector extends Connector {
         if (!success)
           return false;
 
-     // upload config file
+        // upload config file
         success = uploadFile(mediaFolder, configFile);
         if (!success)
           return false;
@@ -88,16 +88,18 @@ public class BrightSignWebConnector extends Connector {
             return false;
           }
 
-          // TODO: zzAlain: just needed while uploading config File, Remove if finished
-          // delete file in rootpath
-          success = deleteFile(mediaFile);
-          if (!success)
-            return false;
+          if (mediaFile != null) {
+            // TODO: zzAlain: just needed while uploading config File, Remove if finished
+            // delete file in rootpath
+            success = deleteFile(mediaFile);
+            if (!success)
+              return false;
 
-          // upload new file to mediafolder
-          success = uploadFile(mediaFolder, mediaFile.getFile());
-          if (!success)
-            return false;
+            // upload new file to mediafolder
+            success = uploadFile(mediaFolder, mediaFile.getFile());
+            if (!success)
+              return false;
+          }
         }
         return success;
       }
@@ -195,9 +197,15 @@ public class BrightSignWebConnector extends Connector {
   }
 
   @Override
-  public List<String> getPossibleTargets() {
-    PortScanner portScanner = new PortScanner();
-    return portScanner.getAllIpWithOpenPortInLocalSubnet(80);
+  public Task<List<String>> getPossibleTargets() {
+
+    Task<List<String>> getTargetTask = new Task<List<String>>() {
+      @Override
+      public List<String> call() throws Exception {
+        return PortScanner.getAllIpWithOpenPortInLocalSubnet(80);
+      }
+    };
+    return getTargetTask;
   }
 
 }

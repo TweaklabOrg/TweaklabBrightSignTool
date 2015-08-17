@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<buttons date="17 Aug 2015 09:27:33 GMT">
+  <button com="0">
+    <file>
+      <filename>IMGP0672.JPG</filename>
+      <type>IMAGE</type>
+    </file>
+  </button>
+  <button com="1">
+    <file>
+      <filename>test-movie.mp4</filename>
+      <type>VIDEO</type>
+    </file>
+  </button>
+</buttons>

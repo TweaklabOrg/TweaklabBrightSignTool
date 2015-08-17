@@ -27,8 +27,9 @@
                   <Label layoutX="31.0" layoutY="99.0" text="Target:" />
                   <Label layoutX="31.0" layoutY="57.0" text="Connector:" />
                   <Label layoutX="612.0" layoutY="14.0" text="    |    " />
-                  <ComboBox fx:id="targetComboBox" editable="true" layoutX="120.0" layoutY="94.0" prefHeight="31.0" prefWidth="226.0" />
+                  <ComboBox fx:id="targetComboBox" editable="true" layoutX="121.0" layoutY="91.0" prefHeight="31.0" prefWidth="184.0" />
                   <ComboBox fx:id="connectorComboBox" layoutX="120.0" layoutY="52.0" onAction="#handleChangeConnector" prefHeight="31.0" prefWidth="226.0" />
+                  <Button layoutX="303.0" layoutY="91.0" mnemonicParsing="false" onAction="#scanPossibleTargets" prefHeight="31.0" prefWidth="43.0" text="Scan" />
                </children>
             </AnchorPane>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="523.0" prefWidth="798.0">
