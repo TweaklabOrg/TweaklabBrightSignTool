@@ -66,6 +66,8 @@ public static void initJFX() {
     Thread uploadThread = new Thread(possibleTargetsTask);
     uploadThread.start();
   }
+  
+  
   private void ScanTargetFinished(Task<List<String>> possibleTargetsTask) {
     try {
        
@@ -75,7 +77,7 @@ public static void initJFX() {
         target = targetList.get(0);
       }
       else{
-        target = "D:\\";
+        target = "C:\\temp\\";
       }
       Boolean connected = sdConnector.connect(target);
       assertTrue(connected);

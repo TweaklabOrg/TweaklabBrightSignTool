@@ -2,13 +2,19 @@ package ch.tweaklab.ip6.gui.controller;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
@@ -26,13 +32,26 @@ import ch.tweaklab.ip6.media.XMLConfigCreator;
  * @author Alain
  *
  */
-public class ButtonTabController {
-
-  MediaFile[] mediaFiles;
-  int numberOfButtons = 4;
+public class GpioTabController {
 
   @FXML
   private AnchorPane rootPane;
+
+  @FXML
+  private CheckBox retriggerEnabledCheckbox;
+
+  @FXML
+  private TextField retriggerDelayField;
+
+  @FXML
+  private Label loopfileNameLabel;
+
+  @FXML
+  private ImageView loopFileImageView;
+
+  MediaFile[] gpioFiles;
+  int numberOfButtons = 4;
+  MediaFile loopFile;
 
   WaitScreen waitScreen;
   Task<Boolean> uploadTask;
@@ -44,12 +63,27 @@ public class ButtonTabController {
    */
   @FXML
   private void initialize() {
-    mediaFiles = new MediaFile[numberOfButtons];
     reset();
+
   }
 
   @FXML
-  private void handleChooseFile(ActionEvent event) {
+  private void handleChooseLoopFile() {
+    final FileChooser fileChooser = new FileChooser();
+    File choosenFile = fileChooser.showOpenDialog(MainApp.primaryStage);
+    if (choosenFile != null) {
+      loopFile = new MediaFile(choosenFile);
+      loopfileNameLabel.setText(choosenFile.getName());
+      if (loopFile != null) {
+        Image image = getMediaFileImage(loopFile);
+        loopFileImageView.setImage(image);
+      }
+    }
+
+  }
+
+  @FXML
+  private void handleChooseGpioFile(ActionEvent event) {
 
     int buttonNumber = -1;
 
@@ -68,34 +102,49 @@ public class ButtonTabController {
 
     if (choosenFile != null) {
       MediaFile mediaFile = new MediaFile(choosenFile);
-      mediaFiles[buttonNumber] = mediaFile;
+      gpioFiles[buttonNumber] = mediaFile;
       Label fileNameLabel = (Label) rootPane.lookup("#fileNameLabel" + buttonNumber);
       fileNameLabel.setText(choosenFile.getName());
 
       if (mediaFile != null) {
-        Image image;
         ImageView imageView = (ImageView) rootPane.lookup("#imageView" + buttonNumber);
-        if (mediaFile.getMediaType() == MediaType.IMAGE) {
-          String path = "file:///" + mediaFile.getFile().getAbsolutePath().replace("\\", "/");
-          image = new Image(path, true);
-        } else {
-          InputStream imageStream = getClass().getClassLoader().getResourceAsStream(mediaFile.getMediaType().toString().toLowerCase() + ".png");
-          image = new Image(imageStream);
-        }
+        Image image = getMediaFileImage(mediaFile);
         imageView.setImage(image);
       }
     }
 
   }
 
+  private Image getMediaFileImage(MediaFile mediaFile) {
+    Image image;
+    if (mediaFile.getMediaType() == MediaType.IMAGE) {
+      String path = "file:///" + mediaFile.getFile().getAbsolutePath().replace("\\", "/");
+      image = new Image(path, true);
+    } else {
+      InputStream imageStream = getClass().getClassLoader().getResourceAsStream(mediaFile.getMediaType().toString().toLowerCase() + ".png");
+      image = new Image(imageStream);
+    }
+    return image;
+  }
+
   @FXML
   private void reset() {
+    // rest gpio files
+    gpioFiles = new MediaFile[numberOfButtons];
     for (int i = 0; i < numberOfButtons; i++) {
       Label fileNameLabel = (Label) rootPane.lookup("#fileNameLabel" + i);
       fileNameLabel.setText("None");
       ImageView imageView = (ImageView) rootPane.lookup("#imageView" + i);
       imageView.setImage(null);
     }
+
+    // reset Loopfile
+    this.loopFileImageView.setImage(null);
+    this.loopFile = null;
+    this.loopfileNameLabel.setText("");
+
+    retriggerDelayField.setText("2000");
+    retriggerEnabledCheckbox.setSelected(true);
   }
 
   @FXML
@@ -107,14 +156,26 @@ public class ButtonTabController {
     try {
       // Show waitscreen
       waitScreen = new WaitScreen();
-      waitScreen.setOnCancel(event -> uploadTask.cancel());
-      waitScreen.setOnClose(event -> uploadTask.cancel());
+      waitScreen.setOnCancel(event -> {
+        if (uploadTask != null)
+          uploadTask.cancel();
+        else
+          waitScreen.closeScreen();
+      });
+      waitScreen.setOnClose(event -> {
+        if (uploadTask != null)
+          uploadTask.cancel();
+        else
+          waitScreen.closeScreen();
+      });
 
       // Create Upload Task and add Events
       Connector connector = Context.getConnector();
-      File buttonConfigFile = XMLConfigCreator.createButtontXML(mediaFiles);
-             
-      uploadTask = connector.uploadMediaFiles(Arrays.asList(mediaFiles), buttonConfigFile);
+      File gpioConfigFile = XMLConfigCreator.createGpioXML(loopFile, gpioFiles, retriggerEnabledCheckbox.isSelected(), retriggerDelayField.getText());
+
+      ArrayList<MediaFile> uploadList = new ArrayList<MediaFile>(Arrays.asList(gpioFiles));
+      uploadList.add(loopFile);
+      uploadTask = connector.uploadMediaFiles(uploadList, gpioConfigFile);
 
       uploadTask.setOnSucceeded(event -> uploadTaskSucceedFinish());
       uploadTask.setOnCancelled(event -> uploadTaskAbortFinish());
@@ -142,7 +203,6 @@ public class ButtonTabController {
       if (uploadTask.get()) {
         waitScreen.closeScreen();
         MainApp.showInfoMessage("Upload finished!");
-        reset();
       } else {
         uploadTaskAbortFinish();
       }

@@ -55,7 +55,7 @@ public class BrightSignSdCardConnector extends Connector {
 
   @Override
   public Task<Boolean> uploadMediaFiles(List<MediaFile> mediaFiles, File configFile) throws Exception {
-    if (OSValidator.isWindows()) {
+ //   if (OSValidator.isWindows()) {
       Task<Boolean> uploadTask = new Task<Boolean>() {
         Boolean success;
 
@@ -64,6 +64,9 @@ public class BrightSignSdCardConnector extends Connector {
           success = true;
 
           // reset media folder on sd card
+          if ((target.endsWith("/") || target.endsWith("\\")) == false) {
+            target = target + "/";
+          }
           File mediaFolder = new File(target + mediaFolderPath);
           if (mediaFolder.exists()) {
             FileUtils.deleteDirectory(mediaFolder);
@@ -71,8 +74,7 @@ public class BrightSignSdCardConnector extends Connector {
           mediaFolder.mkdir();
 
           // copy xml config file
-          File xmlConfigFile = XMLConfigCreator.createPlayListXML(mediaFiles);
-          copyOrReplaceFile(xmlConfigFile, mediaFolder.getPath());
+          copyOrReplaceFile(configFile, mediaFolder.getPath());
 
           // copy each mediafile
           for (MediaFile mediaFile : mediaFiles) {
@@ -87,9 +89,9 @@ public class BrightSignSdCardConnector extends Connector {
         }
       };
       return uploadTask;
-    } else {
-      return null;
-    }
+//    } else {
+//      return null;
+//    }
   }
 
   @Override

@@ -145,7 +145,6 @@ public class PlaylistTabController {
       if (uploadTask.get()) {
         waitScreen.closeScreen();
         MainApp.showInfoMessage("Upload finished!");
-        clearPlaylist();
       } else {
         uploadTaskAbortFinish();
       }

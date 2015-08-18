@@ -35,24 +35,25 @@ public class XMLTest {
     assertTrue(xmlFile.exists());
 
   }
-  
-  @Test
-  public void createButtonXML() {
 
-    File xmlFile = new File(workDirectory + "/button.xml");
-    if (xmlFile.exists()) {
-      xmlFile.delete();
+  @Test
+  public void createGpioXML() {
+
+    File xmlFile1 = new File(workDirectory + "/gpio.xml");
+    if (xmlFile1.exists()) {
+      xmlFile1.delete();
     }
     List<MediaFile> mediaFiles = TestUtil.getMediaFiles();
     MediaFile[] mediaFilesArray = new MediaFile[10];
-    for(int i = 0; i < mediaFiles.size(); i++){
+    for (int i = 0; i < mediaFiles.size(); i++) {
       mediaFilesArray[i] = mediaFiles.get(i);
     }
 
-    xmlFile = XMLConfigCreator.createButtontXML(mediaFilesArray);
+    mediaFilesArray[2] = null;
+    xmlFile1 = XMLConfigCreator.createGpioXML(mediaFiles.get(2), mediaFilesArray, true, "1000");
 
-    assertTrue(xmlFile.exists());
+    assertTrue(xmlFile1.exists());
+
 
   }
-  
 }

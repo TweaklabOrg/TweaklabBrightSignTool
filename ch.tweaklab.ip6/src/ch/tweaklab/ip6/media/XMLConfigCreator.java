@@ -23,26 +23,25 @@ public class XMLConfigCreator {
 
   private final static String WORK_DIRECTORY = "work";
   Properties configFile;
-  
-  
+
   /**
    * Creates an playlist xml config file and stores it in work foldr
+   * 
    * @param mediaFiles
    * @return
    */
   public static File createPlayListXML(List<MediaFile> mediaFiles) {
-    File xmlFile= null;
-    
+    File xmlFile = null;
+
     try {
-      //create file in workfolder
+      // create file in workfolder
       xmlFile = new File(WORK_DIRECTORY + "/playlist.xml");
-      if(xmlFile.exists()){
+      if (xmlFile.exists()) {
         xmlFile.delete();
       }
       xmlFile.createNewFile();
-      
-      
-      //xml factory
+
+      // xml factory
       DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
       DocumentBuilder docBuilder = null;
       docBuilder = docFactory.newDocumentBuilder();
@@ -51,7 +50,7 @@ public class XMLConfigCreator {
       Document doc = docBuilder.newDocument();
       Element rootElement = doc.createElement("playlist");
       doc.appendChild(rootElement);
-      
+
       rootElement.setAttribute("date", new Date().toGMTString());
       Element files = doc.createElement("files");
       rootElement.appendChild(files);
@@ -60,7 +59,6 @@ public class XMLConfigCreator {
 
         Element file = doc.createElement("file");
         files.appendChild(file);
-
 
         Element filename = doc.createElement("filename");
         filename.appendChild(doc.createTextNode(mediaFile.getFile().getName()));
@@ -98,59 +96,71 @@ public class XMLConfigCreator {
     return xmlFile;
 
   }
-  
-  
+
   /**
-   * Creates an button xml config file and stores it in work folder
-   * @param mediaFiles
+   * 
+   * @param loopFile --> file to play if no gpio is selected
+   * @param gpioFiles --> files per gpio
+   * @param retriggerEnabled
+   * @param retriggerDelay
    * @return
    */
-  public static File createButtontXML(MediaFile[] mediaFiles) {
-    File xmlFile= null;
-    
+  public static File createGpioXML(MediaFile loopFile, MediaFile[] gpioFiles, Boolean retriggerEnabled, String retriggerDelay) {
+    File xmlFile = null;
+
     try {
-      //create file in workfolder
-      xmlFile = new File(WORK_DIRECTORY + "/buttons.xml");
-      if(xmlFile.exists()){
+      // create file in workfolder
+      xmlFile = new File(WORK_DIRECTORY + "/gpio.xml");
+      if (xmlFile.exists()) {
         xmlFile.delete();
       }
       xmlFile.createNewFile();
-      
-      
-      //xml factory
+
+      // xml factory
       DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
       DocumentBuilder docBuilder = null;
       docBuilder = docFactory.newDocumentBuilder();
 
       // root elements
       Document doc = docBuilder.newDocument();
-      Element rootElement = doc.createElement("buttons");
+      Element rootElement = doc.createElement("gpio");
       doc.appendChild(rootElement);
-      
+
       rootElement.setAttribute("date", new Date().toGMTString());
 
-      for (int i = 0; i < mediaFiles.length; i ++){
+      // create loop file element
+      if (loopFile != null) {
 
-          if(mediaFiles[i] != null){
-            Element button = doc.createElement("button");
-            button.setAttribute("com", String.valueOf(i));
-            rootElement.appendChild(button);
-            
-           Element file = doc.createElement("file");
-           button.appendChild(file);
-    
-    
-            
-            Element filename = doc.createElement("filename");
-            filename.appendChild(doc.createTextNode(mediaFiles[i].getFile().getName()));
-            file.appendChild(filename);
-    
-            Element mediaType = doc.createElement("type");
-            mediaType.appendChild(doc.createTextNode(mediaFiles[i].getMediaType().toString()));
-            file.appendChild(mediaType);
+        Element loopElement = doc.createElement("loop");
+        loopElement.setAttribute("type", loopFile.getMediaType().toString());
+        loopElement.appendChild(doc.createTextNode(loopFile.getFile().getName()));
+        rootElement.appendChild(loopElement);
+      }
+
+      // create gpio entry for each gpio file
+      for (int i = 0; i < gpioFiles.length; i++) {
+
+        if (gpioFiles[i] != null) {
+
+          Element gpioElement = doc.createElement("gpio" + i);
+          gpioElement.setAttribute("type", gpioFiles[i].getMediaType().toString());
+          gpioElement.appendChild(doc.createTextNode(gpioFiles[i].getFile().getName()));
+          rootElement.appendChild(gpioElement);
+
         }
 
       }
+      
+      // create settings element
+      Element retriggerEnabledElement = doc.createElement("retriggerEnabled");
+      retriggerEnabledElement.appendChild(doc.createTextNode(retriggerEnabled.toString()));
+      rootElement.appendChild(retriggerEnabledElement);
+
+      Element retriggerDelayElement = doc.createElement("retriggerEnabled");
+      retriggerDelayElement.appendChild(doc.createTextNode(retriggerDelay));
+      rootElement.appendChild(retriggerDelayElement);
+      
+      
       // write the content to the stream
       TransformerFactory transformerFactory = TransformerFactory.newInstance();
       Transformer transformer = null;
@@ -172,7 +182,5 @@ public class XMLConfigCreator {
     return xmlFile;
 
   }
-  
-  
-  
+
 }

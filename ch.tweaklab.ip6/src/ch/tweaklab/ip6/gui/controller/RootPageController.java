@@ -160,14 +160,14 @@ public class RootPageController {
       tabPane.getTabs().clear();
       // add playlist Tab
       Tab playlistTab = new Tab();
-      playlistTab.setText("Playlist");
+      playlistTab.setText("Playlist Config");
       tabPane.getTabs().add(playlistTab);
       playlistTab.setContent((Node) FXMLLoader.load(getClass().getResource("../view/PlaylistTab.fxml")));
 
       Tab buttonTab = new Tab();
-      buttonTab.setText("Buttons");
+      buttonTab.setText("GPIO Config");
       tabPane.getTabs().add(buttonTab);
-      buttonTab.setContent((Node) FXMLLoader.load(getClass().getResource("../view/ButtonTab.fxml")));
+      buttonTab.setContent((Node) FXMLLoader.load(getClass().getResource("../view/GpioTab.fxml")));
 
     } catch (IOException e) {
       MainApp.showExceptionMessage(e);
