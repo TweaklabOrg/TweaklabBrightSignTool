@@ -7,8 +7,6 @@ import java.util.List;
 
 import javafx.application.Application;
 import javafx.concurrent.Task;
-import javafx.fxml.FXML;
-import javafx.scene.Cursor;
 import javafx.stage.Stage;
 
 import org.junit.Before;

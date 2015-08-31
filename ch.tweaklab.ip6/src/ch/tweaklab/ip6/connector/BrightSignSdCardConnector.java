@@ -8,7 +8,6 @@ import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import java.util.concurrent.Callable;
 
 import javafx.concurrent.Task;
 
@@ -18,9 +17,7 @@ import org.apache.commons.io.FileUtils;
 
 import ch.tweaklab.ip6.gui.controller.MainApp;
 import ch.tweaklab.ip6.mediaLogic.MediaFile;
-import ch.tweaklab.ip6.mediaLogic.XMLConfigCreator;
 import ch.tweaklab.ip6.util.OSValidator;
-import ch.tweaklab.ip6.util.PortScanner;
 
 /**
  * Connects to a SD Card of Bright Sign Device
@@ -55,43 +52,43 @@ public class BrightSignSdCardConnector extends Connector {
 
   @Override
   public Task<Boolean> uploadMediaFiles(List<MediaFile> mediaFiles, File configFile) throws Exception {
- //   if (OSValidator.isWindows()) {
-      Task<Boolean> uploadTask = new Task<Boolean>() {
-        Boolean success;
+    // if (OSValidator.isWindows()) {
+    Task<Boolean> uploadTask = new Task<Boolean>() {
+      Boolean success;
 
-        @Override
-        public Boolean call() throws Exception {
-          success = true;
+      @Override
+      public Boolean call() throws Exception {
+        success = true;
 
-          // reset media folder on sd card
-          if ((target.endsWith("/") || target.endsWith("\\")) == false) {
-            target = target + "/";
-          }
-          File mediaFolder = new File(target + mediaFolderPath);
-          if (mediaFolder.exists()) {
-            FileUtils.deleteDirectory(mediaFolder);
-          }
-          mediaFolder.mkdir();
-
-          // copy xml config file
-          copyOrReplaceFile(configFile, mediaFolder.getPath());
-
-          // copy each mediafile
-          for (MediaFile mediaFile : mediaFiles) {
-            if (this.isCancelled()) {
-              return false;
-            }
-            if (mediaFile != null) {
-              copyOrReplaceFile(mediaFile.getFile(), mediaFolder.getPath());
-            }
-          }
-          return success;
+        // reset media folder on sd card
+        if ((target.endsWith("/") || target.endsWith("\\")) == false) {
+          target = target + "/";
         }
-      };
-      return uploadTask;
-//    } else {
-//      return null;
-//    }
+        File mediaFolder = new File(target + mediaFolderPath);
+        if (mediaFolder.exists()) {
+          FileUtils.deleteDirectory(mediaFolder);
+        }
+        mediaFolder.mkdir();
+
+        // copy xml config file
+        copyOrReplaceFile(configFile, mediaFolder.getPath());
+
+        // copy each mediafile
+        for (MediaFile mediaFile : mediaFiles) {
+          if (this.isCancelled()) {
+            return false;
+          }
+          if (mediaFile != null) {
+            copyOrReplaceFile(mediaFile.getFile(), mediaFolder.getPath());
+          }
+        }
+        return success;
+      }
+    };
+    return uploadTask;
+    // } else {
+    // return null;
+    // }
   }
 
   @Override

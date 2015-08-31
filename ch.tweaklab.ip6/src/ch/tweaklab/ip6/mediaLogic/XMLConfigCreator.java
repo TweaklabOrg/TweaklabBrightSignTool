@@ -1,12 +1,9 @@
 package ch.tweaklab.ip6.mediaLogic;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
-
-import javafx.scene.control.Button;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;

@@ -8,8 +8,8 @@ package ch.tweaklab.ip6.connector;
 import java.io.File;
 import java.util.List;
 
-import ch.tweaklab.ip6.mediaLogic.MediaFile;
 import javafx.concurrent.Task;
+import ch.tweaklab.ip6.mediaLogic.MediaFile;
 
 public abstract class Connector {
 

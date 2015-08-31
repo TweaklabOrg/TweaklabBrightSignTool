@@ -2,11 +2,10 @@ package ch.tweaklab.ip6.test.util;
 
 import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 import ch.tweaklab.ip6.mediaLogic.MediaFile;
-
-import java.util.ArrayList;
 
 public class TestUtil {
 
