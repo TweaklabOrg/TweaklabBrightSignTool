@@ -18,9 +18,9 @@ import javafx.stage.FileChooser;
 import ch.tweaklab.ip6.connector.Connector;
 import ch.tweaklab.ip6.gui.model.Context;
 import ch.tweaklab.ip6.gui.view.WaitScreen;
-import ch.tweaklab.ip6.media.MediaFile;
-import ch.tweaklab.ip6.media.MediaType;
-import ch.tweaklab.ip6.media.XMLConfigCreator;
+import ch.tweaklab.ip6.mediaLogic.MediaFile;
+import ch.tweaklab.ip6.mediaLogic.MediaType;
+import ch.tweaklab.ip6.mediaLogic.XMLConfigCreator;
 
 /**
  * Controller Class for ContentManagerTab.fxml Manages Upload of a playlist to device

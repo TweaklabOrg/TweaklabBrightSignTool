@@ -26,7 +26,7 @@ import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.HttpClientBuilder;
 
 import ch.tweaklab.ip6.gui.controller.MainApp;
-import ch.tweaklab.ip6.media.MediaFile;
+import ch.tweaklab.ip6.mediaLogic.MediaFile;
 import ch.tweaklab.ip6.util.PortScanner;
 
 import com.jcraft.jsch.Channel;

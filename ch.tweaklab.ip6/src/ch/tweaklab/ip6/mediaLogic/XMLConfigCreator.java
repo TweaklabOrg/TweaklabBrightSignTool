@@ -1,4 +1,4 @@
-package ch.tweaklab.ip6.media;
+package ch.tweaklab.ip6.mediaLogic;
 
 import java.io.File;
 import java.io.IOException;
@@ -58,21 +58,14 @@ public class XMLConfigCreator {
       for (MediaFile mediaFile : mediaFiles) {
 
         Element file = doc.createElement("file");
-        files.appendChild(file);
-
-        Element filename = doc.createElement("filename");
-        filename.appendChild(doc.createTextNode(mediaFile.getFile().getName()));
-        file.appendChild(filename);
-
-        Element mediaType = doc.createElement("type");
-        mediaType.appendChild(doc.createTextNode(mediaFile.getMediaType().toString()));
-        file.appendChild(mediaType);
+        file.setAttribute("type", mediaFile.getMediaType().toString());
+        file.appendChild(doc.createTextNode(mediaFile.getFile().getName()));
 
         if (mediaFile.getMediaType() == MediaType.IMAGE) {
-          Element displayTime = doc.createElement("displaytime");
-          displayTime.appendChild(doc.createTextNode((String.valueOf(mediaFile.getDisplayTime()))));
-          file.appendChild(displayTime);
+          file.setAttribute("displayTime",(String.valueOf(mediaFile.getDisplayTime())));
         }
+        
+        files.appendChild(file);
 
       }
       // write the content to the stream

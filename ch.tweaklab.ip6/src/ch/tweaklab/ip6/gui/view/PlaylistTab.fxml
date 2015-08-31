@@ -37,10 +37,10 @@
 		<Button fx:id="uploadButton" layoutX="79.0" layoutY="599.0"
 			mnemonicParsing="false" onAction="#handleUpload" prefHeight="52.0"
 			prefWidth="337.0" text="Upload Media To Device" />
-		<Button layoutX="39.0" layoutY="53.0" mnemonicParsing="false"
+		<Button layoutX="39.0" layoutY="53.0"  mnemonicParsing="false"
 			onAction="#moveItemUp" prefHeight="31.0" prefWidth="29.0" text="⇑" />
 		<Button layoutX="39.0" layoutY="95.0" mnemonicParsing="false"
-			onAction="#moveItemDown" text="⇓" />
+			onAction="#moveItemDown" prefHeight="31.0" prefWidth="29.0" text="⇓" />
 		<Button layoutX="264.0" layoutY="541.0" mnemonicParsing="false"
 			onAction="#handleRemove" prefHeight="38.0" prefWidth="152.0"
 			text="Remove selected" />

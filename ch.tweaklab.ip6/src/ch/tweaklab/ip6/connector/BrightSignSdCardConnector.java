@@ -17,8 +17,8 @@ import javax.swing.filechooser.FileSystemView;
 import org.apache.commons.io.FileUtils;
 
 import ch.tweaklab.ip6.gui.controller.MainApp;
-import ch.tweaklab.ip6.media.MediaFile;
-import ch.tweaklab.ip6.media.XMLConfigCreator;
+import ch.tweaklab.ip6.mediaLogic.MediaFile;
+import ch.tweaklab.ip6.mediaLogic.XMLConfigCreator;
 import ch.tweaklab.ip6.util.OSValidator;
 import ch.tweaklab.ip6.util.PortScanner;
 

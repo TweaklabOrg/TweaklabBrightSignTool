@@ -6,11 +6,11 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<BorderPane prefHeight="800.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.tweaklab.ip6.gui.controller.RootPageController">
+<BorderPane fx:id="rootBorderPane" prefHeight="800.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.tweaklab.ip6.gui.controller.RootPageController">
    <center>
       <SplitPane fx:id="splitPane" dividerPositions="0.24804177545691905" orientation="VERTICAL" prefHeight="600.0" prefWidth="800.0">
         <items>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="207.0" prefWidth="798.0">
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="798.0">
                <children>
                   <Label layoutX="403.0" layoutY="14.0" text="Current Player:">
                      <font>

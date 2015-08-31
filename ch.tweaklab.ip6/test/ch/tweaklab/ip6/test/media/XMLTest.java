@@ -8,8 +8,8 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-import ch.tweaklab.ip6.media.MediaFile;
-import ch.tweaklab.ip6.media.XMLConfigCreator;
+import ch.tweaklab.ip6.mediaLogic.MediaFile;
+import ch.tweaklab.ip6.mediaLogic.XMLConfigCreator;
 import ch.tweaklab.ip6.test.util.TestUtil;
 
 public class XMLTest {

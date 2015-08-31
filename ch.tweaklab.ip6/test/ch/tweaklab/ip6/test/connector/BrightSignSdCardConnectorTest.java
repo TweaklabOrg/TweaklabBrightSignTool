@@ -18,8 +18,8 @@ import org.junit.Test;
 import ch.tweaklab.ip6.connector.BrightSignSdCardConnector;
 import ch.tweaklab.ip6.gui.controller.MainApp;
 import ch.tweaklab.ip6.gui.model.Context;
-import ch.tweaklab.ip6.media.MediaFile;
-import ch.tweaklab.ip6.media.XMLConfigCreator;
+import ch.tweaklab.ip6.mediaLogic.MediaFile;
+import ch.tweaklab.ip6.mediaLogic.XMLConfigCreator;
 import ch.tweaklab.ip6.test.util.TestUtil;
 
 public class BrightSignSdCardConnectorTest {

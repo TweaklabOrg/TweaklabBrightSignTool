@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<playlist date="31 Aug 2015 10:19:09 GMT">
+  <files>
+    <file displayTime="10" type="IMAGE">test-image.jpg</file>
+    <file type="VIDEO">test-movie.mp4</file>
+    <file type="UNKNOWN">test-unknown.txt</file>
+    <file type="AUDIO">test-audio.mp3</file>
+  </files>
+</playlist>

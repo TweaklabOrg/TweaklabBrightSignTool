@@ -1,4 +1,4 @@
-package ch.tweaklab.ip6.media;
+package ch.tweaklab.ip6.mediaLogic;
 
 public enum MediaType {
 

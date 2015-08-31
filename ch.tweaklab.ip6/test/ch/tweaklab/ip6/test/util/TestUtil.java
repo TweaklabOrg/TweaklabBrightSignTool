@@ -4,7 +4,7 @@ import java.io.File;
 import java.net.URL;
 import java.util.List;
 
-import ch.tweaklab.ip6.media.MediaFile;
+import ch.tweaklab.ip6.mediaLogic.MediaFile;
 
 import java.util.ArrayList;
 

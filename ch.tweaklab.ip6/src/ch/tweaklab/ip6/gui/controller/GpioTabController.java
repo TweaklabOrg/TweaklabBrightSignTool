@@ -22,9 +22,9 @@ import javafx.stage.FileChooser;
 import ch.tweaklab.ip6.connector.Connector;
 import ch.tweaklab.ip6.gui.model.Context;
 import ch.tweaklab.ip6.gui.view.WaitScreen;
-import ch.tweaklab.ip6.media.MediaFile;
-import ch.tweaklab.ip6.media.MediaType;
-import ch.tweaklab.ip6.media.XMLConfigCreator;
+import ch.tweaklab.ip6.mediaLogic.MediaFile;
+import ch.tweaklab.ip6.mediaLogic.MediaType;
+import ch.tweaklab.ip6.mediaLogic.XMLConfigCreator;
 
 /**
  * Controller of PushButton Configuration View
@@ -50,12 +50,15 @@ public class GpioTabController {
   private ImageView loopFileImageView;
 
   MediaFile[] gpioFiles;
-  int numberOfButtons = 4;
+  private static int NUMBER_OF_BUTTONS = 4;
   MediaFile loopFile;
 
   WaitScreen waitScreen;
   Task<Boolean> uploadTask;
   private Thread uploadThread;
+  
+  private static int MAX_FILE_NAME_LENGTH_SHOW = 25;
+  
 
   /**
    * Initializes the controller class. This method is automatically called after the fxml file has
@@ -73,7 +76,12 @@ public class GpioTabController {
     File choosenFile = fileChooser.showOpenDialog(MainApp.primaryStage);
     if (choosenFile != null) {
       loopFile = new MediaFile(choosenFile);
-      loopfileNameLabel.setText(choosenFile.getName());
+      
+      String fileNameToDisplay = choosenFile.getName();
+      if(fileNameToDisplay.length() > MAX_FILE_NAME_LENGTH_SHOW){
+        fileNameToDisplay = fileNameToDisplay.substring(0,22) + "...";
+      }  
+      loopfileNameLabel.setText(fileNameToDisplay);
       if (loopFile != null) {
         Image image = getMediaFileImage(loopFile);
         loopFileImageView.setImage(image);
@@ -93,7 +101,7 @@ public class GpioTabController {
       buttonNumber = Integer.valueOf(((Button) source).getId().substring(13));
     }
 
-    if (buttonNumber < 0 || numberOfButtons > numberOfButtons)
+    if (buttonNumber < 0 || NUMBER_OF_BUTTONS > NUMBER_OF_BUTTONS)
       throw new RuntimeException("Invalid Button ID");
 
     // get file
@@ -103,8 +111,15 @@ public class GpioTabController {
     if (choosenFile != null) {
       MediaFile mediaFile = new MediaFile(choosenFile);
       gpioFiles[buttonNumber] = mediaFile;
+      
+      //get label with same id-number as clicked button 
       Label fileNameLabel = (Label) rootPane.lookup("#fileNameLabel" + buttonNumber);
-      fileNameLabel.setText(choosenFile.getName());
+     
+      String fileNameToDisplay = choosenFile.getName();
+      if(fileNameToDisplay.length() > MAX_FILE_NAME_LENGTH_SHOW){
+        fileNameToDisplay = fileNameToDisplay.substring(0,22) + "...";
+      }
+      fileNameLabel.setText(fileNameToDisplay);
 
       if (mediaFile != null) {
         ImageView imageView = (ImageView) rootPane.lookup("#imageView" + buttonNumber);
@@ -130,8 +145,8 @@ public class GpioTabController {
   @FXML
   private void reset() {
     // rest gpio files
-    gpioFiles = new MediaFile[numberOfButtons];
-    for (int i = 0; i < numberOfButtons; i++) {
+    gpioFiles = new MediaFile[NUMBER_OF_BUTTONS];
+    for (int i = 0; i < NUMBER_OF_BUTTONS; i++) {
       Label fileNameLabel = (Label) rootPane.lookup("#fileNameLabel" + i);
       fileNameLabel.setText("None");
       ImageView imageView = (ImageView) rootPane.lookup("#imageView" + i);
@@ -141,7 +156,7 @@ public class GpioTabController {
     // reset Loopfile
     this.loopFileImageView.setImage(null);
     this.loopFile = null;
-    this.loopfileNameLabel.setText("");
+    this.loopfileNameLabel.setText("none");
 
     retriggerDelayField.setText("2000");
     retriggerEnabledCheckbox.setSelected(true);

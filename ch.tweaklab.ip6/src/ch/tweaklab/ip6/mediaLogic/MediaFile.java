@@ -1,4 +1,4 @@
-package ch.tweaklab.ip6.media;
+package ch.tweaklab.ip6.mediaLogic;
 
 import java.io.File;
 import java.io.IOException;

@@ -19,6 +19,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.layout.BorderPane;
 import ch.tweaklab.ip6.connector.Connector;
 import ch.tweaklab.ip6.gui.model.Context;
 import ch.tweaklab.ip6.util.KeyValueData;
@@ -31,6 +32,9 @@ import ch.tweaklab.ip6.util.KeyValueData;
  */
 public class RootPageController {
 
+  @FXML
+  BorderPane rootBorderPane;
+  
   @FXML
   private SplitPane splitPane;
 
@@ -118,7 +122,7 @@ public class RootPageController {
 
     String target = targetComboBox.getSelectionModel().getSelectedItem();
 
-    if (target.length() < 1) {
+    if (target == null || target.length() < 1) {
       MainApp.showErrorMessage("Target not valid!", "Please enter a valid target address.");
       return;
     }
@@ -144,10 +148,15 @@ public class RootPageController {
   @FXML
   public void showOrCloseConnectionMenu() {
     if (connectMenuOpen) {
+      rootBorderPane.setPrefHeight(830);
+      MainApp.primaryStage.setMinHeight(830);
+      MainApp.primaryStage.setMaxHeight(830);
       splitPane.setDividerPosition(0, 0.06);
       connectionMenuButton.setText("more..");
       this.connectMenuOpen = false;
     } else {
+      MainApp.primaryStage.setMinHeight(980);
+      MainApp.primaryStage.setMaxHeight(980);
       splitPane.setDividerPosition(0, 0.22);
       connectionMenuButton.setText("less..");
       this.connectMenuOpen = true;

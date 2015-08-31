@@ -2,7 +2,7 @@
 <gpio date="18 Aug 2015 08:29:28 GMT">
   <loop type="IMAGE">IMGP0672.JPG</loop>
   <gpio0 type="IMAGE">IMGP0672.JPG</gpio0>
-  <gpio2 type="VIDEO">test-movie.mp4</gpio2>
+  <gpio2 type="VIDEO"  >test-movie.mp4</gpio2>
   <gpio3 type="VIDEO">ST_H264_1080-25P_CRF12-5_20M_AAC.mp4</gpio3>
   <retriggerEnabled>true</retriggerEnabled>
   <retriggerEnabled>2000</retriggerEnabled>
