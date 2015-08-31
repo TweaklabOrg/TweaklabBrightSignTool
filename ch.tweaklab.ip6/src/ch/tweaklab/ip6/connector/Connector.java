@@ -37,7 +37,7 @@ public abstract class Connector {
    * Check if Device is currently connected
    * @return
    */
-  public Boolean getIsConnected() {
+  public Boolean isConnected() {
     return isConnected;
   }
 

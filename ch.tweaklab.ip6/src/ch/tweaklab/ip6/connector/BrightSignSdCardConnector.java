@@ -22,7 +22,7 @@ import ch.tweaklab.ip6.util.OSValidator;
 /**
  * Connects to a SD Card of Bright Sign Device
  * 
- * @author Alf
+ * @author Alain
  *
  */
 public class BrightSignSdCardConnector extends Connector {
@@ -45,9 +45,20 @@ public class BrightSignSdCardConnector extends Connector {
 
   @Override
   public boolean connect(String path) {
-    this.target = path;
-    this.isConnected = true;
+    if (isPathValid(path)) {
+      this.target = path;
+      this.isConnected = true;
+    } else {
+      this.isConnected = false;
+    }
+
     return isConnected;
+  }
+
+  private Boolean isPathValid(String path) {
+    // TODO: zzAlain check if path is valid
+
+    return true;
   }
 
   @Override

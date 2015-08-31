@@ -71,7 +71,15 @@ public class RootPageController {
     connectorComboBox.getSelectionModel().selectFirst();
 
     handleChangeConnector();
-
+    Tab setupTab = new Tab();
+    setupTab.setText("Device Setup");
+    tabPane.getTabs().add(setupTab);
+    try {
+      setupTab.setContent((Node) FXMLLoader.load(getClass().getResource("../view/DeviceSetup.fxml")));
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
   }
 
   @FXML
@@ -162,7 +170,7 @@ public class RootPageController {
 
   private void addTabs() {
     try {
-      tabPane.getTabs().clear();
+      tabPane.getTabs().remove(0);
       // add playlist Tab
       Tab playlistTab = new Tab();
       playlistTab.setText("Playlist Config");
@@ -173,6 +181,7 @@ public class RootPageController {
       buttonTab.setText("GPIO Config");
       tabPane.getTabs().add(buttonTab);
       buttonTab.setContent((Node) FXMLLoader.load(getClass().getResource("../view/GpioTab.fxml")));
+      
 
     } catch (IOException e) {
       MainApp.showExceptionMessage(e);

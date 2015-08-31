@@ -133,7 +133,7 @@ public class PlaylistTabController {
 
   private Boolean validateData() {
     // validate data
-    if (Context.getConnector() == null || Context.getConnector().getIsConnected() == false) {
+    if (Context.getConnector() == null || Context.getConnector().isConnected() == false) {
       MainApp.showErrorMessage("Not connected!", "You are currently not connected to a device. Please connect before upload");
       return false;
     }
