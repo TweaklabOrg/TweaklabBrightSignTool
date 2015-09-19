@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="600.0" prefWidth="250.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.tweaklab.ip6.gui.controller.UploadScreenController">
+   <children>
+      <Label layoutX="14.0" layoutY="21.0" text="Target" />
+      <Button layoutX="88.0" layoutY="71.0" mnemonicParsing="false" onAction="#handleDisconnect" text="Disconnect" />
+      <Label fx:id="hostNameLabel" layoutX="97.0" layoutY="21.0" text="Label" />
+      <Button layoutX="99.0" layoutY="537.0" mnemonicParsing="false" onAction="#handleUpload" text="Upload" />
+      <Label layoutX="17.0" layoutY="170.0" text="Current Upload Set:" />
+      <Label fx:id="currentUploadSetLabel" layoutX="149.0" layoutY="170.0" text="Label" />
+   </children>
+</AnchorPane>

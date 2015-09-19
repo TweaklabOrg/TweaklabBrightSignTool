@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<BorderPane fx:id="rootBorderPane" prefHeight="800.0" prefWidth="1178.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.tweaklab.ip6.gui.controller.RootPageController">
+   <center>
+      <SplitPane fx:id="splitPane" orientation="horizontal" prefHeight="672.0" prefWidth="1021.0">
+        <items>
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="523.0" prefWidth="798.0">
+               <children>
+                  <TabPane fx:id="tabPane" prefHeight="462.0" prefWidth="798.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <tabs>
+                        <Tab text="Not connected">
+                          <content>
+                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="1200.0">
+                                 <children>
+                                    <Label layoutX="14.0" layoutY="26.0" text="You are currently not connected to a mediaplayer. Please connect..." />
+                                 </children>
+                              </AnchorPane>
+                          </content>
+                        </Tab>
+                     </tabs></TabPane>
+               </children>
+            </AnchorPane>
+
+          
+        </items>
+      </SplitPane>
+   </center>
+   <top>
+      <MenuBar BorderPane.alignment="CENTER">
+        <menus>
+          <Menu mnemonicParsing="false" text="File">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Close" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Settings">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Set up new Device..." />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Help">
+            <items>
+              <MenuItem mnemonicParsing="false" text="About" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+   </top>
+</BorderPane>

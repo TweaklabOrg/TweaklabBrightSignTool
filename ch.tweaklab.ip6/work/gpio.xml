@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<gpio date="31 Aug 2015 11:53:09 GMT">
-  <loop type="IMAGE">test-image.jpg</loop>
-  <gpio0 type="IMAGE">IMGP1057.JPG</gpio0>
-  <gpio1 type="VIDEO">ST_H264_1080-25P_CRF12-5_20M_AAC.mp4</gpio1>
-  <gpio3 type="VIDEO">test-movie.mp4</gpio3>
+<gpio date="19 Sep 2015 15:08:41 GMT">
+  <gpio0 type="IMAGE">IMGP0672.JPG</gpio0>
   <retriggerEnabled>true</retriggerEnabled>
   <retriggerEnabled>2000</retriggerEnabled>
 </gpio>

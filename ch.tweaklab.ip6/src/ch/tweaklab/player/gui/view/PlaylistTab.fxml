@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.media.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+ <?import ch.tweaklab.ip6.gui.view.NumberTextField?>
+
+<AnchorPane prefHeight="700.0" prefWidth="1000.0"
+	xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1"
+	fx:controller="ch.tweaklab.ip6.gui.controller.PlaylistTabController">
+	<children>
+		<ListView fx:id="listView" layoutX="79.0" layoutY="53.0"
+			onMouseClicked="#handleMouseClickedInListView" prefHeight="467.0"
+			prefWidth="337.0">
+			<contextMenu>
+				<ContextMenu>
+					<items>
+						<MenuItem mnemonicParsing="false" onAction="#handleRemove"
+							text="Delete" />
+					</items>
+				</ContextMenu>
+			</contextMenu>
+		</ListView>
+		<Label layoutX="79.0" layoutY="26.0" text="Playlist">
+			<font>
+				<Font name="System Bold" size="15.0" />
+			</font>
+		</Label>
+		<Button layoutX="79.0" layoutY="541.0" mnemonicParsing="false"
+			onAction="#handleAddFileToListView" prefHeight="38.0" prefWidth="161.0"
+			text="Add File..." />
+		<Button fx:id="uploadButton" layoutX="79.0" layoutY="599.0"
+			mnemonicParsing="false" onAction="#hhandleAddConfigToUpload" prefHeight="52.0"
+			prefWidth="337.0" text="Add Config to Upload" />
+		<Button layoutX="39.0" layoutY="53.0"  mnemonicParsing="false"
+			onAction="#moveItemUp" prefHeight="31.0" prefWidth="29.0" text="⇑" />
+		<Button layoutX="39.0" layoutY="95.0" mnemonicParsing="false"
+			onAction="#moveItemDown" prefHeight="31.0" prefWidth="29.0" text="⇓" />
+		<Button layoutX="264.0" layoutY="541.0" mnemonicParsing="false"
+			onAction="#handleRemove" prefHeight="38.0" prefWidth="152.0"
+			text="Remove selected" />
+		<GridPane layoutX="463.0" layoutY="346.0" prefHeight="174.0"
+			prefWidth="448.0">
+			<columnConstraints>
+				<ColumnConstraints hgrow="SOMETIMES" minWidth="10.0"
+					prefWidth="100.0" />
+				<ColumnConstraints hgrow="SOMETIMES" minWidth="10.0"
+					prefWidth="100.0" />
+			</columnConstraints>
+			<rowConstraints>
+				<RowConstraints minHeight="10.0" prefHeight="30.0"
+					vgrow="SOMETIMES" />
+				<RowConstraints minHeight="10.0" prefHeight="30.0"
+					vgrow="SOMETIMES" />
+				<RowConstraints minHeight="10.0" prefHeight="30.0"
+					vgrow="SOMETIMES" />
+				<RowConstraints minHeight="10.0" prefHeight="30.0"
+					vgrow="SOMETIMES" />
+			</rowConstraints>
+			<children>
+				<Label fx:id="displayTimeLabel" text="Display Time"
+					GridPane.rowIndex="3" />
+				<Label text="MediaType" GridPane.rowIndex="1" />
+				<NumberTextField fx:id="displayTimeField"
+					GridPane.columnIndex="1" GridPane.rowIndex="3" />
+				<Label text="Filename" />
+				<Label fx:id="fileNameField" text="Label"
+					GridPane.columnIndex="1" />
+				<Label text="Filesize:" GridPane.rowIndex="2" />
+				<Label fx:id="fileSizeLabel" text="Label"
+					GridPane.columnIndex="1" GridPane.rowIndex="2" />
+				<Label fx:id="mediaTypeField" text="Label"
+					GridPane.columnIndex="1" GridPane.rowIndex="1" />
+			</children>
+		</GridPane>
+		<Label layoutX="463.0" layoutY="325.0" text="Detailed file information:">
+			<font>
+				<Font name="System Bold" size="15.0" />
+			</font>
+		</Label>
+
+		<Label layoutX="463.0" layoutY="26.0" text="Preview">
+			<font>
+				<Font name="System Bold" size="15.0" />
+			</font>
+		</Label>
+		<ImageView fx:id="imageView" fitHeight="247.0" fitWidth="390.0"
+			layoutX="463.0" layoutY="53.0" pickOnBounds="true" preserveRatio="true" />
+	</children>
+</AnchorPane>
