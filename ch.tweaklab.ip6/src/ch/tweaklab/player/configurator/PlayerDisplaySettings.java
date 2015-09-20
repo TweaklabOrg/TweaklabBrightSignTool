@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Properties;
 
 import ch.tweaklab.player.gui.controller.MainApp;
+import ch.tweaklab.player.model.Keys;
 
 public class PlayerDisplaySettings {
 
@@ -17,19 +18,11 @@ public class PlayerDisplaySettings {
 
     PlayerDisplaySettings displaySettings = new PlayerDisplaySettings();
 
-    Properties configFile = new Properties();
-    try {
-      configFile.load(PlayerDisplaySettings.class.getClassLoader().getResourceAsStream("config.properties"));
-
-      displaySettings.auto = Boolean.parseBoolean((configFile.getProperty("auto")));
-      displaySettings.width = Integer.parseInt(configFile.getProperty("width"));
-      displaySettings.height = Integer.parseInt(configFile.getProperty("height"));
-      displaySettings.freq = Integer.parseInt(configFile.getProperty("freq"));
-      displaySettings.interlaced = Boolean.parseBoolean((configFile.getProperty("interlaced")));
-
-    } catch (IOException e) {
-      MainApp.showExceptionMessage(e);
-    }
+    displaySettings.auto = Boolean.parseBoolean((Keys.loadProperty(Keys.DEFAULT_DISPLAY_AUTO_PROPS_KEY)));
+    displaySettings.width = Integer.parseInt(Keys.loadProperty(Keys.DEFAULT_DISPLAY_WIDTH_PROPS_KEY));
+    displaySettings.height = Integer.parseInt(Keys.loadProperty(Keys.DEFAULT_DISPLAY_HEIGHT_PROPS_KEY));
+    displaySettings.freq = Integer.parseInt(Keys.loadProperty(Keys.DEFAULT_DISPLAY_FREQ_PROPS_KEY));
+    displaySettings.interlaced = Boolean.parseBoolean((Keys.loadProperty(Keys.DEFAULT_DISPLAY_INTERLACED_PROPS_KEY)));
 
     return displaySettings;
   }

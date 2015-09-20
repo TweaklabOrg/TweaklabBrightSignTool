@@ -45,9 +45,9 @@ public class MediaFile {
     Properties configFile = new Properties();
     try {
       configFile.load(this.getClass().getClassLoader().getResourceAsStream("config.properties"));
-      String image_regex_pattern = configFile.getProperty("image_regex");
-      String audio_regex_pattern = configFile.getProperty("audio_regex");
-      String video_regex_pattern = configFile.getProperty("video_regex");
+      String image_regex_pattern = Keys.loadProperty("image_regex");
+      String audio_regex_pattern = Keys.loadProperty("audio_regex");
+      String video_regex_pattern = Keys.loadProperty("video_regex");
 
       String fileName = file.getName().replace(" ", "+");
       if (Pattern.matches(image_regex_pattern, fileName)) {

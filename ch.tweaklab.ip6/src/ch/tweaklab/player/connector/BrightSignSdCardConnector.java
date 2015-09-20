@@ -16,6 +16,7 @@ import javax.swing.filechooser.FileSystemView;
 import org.apache.commons.io.FileUtils;
 
 import ch.tweaklab.player.gui.controller.MainApp;
+import ch.tweaklab.player.model.Keys;
 import ch.tweaklab.player.model.MediaFile;
 import ch.tweaklab.player.model.MediaUploadData;
 import ch.tweaklab.player.util.OSValidator;
@@ -28,21 +29,13 @@ import ch.tweaklab.player.util.OSValidator;
  */
 public class BrightSignSdCardConnector extends Connector {
 
-  public static final String CLASS_DISPLAY_NAME = "BS SC-Card Connector"; 
-  
+  public static final String CLASS_DISPLAY_NAME = "BS SC-Card Connector";
+
   private String mediaFolderPath;
-  private Properties configFile;
 
   public BrightSignSdCardConnector() {
 
-    configFile = new Properties();
-    try {
-      configFile.load(this.getClass().getClassLoader().getResourceAsStream("config.properties"));
-      mediaFolderPath = configFile.getProperty("mediaFolder");
-
-    } catch (IOException e) {
-      MainApp.showExceptionMessage(e);
-    }
+    mediaFolderPath = Keys.loadProperty("mediaFolder");
 
   }
 
@@ -63,7 +56,6 @@ public class BrightSignSdCardConnector extends Connector {
 
     return true;
   }
-
 
   @Override
   public Task<List<String>> getPossibleTargets() {
@@ -130,8 +122,8 @@ public class BrightSignSdCardConnector extends Connector {
   }
 
   @Override
-  public Task<Boolean> upload(MediaUploadData uploadData) throws Exception {
- // if (OSValidator.isWindows()) {
+  public Task<Boolean> upload(MediaUploadData uploadData,List<File> systemFiles) throws Exception {
+    // if (OSValidator.isWindows()) {
     Task<Boolean> uploadTask = new Task<Boolean>() {
       Boolean success;
 
@@ -169,5 +161,7 @@ public class BrightSignSdCardConnector extends Connector {
     // return null;
     // }
   }
+
+
 
 }

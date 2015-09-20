@@ -37,13 +37,14 @@ public abstract class Connector {
   public abstract boolean disconnect();
   
  /**
-  * create a Task which handles upload of files and doesnt block the GUI
-  * @param mediaFiles --> a list of files to upload
-  * @param configFile --> an xml config file which contains the logig for the player
+  * 
+  * 
+  * @param uploadData
   * @return
   * @throws Exception
   */
-  public abstract Task<Boolean> upload(MediaUploadData uploadData) throws Exception;
+  public abstract Task<Boolean> upload(MediaUploadData uploadData, List<File> systemFiles) throws Exception;
+
 
   /**
    * Check if Device is currently connected

@@ -30,21 +30,18 @@ import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.HttpClientBuilder;
 
 import ch.tweaklab.player.gui.controller.MainApp;
+import ch.tweaklab.player.model.Keys;
 import ch.tweaklab.player.model.MediaFile;
 import ch.tweaklab.player.model.MediaUploadData;
 import ch.tweaklab.player.util.PortScanner;
 
-
 public class BrightSignWebConnector extends Connector {
 
-  
-  public static final String CLASS_DISPLAY_NAME = "BS Web Connector"; 
-  
-  
+  public static final String CLASS_DISPLAY_NAME = "BS Web Connector";
+
   private String uploadRootUrl;
   Properties configFile;
   private String mediaFolder;
-  private String resetMediaFolderScriptName;
 
   private int tcpPort;
 
@@ -53,18 +50,8 @@ public class BrightSignWebConnector extends Connector {
   private BufferedReader inFromTcpServer;
 
   public BrightSignWebConnector() {
-
-    configFile = new Properties();
-    try {
-      configFile.load(this.getClass().getClassLoader().getResourceAsStream("config.properties"));
-      tcpPort = Integer.parseInt(configFile.getProperty("tcp_port"));
-      resetMediaFolderScriptName = configFile.getProperty("resetMediaFolderScriptName");
-      mediaFolder = "/" + configFile.getProperty("mediaFolder");
-
-    } catch (IOException e) {
-      MainApp.showExceptionMessage(e);
-    }
-
+    tcpPort = Integer.parseInt(Keys.loadProperty(Keys.DEFAULT_TCP_PORT_PROPS_KEY));
+    mediaFolder = "/" + Keys.loadProperty(Keys.DEFAULT_MEDIA_FOLDER_PROPS_KEY);
   }
 
   public boolean connect(String host) {
@@ -95,11 +82,29 @@ public class BrightSignWebConnector extends Connector {
   }
 
   @Override
-  public Task<Boolean> upload(MediaUploadData uploadData) throws Exception {
+  public Task<Boolean> upload(MediaUploadData uploadData, List<File> systemFiles) throws Exception {
     Task<Boolean> uploadTask = new Task<Boolean>() {
       @Override
       public Boolean call() throws Exception {
         Boolean success = true;
+
+        // uploadSystemFiles
+        for (File systemFile : systemFiles) {
+          if (systemFile != null) {
+            success = deleteFile("/", systemFile);
+            if (!success)
+              return false;
+
+            // upload new file to mediafolder
+            success = uploadFile("/", systemFile);
+            if (!success)
+              return false;
+          }
+
+        }
+
+        // upload Media
+
         // run script to delete whole media folder
         String answer = sendTCPCommand("resetFilestructure");
         if (answer == "unsupported") {
@@ -118,7 +123,7 @@ public class BrightSignWebConnector extends Connector {
           if (mediaFile != null) {
             // TODO: zzAlain: just needed while uploading config File, Remove if finished
             // delete file in rootpath
-            success = deleteFile(mediaFile);
+            success = deleteFile(mediaFolder,mediaFile.getFile());
             if (!success)
               return false;
 
@@ -150,9 +155,9 @@ public class BrightSignWebConnector extends Connector {
     return true;
   }
 
-  private Boolean deleteFile(MediaFile mediaFile) throws Exception {
-    String urlFileName = mediaFile.getFile().getName().replace(" ", "+");
-    String urlFilePath = mediaFolder.replace("/", "%2F") + "%2F" + urlFileName;
+  private Boolean deleteFile(String destinationFolder, File file) throws Exception {
+    String urlFileName = file.getName().replace(" ", "+");
+    String urlFilePath = destinationFolder.replace("/", "%2F") + "%2F" + urlFileName;
     String deleteUrl = "http://" + target + "/delete?filename=sd" + urlFilePath + "&delete=Delete";
     return sendGetRequest(deleteUrl);
   }
@@ -170,20 +175,17 @@ public class BrightSignWebConnector extends Connector {
     return true;
   }
 
- 
-
   public String sendTCPCommand(String command) {
     String answer = "";
     try {
       outToTcpServer.writeBytes(command + '\n');
-      //answer = inFromTcpServer.readLine();
+      // answer = inFromTcpServer.readLine();
     } catch (Exception e) {
       e.printStackTrace();
     }
     return answer;
 
   }
-
 
   @Override
   public Task<List<String>> getPossibleTargets() {

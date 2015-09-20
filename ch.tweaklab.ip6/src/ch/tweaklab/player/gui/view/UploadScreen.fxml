@@ -9,6 +9,30 @@
 
 <AnchorPane prefHeight="700.0" prefWidth="250.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.tweaklab.player.gui.controller.UploadScreenController">
    <children>
+      <Pane fx:id="generalSettingsPane" layoutX="4.0" layoutY="352.0" prefHeight="154.0" prefWidth="242.0">
+         <children>
+            <CheckBox fx:id="initalizeSystemCheckobx" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" text="Initialize System" />
+            <Label layoutX="14.0" layoutY="50.0" text="Hostname:" />
+            <TextField fx:id="newHostnameField" layoutX="89.0" layoutY="46.0" prefHeight="25.0" prefWidth="121.0" />
+            <Label layoutX="22.0" layoutY="77.0" text="IP" />
+            <TextField fx:id="newIPField" layoutX="89.0" layoutY="82.0" prefHeight="25.0" prefWidth="121.0" />
+            <Label layoutX="22.0" layoutY="107.0" text="Volume" />
+            <TextField fx:id="volumeField" layoutX="89.0" layoutY="116.0" prefHeight="25.0" prefWidth="89.0" />
+         </children>
+      </Pane>
+      <Pane fx:id="displaySettingsPane" layoutX="7.0" layoutY="173.0" prefHeight="139.0" prefWidth="242.0">
+         <children>
+            <CheckBox fx:id="autoDisplaySolutionCheckbox" layoutX="14.0" layoutY="40.0" mnemonicParsing="false" text="Auto Display Solution" />
+            <Label layoutX="14.0" layoutY="70.0" text="Width" />
+            <TextField fx:id="widthField" layoutX="73.0" layoutY="66.0" prefHeight="25.0" prefWidth="48.0" />
+            <TextField fx:id="heightField" layoutX="173.0" layoutY="66.0" prefHeight="25.0" prefWidth="55.0" />
+            <TextField fx:id="frequencyField" layoutX="73.0" layoutY="100.0" prefHeight="25.0" prefWidth="48.0" />
+            <Label layoutX="14.0" layoutY="104.0" text="Frequency" />
+            <Label layoutX="131.0" layoutY="70.0" text="Height" />
+            <CheckBox fx:id="interlacedCheckbox" layoutX="136.0" layoutY="104.0" mnemonicParsing="false" text="Interlaced" />
+            <Label layoutX="14.0" layoutY="14.0" text="Display Solution:" />
+         </children>
+      </Pane>
       <Label layoutX="17.0" layoutY="63.0" text="Target adress:" />
       <Button layoutX="111.0" layoutY="92.0" mnemonicParsing="false" onAction="#handleDisconnect" prefHeight="17.0" prefWidth="104.0" text="Disconnect" />
       <Label fx:id="hostNameLabel" layoutX="111.0" layoutY="39.0" text="Label" />
@@ -21,45 +45,28 @@
          </font>
       </Label>
       <Label layoutX="17.0" layoutY="39.0" text="Hostname:" />
-      <Label fx:id="ipLabel" layoutX="111.0" layoutY="63.0" text="Label" />
+      <Label fx:id="targetAddressLabel" layoutX="111.0" layoutY="63.0" text="Label" />
       <Line endX="100.0" layoutX="121.0" layoutY="143.0" startX="-100.0" />
       <Label layoutX="22.0" layoutY="155.0" text="Display Settings:">
          <font>
             <Font name="System Bold" size="12.0" />
          </font>
       </Label>
-      <Label layoutX="22.0" layoutY="184.0" text="Display Solution:" />
-      <CheckBox layoutX="24.0" layoutY="375.0" mnemonicParsing="false" text="Initialize System" />
-      <TextField layoutX="99.0" layoutY="402.0" prefHeight="25.0" prefWidth="121.0" />
-      <Label layoutX="26.0" layoutY="406.0" text="Hostname:" />
-      <Label layoutX="29.0" layoutY="438.0" text="IP" />
-      <TextField layoutX="99.0" layoutY="434.0" prefHeight="25.0" prefWidth="121.0" />
-      <Label layoutX="25.0" layoutY="468.0" text="Volume" />
-      <TextField layoutX="126.0" layoutY="464.0" prefHeight="25.0" prefWidth="89.0" />
-      <CheckBox layoutX="164.0" layoutY="155.0" mnemonicParsing="false" selected="true" text="Upload " />
-      <CheckBox layoutX="23.0" layoutY="212.0" mnemonicParsing="false" text="Auto Display Solution" />
-      <Label layoutX="12.0" layoutY="242.0" text="Width" />
-      <TextField layoutX="77.0" layoutY="238.0" prefHeight="25.0" prefWidth="48.0" />
-      <Label layoutX="134.0" layoutY="242.0" text="Height" />
-      <TextField layoutX="181.0" layoutY="238.0" prefHeight="25.0" prefWidth="55.0" />
-      <CheckBox layoutX="158.0" layoutY="272.0" mnemonicParsing="false" text="Interlaced" />
-      <Label layoutX="14.0" layoutY="272.0" text="Frequency" />
-      <TextField layoutX="77.0" layoutY="268.0" prefHeight="25.0" prefWidth="48.0" />
+      <CheckBox fx:id="uploadDisplaySettingsCheckbox" layoutX="164.0" layoutY="155.0" mnemonicParsing="false" selected="true" text="Upload " />
       <Line endX="100.0" layoutX="121.0" layoutY="321.0" startX="-100.0" />
       <Label layoutX="20.0" layoutY="333.0" text="System Settings:">
          <font>
             <Font name="System Bold" size="12.0" />
          </font>
       </Label>
-      <CheckBox layoutX="164.0" layoutY="333.0" mnemonicParsing="false" selected="true" text="Upload " />
+      <CheckBox fx:id="uploadGeneralSettingsheckbox" layoutX="164.0" layoutY="333.0" mnemonicParsing="false" selected="true" text="Upload " />
       <Line endX="100.0" layoutX="125.0" layoutY="505.0" startX="-100.0" />
       <Label layoutX="36.0" layoutY="574.0" text="Media">
          <font>
             <Font name="System Bold" size="12.0" />
          </font>
       </Label>
-      <CheckBox layoutX="150.0" layoutY="566.0" mnemonicParsing="false" selected="true" text="Upload " />
-      <CheckBox layoutX="153.0" layoutY="519.0" mnemonicParsing="false" selected="true" text="Upload " />
+      <CheckBox fx:id="uploadScriptsCheckbox" layoutX="153.0" layoutY="519.0" mnemonicParsing="false" selected="true" text="Upload " />
       <Label layoutX="28.0" layoutY="519.0" text="Scripts">
          <font>
             <Font name="System Bold" size="12.0" />

@@ -3,6 +3,7 @@ package ch.tweaklab.player.test.connector;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import javafx.application.Application;
@@ -13,6 +14,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import ch.tweaklab.player.configurator.PlayerGeneralSettings;
 import ch.tweaklab.player.configurator.XMLConfigCreator;
 import ch.tweaklab.player.connector.BrightSignSdCardConnector;
 import ch.tweaklab.player.gui.controller.ControllerMediator;
@@ -93,11 +95,12 @@ public static void initJFX() {
   @Test
   public void uploadFiles() {
     try {
-
+      List<File> systemFiles = TestUtil.getSystemFiles();
       List<MediaFile> mediaFiles = TestUtil.getMediaFiles();
+ 
       File configFile = XMLConfigCreator.createPlayListXML(mediaFiles);
       MediaUploadData uploadData = new MediaUploadData(PlayModusType.PLAYLIST, mediaFiles, configFile);
-      Task<Boolean> uploadTask = sdConnector.upload(uploadData);
+      Task<Boolean> uploadTask = sdConnector.upload(uploadData,systemFiles);
       uploadTask.setOnSucceeded(event -> success = true);
       uploadTask.setOnCancelled(event -> success = false);
       uploadTask.setOnFailed(event -> success = false);

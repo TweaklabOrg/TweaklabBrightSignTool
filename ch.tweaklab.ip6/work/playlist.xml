@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <playlist>
   <files>
-    <file displayTime="10" type="IMAGE">test-image.jpg</file>
-    <file type="VIDEO">test-movie.mp4</file>
-    <file type="UNKNOWN">test-unknown.txt</file>
-    <file type="AUDIO">test-audio.mp3</file>
+    <file displayTime="0" type="IMAGE">IMGP0672.JPG</file>
+    <file displayTime="0" type="IMAGE">100_0795.JPG</file>
   </files>
 </playlist>

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <displaySettings>
-  <auto>true</auto>
+  <auto>false</auto>
   <width>720</width>
   <height>576</height>
-  <freq>60</freq>
+  <freq>100</freq>
   <interlaced>false</interlaced>
 </displaySettings>

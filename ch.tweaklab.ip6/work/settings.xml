@@ -4,16 +4,16 @@
   <scriptVersion>1.0</scriptVersion>
   <mediaFolder>media</mediaFolder>
   <mode>gpio</mode>
-  <ip>192.168.35.66</ip>
+  <ip>192.168.0.66</ip>
   <netmask>255.255.255.0</netmask>
   <!--Unfortunately the gateway must be defined to make the network diagnostics happy.-->
   <!--Chose any reachable ip if you don't have a gateway.-->
-  <gateway>192.168.35.66</gateway>
-  <dhcp>true</dhcp>
+  <gateway>192.168.0.66</gateway>
+  <dhcp>false</dhcp>
   <!-- We made the ssh password visible as we use the devices in closed networks only.-->
   <!--Like that you can always find out the password by reading the SD.-->
   <ssh_password>pro5i</ssh_password>
-  <volume>100</volume>
+  <volume>80</volume>
   <!-- If <initialize> is set to true, the registry will be cleared and all settings will be set as configured in the xmls.-->
   <initialize>false</initialize>
   <tcp_port>9753</tcp_port>

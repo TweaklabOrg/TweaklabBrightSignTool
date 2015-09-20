@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Properties;
 
 import ch.tweaklab.player.gui.controller.MainApp;
+import ch.tweaklab.player.model.Keys;
 
 public class PlayerGeneralSettings {
 
@@ -28,40 +29,32 @@ public class PlayerGeneralSettings {
 
     PlayerGeneralSettings settings = new PlayerGeneralSettings();
 
-    Properties configFile = new Properties();
-    try {
-      configFile.load(PlayerDisplaySettings.class.getClassLoader().getResourceAsStream("config.properties"));
+    settings.mediaFolder = Keys.loadProperty(Keys.DEFAULT_MEDIA_FOLDER_PROPS_KEY);
+    settings.hostname = Keys.loadProperty(Keys.DEFAULT_NAME_PROPS_KEY);
+    settings.dhcp = Boolean.parseBoolean(Keys.loadProperty(Keys.DEFAULT_DHCP_PROPS_KEY));
+    settings.ip = Keys.loadProperty(Keys.DEFAULT_IP_PROPS_KEY);
 
-      settings.mediaFolder = configFile.getProperty("mediaFolder");
-      settings.hostname = configFile.getProperty("hostname");
-      settings.dhcp = Boolean.parseBoolean(configFile.getProperty("dhcp"));
-      settings.ip = configFile.getProperty("ip");
-
-      settings.gateway = configFile.getProperty("gateway");
-      if (settings.gateway == null || settings.gateway.equals("")) {
-        settings.gateway = settings.ip;
-      }
-      settings.netmask = configFile.getProperty("netmask");
-
-      settings.tcpPort = Integer.parseInt(configFile.getProperty("tcp_port"));
-      settings.volume = Integer.parseInt(configFile.getProperty("volume"));
-
-      settings.mode = configFile.getProperty("mode");
-      settings.scriptVersion = configFile.getProperty("script_version");
-
-      settings.sshPassword = configFile.getProperty("ssh_password");
-      settings.debug = Boolean.parseBoolean((configFile.getProperty("debug")));
-      settings.initialize = Boolean.parseBoolean((configFile.getProperty("initialize")));
-
-    } catch (IOException e) {
-      MainApp.showExceptionMessage(e);
+    settings.gateway = Keys.loadProperty(Keys.DEFAULT_GATEWAYS_PROPS_KEY);
+    if (settings.gateway == null || settings.gateway.equals("")) {
+      settings.gateway = settings.ip;
     }
+    settings.netmask = Keys.loadProperty(Keys.DEFAULT_NETWORK_PROPS_KEY);
+
+    settings.tcpPort = Integer.parseInt(Keys.loadProperty(Keys.DEFAULT_TCP_PORT_PROPS_KEY));
+    settings.volume = Integer.parseInt(Keys.loadProperty(Keys.DEFAULT_VOLUME_PROPS_KEY));
+
+    settings.mode = Keys.loadProperty(Keys.DEFAULT_MODE_PROPS_KEY);
+    settings.scriptVersion = Keys.loadProperty(Keys.DEFAULT_SCRIPT_VERSION_PROPS_KEY);
+
+    settings.sshPassword = Keys.loadProperty(Keys.DEFAULT_SSH_PASSWORD_PROPS_KEY);
+    settings.debug = Boolean.parseBoolean((Keys.loadProperty(Keys.DEFAULT_DEBUG_PROPS_KEY)));
+    settings.initialize = Boolean.parseBoolean((Keys.loadProperty(Keys.DEFAULT_INITIALIZE_PROPS_KEY)));
 
     return settings;
   }
 
-  public String getScriptVersion() {
-    return scriptVersion;
+  public String getMediaFolder() {
+    return mediaFolder;
   }
 
   public String getHostname() {
@@ -70,18 +63,6 @@ public class PlayerGeneralSettings {
 
   public String getIp() {
     return ip;
-  }
-
-  public int getVolume() {
-    return volume;
-  }
-
-  public Boolean getInitialize() {
-    return initialize;
-  }
-
-  public String getMediaFolder() {
-    return mediaFolder;
   }
 
   public String getNetmask() {
@@ -96,24 +77,84 @@ public class PlayerGeneralSettings {
     return dhcp;
   }
 
-  public int getTcpPort() {
-    return tcpPort;
-  }
-
-  public String getMode() {
-    return mode;
-  }
-
   public String getSshPassword() {
     return sshPassword;
+  }
+
+  public int getTcpPort() {
+    return tcpPort;
   }
 
   public Boolean getDebug() {
     return debug;
   }
 
+  public String getMode() {
+    return mode;
+  }
+
+  public int getVolume() {
+    return volume;
+  }
+
+  public Boolean getInitialize() {
+    return initialize;
+  }
+
+  public String getScriptVersion() {
+    return scriptVersion;
+  }
+
+  public void setMediaFolder(String mediaFolder) {
+    this.mediaFolder = mediaFolder;
+  }
+
+  public void setHostname(String hostname) {
+    this.hostname = hostname;
+  }
+
+  public void setIp(String ip) {
+    this.ip = ip;
+  }
+
+  public void setNetmask(String netmask) {
+    this.netmask = netmask;
+  }
+
+  public void setGateway(String gateway) {
+    this.gateway = gateway;
+  }
+
+  public void setDhcp(Boolean dhcp) {
+    this.dhcp = dhcp;
+  }
+
+  public void setSshPassword(String sshPassword) {
+    this.sshPassword = sshPassword;
+  }
+
+  public void setTcpPort(int tcpPort) {
+    this.tcpPort = tcpPort;
+  }
+
   public void setDebug(Boolean debug) {
     this.debug = debug;
+  }
+
+  public void setMode(String mode) {
+    this.mode = mode;
+  }
+
+  public void setVolume(int volume) {
+    this.volume = volume;
+  }
+
+  public void setInitialize(Boolean initialize) {
+    this.initialize = initialize;
+  }
+
+  public void setScriptVersion(String scriptVersion) {
+    this.scriptVersion = scriptVersion;
   }
 
 }
