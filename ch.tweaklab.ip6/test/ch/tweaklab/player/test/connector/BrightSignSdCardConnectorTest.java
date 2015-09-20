@@ -13,12 +13,12 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import ch.tweaklab.player.configurator.XMLConfigCreator;
 import ch.tweaklab.player.connector.BrightSignSdCardConnector;
+import ch.tweaklab.player.gui.controller.ControllerMediator;
 import ch.tweaklab.player.gui.controller.MainApp;
-import ch.tweaklab.player.mediaLogic.MediaFile;
-import ch.tweaklab.player.mediaLogic.XMLConfigCreator;
+import ch.tweaklab.player.model.MediaFile;
 import ch.tweaklab.player.model.MediaUploadData;
-import ch.tweaklab.player.model.Mediator;
 import ch.tweaklab.player.model.PlayModusType;
 import ch.tweaklab.player.test.util.TestUtil;
 
@@ -61,7 +61,7 @@ public static void initJFX() {
 
   @Test
   public void connect() {
-    Task<List<String>> possibleTargetsTask =  Mediator.getInstance().getConnector().getPossibleTargets();   
+    Task<List<String>> possibleTargetsTask =  ControllerMediator.getInstance().getConnector().getPossibleTargets();   
     possibleTargetsTask.setOnSucceeded(event -> ScanTargetFinished(possibleTargetsTask));
     Thread uploadThread = new Thread(possibleTargetsTask);
     uploadThread.start();

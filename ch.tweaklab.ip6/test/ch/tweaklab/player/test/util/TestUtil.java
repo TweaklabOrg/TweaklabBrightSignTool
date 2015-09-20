@@ -5,7 +5,10 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import ch.tweaklab.player.mediaLogic.MediaFile;
+import org.junit.Test;
+
+import ch.tweaklab.player.model.MediaFile;
+import ch.tweaklab.player.util.DiscoverServices;
 
 public class TestUtil {
 
@@ -33,4 +36,15 @@ public class TestUtil {
     
     return mediaFiles;
   }
+  
+  
+  @Test
+  public void bonjourTest(){
+    //Type: _tl._tcp.
+   
+    String servicename = "_tl._tcp.local";
+    DiscoverServices discoverer = new DiscoverServices();
+    discoverer.searchServices(servicename);
+  }
+  
 }

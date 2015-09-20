@@ -15,13 +15,12 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
+import ch.tweaklab.player.configurator.XMLConfigCreator;
 import ch.tweaklab.player.connector.Connector;
 import ch.tweaklab.player.gui.view.WaitScreen;
-import ch.tweaklab.player.mediaLogic.MediaFile;
-import ch.tweaklab.player.mediaLogic.MediaType;
-import ch.tweaklab.player.mediaLogic.XMLConfigCreator;
+import ch.tweaklab.player.model.MediaFile;
+import ch.tweaklab.player.model.MediaType;
 import ch.tweaklab.player.model.MediaUploadData;
-import ch.tweaklab.player.model.Mediator;
 import ch.tweaklab.player.model.PlayModusType;
 
 /**
@@ -53,8 +52,6 @@ public class PlaylistTabController {
   @FXML
   private Button uploadButton;
 
-  @FXML
-  private ImageView imageView;
 
   /**
    * Initializes the controller class. This method is automatically called after the fxml file has
@@ -106,7 +103,7 @@ public class PlaylistTabController {
       File configFile = XMLConfigCreator.createPlayListXML(listView.getItems());
       
       MediaUploadData mediaUploadData = new MediaUploadData(PlayModusType.PLAYLIST, listView.getItems(), configFile );
-      Mediator.getInstance().setMediaUploadData(mediaUploadData);
+      ControllerMediator.getInstance().setMediaUploadData(mediaUploadData);
 
     } catch (Exception e) {
       MainApp.showExceptionMessage(e);
@@ -142,18 +139,13 @@ public class PlaylistTabController {
       if (selectedMediaFile.getMediaType() == MediaType.IMAGE) {
         this.displayTimeField.setVisible(true);
         this.displayTimeLabel.setVisible(true);
-        String path = "file:///" + selectedMediaFile.getFile().getAbsolutePath().replace("\\", "/");
-        image = new Image(path, true);
-
-        this.imageView.setImage(image);
+        
       } else {
-        InputStream imageStream = getClass().getClassLoader().getResourceAsStream(selectedMediaFile.getMediaType().toString().toLowerCase() + ".png");
-        image = new Image(imageStream);
 
         this.displayTimeField.setVisible(false);
         this.displayTimeLabel.setVisible(false);
       }
-      this.imageView.setImage(image);
+
     }
   }
 

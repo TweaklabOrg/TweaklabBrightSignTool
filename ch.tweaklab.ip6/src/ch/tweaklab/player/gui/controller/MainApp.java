@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
+import ch.tweaklab.player.model.Keys;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -28,7 +29,7 @@ public class MainApp extends Application {
   @Override
   public void start(Stage primaryStage) {
     MainApp.primaryStage = primaryStage;
-    MainApp.primaryStage.setTitle("Tweaklab IP6");
+    MainApp.primaryStage.setTitle(Keys.APPLICATION_TITLE + " " + Keys.APPLICATION_VERSION);
     MainApp.primaryStage.setResizable(false);
 
     initRootLayout();
@@ -41,7 +42,7 @@ public class MainApp extends Application {
     try {
       // Load root layout from fxml file.
       FXMLLoader loader = new FXMLLoader();
-      loader.setLocation(this.getClass().getResource("../view/RootPage.fxml"));
+      loader.setLocation(this.getClass().getResource(Keys.ROOT_PAGE_FXML_PATH));
       rootLayout = (BorderPane) loader.load();
 
       // Show the scene containing the root layout.

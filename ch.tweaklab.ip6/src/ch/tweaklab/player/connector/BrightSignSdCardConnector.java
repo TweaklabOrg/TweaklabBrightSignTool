@@ -16,7 +16,7 @@ import javax.swing.filechooser.FileSystemView;
 import org.apache.commons.io.FileUtils;
 
 import ch.tweaklab.player.gui.controller.MainApp;
-import ch.tweaklab.player.mediaLogic.MediaFile;
+import ch.tweaklab.player.model.MediaFile;
 import ch.tweaklab.player.model.MediaUploadData;
 import ch.tweaklab.player.util.OSValidator;
 
@@ -28,6 +28,8 @@ import ch.tweaklab.player.util.OSValidator;
  */
 public class BrightSignSdCardConnector extends Connector {
 
+  public static final String CLASS_DISPLAY_NAME = "BS SC-Card Connector"; 
+  
   private String mediaFolderPath;
   private Properties configFile;
 

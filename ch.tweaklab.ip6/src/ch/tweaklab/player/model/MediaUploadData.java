@@ -4,8 +4,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import ch.tweaklab.player.mediaLogic.MediaFile;
-
 public class MediaUploadData {
 
   

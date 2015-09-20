@@ -12,8 +12,8 @@
 	<classpathentry kind="lib" path="lib/httpclient-win-4.5.jar"/>
 	<classpathentry kind="lib" path="lib/httpcore-4.4.1.jar"/>
 	<classpathentry kind="lib" path="lib/httpmime-4.5.jar"/>
-	<classpathentry kind="lib" path="lib/jsch-0.1.53.jar" sourcepath="lib/jsch-0.1.53.jar"/>
 	<classpathentry kind="lib" path="lib/commons-io-2.4.jar"/>
+	<classpathentry kind="lib" path="lib/jmdns.jar" sourcepath="C:/Development/libs/jmdns"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

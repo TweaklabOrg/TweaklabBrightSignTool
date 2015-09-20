@@ -17,11 +17,10 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.BorderPane;
+import ch.tweaklab.player.configurator.XMLConfigCreator;
 import ch.tweaklab.player.connector.Connector;
 import ch.tweaklab.player.gui.view.WaitScreen;
-import ch.tweaklab.player.mediaLogic.XMLConfigCreator;
 import ch.tweaklab.player.model.MediaUploadData;
-import ch.tweaklab.player.model.Mediator;
 import ch.tweaklab.player.util.KeyValueData;
 
 /**
@@ -52,14 +51,14 @@ private Label currentUploadSetLabel;
    */
   @FXML
   private void initialize() {
-this.hostNameLabel.setText(Mediator.getInstance().getConnector().getTarget());
-    Mediator.getInstance().setUploadController(this);
+this.hostNameLabel.setText(ControllerMediator.getInstance().getConnector().getTarget());
+    ControllerMediator.getInstance().setUploadController(this);
   }
 
   @FXML
   private void handleDisconnect(){
     
-    Mediator.getInstance().disconnectFromDevice();
+    ControllerMediator.getInstance().disconnectFromDevice();
   }
 
   public void updateCurrentUploadSetLabel(String playType){
@@ -76,8 +75,8 @@ this.hostNameLabel.setText(Mediator.getInstance().getConnector().getTarget());
       waitScreen.setOnClose(event -> uploadTask.cancel());
 
       // Create Upload Task and add Events
-      Connector connector = Mediator.getInstance().getConnector();
-     MediaUploadData uploadData = Mediator.getInstance().getUploadData();
+      Connector connector = ControllerMediator.getInstance().getConnector();
+     MediaUploadData uploadData = ControllerMediator.getInstance().getUploadData();
      
       uploadTask = connector.upload(uploadData);
 

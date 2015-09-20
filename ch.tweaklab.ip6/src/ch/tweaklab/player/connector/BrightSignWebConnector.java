@@ -30,16 +30,17 @@ import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.HttpClientBuilder;
 
 import ch.tweaklab.player.gui.controller.MainApp;
-import ch.tweaklab.player.mediaLogic.MediaFile;
+import ch.tweaklab.player.model.MediaFile;
 import ch.tweaklab.player.model.MediaUploadData;
 import ch.tweaklab.player.util.PortScanner;
 
-import com.jcraft.jsch.Channel;
-import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.Session;
 
 public class BrightSignWebConnector extends Connector {
 
+  
+  public static final String CLASS_DISPLAY_NAME = "BS Web Connector"; 
+  
+  
   private String uploadRootUrl;
   Properties configFile;
   private String mediaFolder;
@@ -169,57 +170,7 @@ public class BrightSignWebConnector extends Connector {
     return true;
   }
 
-  // /**
-  // * Start a Bright Sign Script over SSH
-  // *
-  // * @param scriptName --> full path to script
-  // */
-  // private Boolean RunScriptOverSSH(String scriptName) {
-  // final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-  // try {
-  // String user = configFile.getProperty("ssh_user");
-  // String password = configFile.getProperty("ssh_password");
-  // int port = Integer.parseInt(configFile.getProperty("ssh_port"));
-  //
-  // JSch jsch = new JSch();
-  // Session session = jsch.getSession(user, target, port);
-  // session.setPassword(password);
-  //
-  // session.setConfig("StrictHostKeyChecking", "no");
-  //
-  // session.connect(); // making a connection with timeout.
-  // Channel channel = session.openChannel("shell");
-  //
-  // PipedInputStream pip = new PipedInputStream(100);
-  // channel.setInputStream(pip);
-  //
-  // PipedOutputStream pop = new PipedOutputStream(pip);
-  // PrintStream print = new PrintStream(pop);
-  //
-  // channel.setOutputStream(baos);
-  //
-  // channel.connect();
-  // int ctrlC = 3;
-  // print.println((char) ctrlC);
-  // Thread.sleep(1000);
-  // print.println("script " + scriptName);
-  // Thread.sleep(1000);
-  // print.println("run(\"" + scriptName + "\")");
-  // Thread.sleep(1000);
-  //
-  // print.close();
-  // channel.disconnect();
-  // session.disconnect();
-  //
-  // } catch (Exception e) {
-  // String output = new String(baos.toByteArray());
-  // System.out.println(output);
-  // e.printStackTrace();
-  // return false;
-  // }
-  //
-  // return true;
-  // }
+ 
 
   public String sendTCPCommand(String command) {
     String answer = "";

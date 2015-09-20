@@ -16,8 +16,9 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.BorderPane;
+import ch.tweaklab.player.connector.BrightSignSdCardConnector;
+import ch.tweaklab.player.connector.BrightSignWebConnector;
 import ch.tweaklab.player.connector.Connector;
-import ch.tweaklab.player.model.Mediator;
 import ch.tweaklab.player.util.KeyValueData;
 
 /**
@@ -55,8 +56,8 @@ public class ConnectScreenController {
   @FXML
   private void initialize() {
 
-    KeyValueData sdConnector = new KeyValueData("BrightSign SD Card", "ch.tweaklab.ip6.connector.BrightSignSdCardConnector");
-    KeyValueData webConnector = new KeyValueData("BrightSign Web", "ch.tweaklab.ip6.connector.BrightSignWebConnector");
+    KeyValueData sdConnector = new KeyValueData(BrightSignSdCardConnector.CLASS_DISPLAY_NAME, BrightSignSdCardConnector.class.getName());
+    KeyValueData webConnector = new KeyValueData(BrightSignWebConnector.CLASS_DISPLAY_NAME, BrightSignWebConnector.class.getName());
 
     connectorComboBox.setItems(FXCollections.observableArrayList(webConnector, sdConnector));
     connectorComboBox.getSelectionModel().selectFirst();
@@ -68,7 +69,7 @@ public class ConnectScreenController {
   @FXML
   private void scanPossibleTargets(){
     MainApp.primaryStage.getScene().setCursor(Cursor.WAIT);
-    Task<List<String>> possibleTargetsTask =  Mediator.getInstance().getConnector().getPossibleTargets();   
+    Task<List<String>> possibleTargetsTask =  ControllerMediator.getInstance().getConnector().getPossibleTargets();   
     possibleTargetsTask.setOnSucceeded(event -> ScanTargetFinished(possibleTargetsTask));
     Thread uploadThread = new Thread(possibleTargetsTask);
     uploadThread.start();
@@ -94,7 +95,7 @@ public class ConnectScreenController {
     try {
       clazz = Class.forName(className);
       Connector connector = (Connector) clazz.newInstance();
-      Mediator.getInstance().setConnector(connector);
+      ControllerMediator.getInstance().setConnector(connector);
     } catch (Exception e) {
       MainApp.showExceptionMessage(e);
     }
@@ -113,8 +114,8 @@ public class ConnectScreenController {
       MainApp.showErrorMessage("Target not valid!", "Please enter a valid target address.");
       return;
     }
-    Mediator mediator = Mediator.getInstance();
-  Mediator.getInstance().connectToDevice(target);
+    ControllerMediator mediator = ControllerMediator.getInstance();
+  ControllerMediator.getInstance().connectToDevice(target);
   }
 
 

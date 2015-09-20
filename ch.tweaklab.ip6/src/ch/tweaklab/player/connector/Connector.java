@@ -9,14 +9,18 @@ import java.io.File;
 import java.util.List;
 
 import javafx.concurrent.Task;
-import ch.tweaklab.player.mediaLogic.MediaFile;
+import ch.tweaklab.player.model.MediaFile;
 import ch.tweaklab.player.model.MediaUploadData;
 
 public abstract class Connector {
 
+ public static final String CLASS_DISPLAY_NAME = "Abstract Connector (Field not overwritten)"; 
  protected Boolean isConnected = false;
  protected String target = "";
  protected String targetName = "";
+
+ 
+ 
 
  /**
   * connect to a device

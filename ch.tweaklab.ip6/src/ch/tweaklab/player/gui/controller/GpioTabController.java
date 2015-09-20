@@ -1,28 +1,20 @@
 package ch.tweaklab.player.gui.controller;
 
 import java.io.File;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
-import ch.tweaklab.player.connector.Connector;
-import ch.tweaklab.player.gui.view.WaitScreen;
-import ch.tweaklab.player.mediaLogic.MediaFile;
-import ch.tweaklab.player.mediaLogic.MediaType;
-import ch.tweaklab.player.mediaLogic.XMLConfigCreator;
+import ch.tweaklab.player.configurator.XMLConfigCreator;
+import ch.tweaklab.player.model.MediaFile;
 import ch.tweaklab.player.model.MediaUploadData;
-import ch.tweaklab.player.model.Mediator;
 import ch.tweaklab.player.model.PlayModusType;
 
 /**
@@ -45,8 +37,6 @@ public class GpioTabController {
   @FXML
   private Label loopfileNameLabel;
 
-  @FXML
-  private ImageView loopFileImageView;
 
   MediaFile[] gpioFiles;
   private static int NUMBER_OF_BUTTONS = 4;
@@ -76,10 +66,6 @@ public class GpioTabController {
         fileNameToDisplay = fileNameToDisplay.substring(0, 22) + "...";
       }
       loopfileNameLabel.setText(fileNameToDisplay);
-      if (loopFile != null) {
-        Image image = getMediaFileImage(loopFile);
-        loopFileImageView.setImage(image);
-      }
     }
 
   }
@@ -114,27 +100,10 @@ public class GpioTabController {
         fileNameToDisplay = fileNameToDisplay.substring(0, 22) + "...";
       }
       fileNameLabel.setText(fileNameToDisplay);
-
-      if (mediaFile != null) {
-        ImageView imageView = (ImageView) rootPane.lookup("#imageView" + buttonNumber);
-        Image image = getMediaFileImage(mediaFile);
-        imageView.setImage(image);
-      }
     }
 
   }
 
-  private Image getMediaFileImage(MediaFile mediaFile) {
-    Image image;
-    if (mediaFile.getMediaType() == MediaType.IMAGE) {
-      String path = "file:///" + mediaFile.getFile().getAbsolutePath().replace("\\", "/");
-      image = new Image(path, true);
-    } else {
-      InputStream imageStream = getClass().getClassLoader().getResourceAsStream(mediaFile.getMediaType().toString().toLowerCase() + ".png");
-      image = new Image(imageStream);
-    }
-    return image;
-  }
 
   @FXML
   private void reset() {
@@ -143,12 +112,9 @@ public class GpioTabController {
     for (int i = 0; i < NUMBER_OF_BUTTONS; i++) {
       Label fileNameLabel = (Label) rootPane.lookup("#fileNameLabel" + i);
       fileNameLabel.setText("None");
-      ImageView imageView = (ImageView) rootPane.lookup("#imageView" + i);
-      imageView.setImage(null);
     }
 
     // reset Loopfile
-    this.loopFileImageView.setImage(null);
     this.loopFile = null;
     this.loopfileNameLabel.setText("none");
 
@@ -165,7 +131,7 @@ public class GpioTabController {
     uploadList.add(loopFile);
 
     MediaUploadData mediaUploadData = new MediaUploadData(PlayModusType.GPIO, uploadList, gpioConfigFile);
-    Mediator.getInstance().setMediaUploadData(mediaUploadData);
+    ControllerMediator.getInstance().setMediaUploadData(mediaUploadData);
 
   }
 
