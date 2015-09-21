@@ -1,6 +1,7 @@
 package ch.tweaklab.player.test.util;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -59,7 +60,12 @@ public class TestUtil {
    
     String servicename = "_tl._tcp.local";
     DiscoverServices discoverer = new DiscoverServices();
-    discoverer.searchServices(servicename);
+    try {
+      discoverer.searchServices(servicename);
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
   }
   
 }

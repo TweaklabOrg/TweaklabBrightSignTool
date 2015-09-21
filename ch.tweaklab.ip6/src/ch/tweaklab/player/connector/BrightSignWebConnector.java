@@ -5,19 +5,16 @@ package ch.tweaklab.player.connector;
  * Connects to a BrightSign Device via HTTP and SSH
  */
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
-import java.io.PrintStream;
 import java.net.HttpURLConnection;
 import java.net.Socket;
 import java.net.URL;
 import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.ExecutionException;
 
 import javafx.concurrent.Task;
 
@@ -33,7 +30,7 @@ import ch.tweaklab.player.gui.controller.MainApp;
 import ch.tweaklab.player.model.Keys;
 import ch.tweaklab.player.model.MediaFile;
 import ch.tweaklab.player.model.MediaUploadData;
-import ch.tweaklab.player.util.PortScanner;
+import ch.tweaklab.player.util.DiscoverServices;
 
 public class BrightSignWebConnector extends Connector {
 
@@ -57,13 +54,13 @@ public class BrightSignWebConnector extends Connector {
   public boolean connect(String host) {
 
     try {
-      this.target = host;
+      this.target = host + ".local";
 
-      tcpSocket = new Socket(host, tcpPort);
+      tcpSocket = new Socket(this.target, tcpPort);
       outToTcpServer = new DataOutputStream(tcpSocket.getOutputStream());
       inFromTcpServer = new BufferedReader(new InputStreamReader(tcpSocket.getInputStream()));
-      uploadRootUrl = "http://" + host + "/upload.html?rp=sd";
-      this.isConnected = sendGetRequest("http://" + host);
+      uploadRootUrl = "http://" + this.target + "/upload.html?rp=sd";
+      this.isConnected = sendGetRequest("http://" + this.target);
     } catch (Exception e) {
       this.isConnected = false;
     }
@@ -192,11 +189,12 @@ public class BrightSignWebConnector extends Connector {
 
   @Override
   public Task<List<String>> getPossibleTargets() {
-    // TODO: Stephan: reaction if no target found
+    // TODO: Stephan: reaction if no target found.
     Task<List<String>> getTargetTask = new Task<List<String>>() {
       @Override
       public List<String> call() throws Exception {
-        return PortScanner.getAllIpWithOpenPortInLocalSubnet(80);
+        List<String> result = DiscoverServices.searchServices("_tl");
+        return result;
       }
     };
     return getTargetTask;
