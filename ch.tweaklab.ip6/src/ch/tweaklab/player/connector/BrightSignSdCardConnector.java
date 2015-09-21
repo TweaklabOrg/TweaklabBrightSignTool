@@ -5,10 +5,11 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-
+import static java.nio.file.StandardCopyOption.*;
 import javafx.concurrent.Task;
 
 import javax.swing.filechooser.FileSystemView;
@@ -35,7 +36,7 @@ public class BrightSignSdCardConnector extends Connector {
 
   public BrightSignSdCardConnector() {
 
-    mediaFolderPath = Keys.loadProperty("mediaFolder");
+    mediaFolderPath = Keys.loadProperty("default_mediaFolder");
 
   }
 
@@ -81,6 +82,8 @@ public class BrightSignSdCardConnector extends Connector {
           File volumes = new File("/Volumes");
           File files[] = volumes.listFiles();
           for (File f : files) {
+            // TODO: Stephan: parse .-files
+            // TODO: Stephan: only add removeable disks
             targetList.add(f.getAbsolutePath());
           }
         }
@@ -130,19 +133,29 @@ public class BrightSignSdCardConnector extends Connector {
       @Override
       public Boolean call() throws Exception {
         success = true;
+        
+        // writeSystemFiles
+        for (File systemFile : systemFiles) {
+          if (systemFile != null) {
+            File targetFile = new File(target + "/" + systemFile.getName());
+            // write file to root folder
+            FileUtils.copyFile(systemFile, targetFile);
+          }
 
+        }
+        
         // reset media folder on sd card
         if ((target.endsWith("/") || target.endsWith("\\")) == false) {
           target = target + "/";
         }
-        File mediaFolder = new File(target + mediaFolderPath);
+        File mediaFolder = new File(target + "/" + mediaFolderPath);
         if (mediaFolder.exists()) {
           FileUtils.deleteDirectory(mediaFolder);
         }
         mediaFolder.mkdir();
 
         // copy xml config file
-        copyOrReplaceFile(uploadData.getConfigFile(), mediaFolder.getPath());
+        copyOrReplaceFile(uploadData.getConfigFile(), target);
 
         // copy each mediafile
         for (MediaFile mediaFile : uploadData.getUploadList()) {

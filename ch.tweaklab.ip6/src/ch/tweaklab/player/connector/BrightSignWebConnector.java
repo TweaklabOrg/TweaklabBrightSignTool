@@ -103,18 +103,21 @@ public class BrightSignWebConnector extends Connector {
 
         }
 
-        // upload Media
-
         // run script to delete whole media folder
         String answer = sendTCPCommand("resetFilestructure");
-        if (answer == "unsupported") {
+        if (!answer.equals("OK")) {
           return false;
         }
 
         // upload config file
-        success = uploadFile(mediaFolder, uploadData.getConfigFile());
+        success = deleteFile("/", uploadData.getConfigFile());
         if (!success)
           return false;
+        success = uploadFile("/", uploadData.getConfigFile());
+        if (!success)
+          return false;
+
+        // upload Media
         for (MediaFile mediaFile : uploadData.getUploadList()) {
           if (this.isCancelled()) {
             return false;
@@ -179,7 +182,7 @@ public class BrightSignWebConnector extends Connector {
     String answer = "";
     try {
       outToTcpServer.writeBytes(command + '\n');
-      // answer = inFromTcpServer.readLine();
+      answer = inFromTcpServer.readLine();
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -189,7 +192,7 @@ public class BrightSignWebConnector extends Connector {
 
   @Override
   public Task<List<String>> getPossibleTargets() {
-
+    // TODO: Stephan: reaction if no target found
     Task<List<String>> getTargetTask = new Task<List<String>>() {
       @Override
       public List<String> call() throws Exception {
