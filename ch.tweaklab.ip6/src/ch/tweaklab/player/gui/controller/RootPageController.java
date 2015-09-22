@@ -49,7 +49,6 @@ public class RootPageController implements TabControllerInt {
   }
 
   public void disconnectFromDevice() {
-    tabPane.getTabs().clear();
     this.loadConnectItems();
   }
 

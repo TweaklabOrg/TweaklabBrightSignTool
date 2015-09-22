@@ -99,7 +99,7 @@ public static void initJFX() {
       List<MediaFile> mediaFiles = TestUtil.getMediaFiles();
  
       File configFile = XMLConfigCreator.createPlayListXML(mediaFiles);
-      MediaUploadData uploadData = new MediaUploadData(PlayModusType.PLAYLIST, mediaFiles, configFile);
+      MediaUploadData uploadData = new MediaUploadData(mediaFiles, configFile);
       Task<Boolean> uploadTask = sdConnector.upload(uploadData,systemFiles);
       uploadTask.setOnSucceeded(event -> success = true);
       uploadTask.setOnCancelled(event -> success = false);
