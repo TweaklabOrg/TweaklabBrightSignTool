@@ -20,7 +20,6 @@ import ch.tweaklab.player.gui.controller.ControllerMediator;
 import ch.tweaklab.player.gui.controller.MainApp;
 import ch.tweaklab.player.model.MediaFile;
 import ch.tweaklab.player.model.MediaUploadData;
-import ch.tweaklab.player.model.PlayModusType;
 import ch.tweaklab.player.test.util.TestUtil;
 
 public class BrightSignWebConnectorTest {
@@ -89,7 +88,7 @@ public class BrightSignWebConnectorTest {
       List<MediaFile> mediaFiles = TestUtil.getMediaFiles();
       File configFile = XMLConfigCreator.createPlayListXML(mediaFiles);
       MediaUploadData uploadData = new MediaUploadData(mediaFiles, configFile);
-      Task<Boolean> uploadTask = webConnector.upload(uploadData,systemFiles);
+      Task<Boolean> uploadTask = webConnector.upload(uploadData, systemFiles);
       uploadTask.setOnSucceeded(event -> success = true);
       uploadTask.setOnCancelled(event -> success = false);
       uploadTask.setOnFailed(event -> success = false);

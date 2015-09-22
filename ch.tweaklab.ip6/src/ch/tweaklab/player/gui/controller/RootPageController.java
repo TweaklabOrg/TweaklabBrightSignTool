@@ -23,7 +23,7 @@ import ch.tweaklab.player.model.MediaUploadData;
  * @author Alain
  *
  */
-public class RootPageController implements TabControllerInt {
+public class RootPageController  {
 
   @FXML
   BorderPane rootBorderPane;
@@ -34,8 +34,8 @@ public class RootPageController implements TabControllerInt {
   @FXML
   private TabPane tabPane;
 
-  private List<TabControllerInt> tabControllers = new ArrayList<TabControllerInt>();
-  private TabControllerInt currentTabController;
+  private List<TabController> tabControllers = new ArrayList<TabController>();
+  private TabController currentTabController;
 
   /**
    * Initializes the controller class. This method is automatically called after the fxml file has
@@ -137,7 +137,6 @@ public class RootPageController implements TabControllerInt {
     currentTabController = tabControllers.get(tabPane.getSelectionModel().getSelectedIndex());
   }
 
-  @Override
   public MediaUploadData getMediaUploadData() {
     return currentTabController.getMediaUploadData();
   }

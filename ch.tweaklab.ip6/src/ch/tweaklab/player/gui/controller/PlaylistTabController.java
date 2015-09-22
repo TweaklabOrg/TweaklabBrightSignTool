@@ -21,7 +21,7 @@ import ch.tweaklab.player.model.MediaUploadData;
  * @author Alf
  *
  */
-public class PlaylistTabController implements TabControllerInt {
+public class PlaylistTabController extends TabController {
 
   @FXML
   private ListView<MediaFile> listView;

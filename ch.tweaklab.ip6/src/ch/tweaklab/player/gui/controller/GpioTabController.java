@@ -22,7 +22,7 @@ import ch.tweaklab.player.model.MediaUploadData;
  * @author Alain
  *
  */
-public class GpioTabController implements TabControllerInt {
+public class GpioTabController extends TabController {
 
   @FXML
   private AnchorPane rootPane;

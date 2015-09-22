@@ -3,7 +3,6 @@ package ch.tweaklab.player.test.connector;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 import javafx.application.Application;
@@ -14,14 +13,12 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import ch.tweaklab.player.configurator.PlayerGeneralSettings;
 import ch.tweaklab.player.configurator.XMLConfigCreator;
 import ch.tweaklab.player.connector.BrightSignSdCardConnector;
 import ch.tweaklab.player.gui.controller.ControllerMediator;
 import ch.tweaklab.player.gui.controller.MainApp;
 import ch.tweaklab.player.model.MediaFile;
 import ch.tweaklab.player.model.MediaUploadData;
-import ch.tweaklab.player.model.PlayModusType;
 import ch.tweaklab.player.test.util.TestUtil;
 
 public class BrightSignSdCardConnectorTest {
