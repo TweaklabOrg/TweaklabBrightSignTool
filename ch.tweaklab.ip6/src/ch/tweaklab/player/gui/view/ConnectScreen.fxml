@@ -7,11 +7,11 @@
 
 <AnchorPane prefHeight="700.0" prefWidth="250.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.tweaklab.player.gui.controller.ConnectScreenController">
    <children>
-      <Label layoutX="3.0" layoutY="27.0" text="Connector" />
-      <ComboBox fx:id="connectorComboBox" layoutX="67.0" layoutY="23.0" onAction="#handleChangeConnector" prefHeight="25.0" prefWidth="169.0" />
-      <Label layoutX="3.0" layoutY="64.0" text="Target" />
-      <Button layoutX="67.0" layoutY="183.0" mnemonicParsing="false" onAction="#handleConnect" prefHeight="40.0" prefWidth="169.0" text="Connect" />
-      <Button layoutX="133.0" layoutY="92.0" mnemonicParsing="false" onAction="#scanPossibleTargets" prefHeight="25.0" prefWidth="103.0" text="scan for targets" />
-      <ComboBox fx:id="targetComboBox" editable="true" layoutX="67.0" layoutY="60.0" prefHeight="25.0" prefWidth="169.0" />
+      <Label layoutX="16.0" layoutY="44.0" text="Connector" />
+      <ComboBox fx:id="connectorComboBox" layoutX="16.0" layoutY="77.0" onAction="#handleChangeConnector" prefHeight="31.0" prefWidth="222.0" />
+      <Label layoutX="16.0" layoutY="121.0" text="Target" />
+      <Button layoutX="59.0" layoutY="247.0" mnemonicParsing="false" onAction="#handleConnect" prefHeight="40.0" prefWidth="169.0" text="Connect" />
+      <Button layoutX="109.0" layoutY="189.0" mnemonicParsing="false" onAction="#scanPossibleTargets" prefHeight="31.0" prefWidth="127.0" text="scan for targets" />
+      <ComboBox fx:id="targetComboBox" editable="true" layoutX="14.0" layoutY="152.0" prefHeight="31.0" prefWidth="222.0" />
    </children>
 </AnchorPane>

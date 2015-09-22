@@ -12,18 +12,7 @@
         <items>
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="669.0" prefWidth="983.0">
                <children>
-                  <TabPane fx:id="tabPane" prefHeight="462.0" prefWidth="798.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                     <tabs>
-                        <Tab text="Not connected">
-                          <content>
-                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="642.0" prefWidth="998.0">
-                                 <children>
-                                    <Label layoutX="14.0" layoutY="26.0" text="You are currently not connected to a mediaplayer. Please connect..." />
-                                 </children>
-                              </AnchorPane>
-                          </content>
-                        </Tab>
-                     </tabs></TabPane>
+                  <TabPane fx:id="tabPane" prefHeight="462.0" prefWidth="798.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                </children>
             </AnchorPane>
 

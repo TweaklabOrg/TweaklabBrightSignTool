@@ -1,27 +1,21 @@
 package ch.tweaklab.player.gui.controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
-import javafx.collections.FXCollections;
-import javafx.concurrent.Task;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Cursor;
 import javafx.scene.Node;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
-import ch.tweaklab.player.connector.Connector;
 import ch.tweaklab.player.model.Keys;
-import ch.tweaklab.player.util.KeyValueData;
+import ch.tweaklab.player.model.MediaUploadData;
 
 /**
  * Controller of RootPage.fxml Contains Connections Components and Tabview
@@ -29,7 +23,7 @@ import ch.tweaklab.player.util.KeyValueData;
  * @author Alain
  *
  */
-public class RootPageController {
+public class RootPageController implements TabControllerInt {
 
   @FXML
   BorderPane rootBorderPane;
@@ -40,6 +34,9 @@ public class RootPageController {
   @FXML
   private TabPane tabPane;
 
+  private List<TabControllerInt> tabControllers = new ArrayList<TabControllerInt>();
+  private TabControllerInt currentTabController;
+
   /**
    * Initializes the controller class. This method is automatically called after the fxml file has
    * been loaded.
@@ -47,22 +44,17 @@ public class RootPageController {
   @FXML
   private void initialize() {
     ControllerMediator.getInstance().setRootController(this);
-
     loadConnectItems();
-
+    addTabs();
   }
-  
-  
+
   public void disconnectFromDevice() {
     tabPane.getTabs().clear();
     this.loadConnectItems();
-    
   }
 
   public void connectToDevice() {
-    this.addTabs();
     this.loadUploadItems();
-    
   }
 
   private void loadUploadItems() {
@@ -105,24 +97,50 @@ public class RootPageController {
 
   private void addTabs() {
     try {
-      tabPane.getTabs().clear();
-      // add playlist Tab
+      FXMLLoader playlistLoader = new FXMLLoader(getClass().getResource(Keys.PLAYLIST_TAB_FXML_PATH));
+      Node node = (Node) playlistLoader.load();
+      PlaylistTabController playlistController = playlistLoader.<PlaylistTabController> getController();
+      tabControllers.add(playlistController);
       Tab playlistTab = new Tab();
       playlistTab.setText("Playlist Config");
       tabPane.getTabs().add(playlistTab);
-      playlistTab.setContent((Node) FXMLLoader.load(getClass().getResource(Keys.PLAYLIST_TAB_FXML_PATH)));
+      playlistTab.setContent(node);
+      playlistTab.setOnSelectionChanged(new EventHandler<Event>() {
+        @Override
+        public void handle(Event t) {
+          handleTabChange();
+        }
+      });
 
-      Tab buttonTab = new Tab();
-      buttonTab.setText("GPIO Config");
-      tabPane.getTabs().add(buttonTab);
-      buttonTab.setContent((Node) FXMLLoader.load(getClass().getResource(Keys.GPIO_TAB_FXML_PATH)));
+      FXMLLoader gpioLoader = new FXMLLoader(getClass().getResource(Keys.GPIO_TAB_FXML_PATH));
+      Node gpioTabContent = (Node) gpioLoader.load();
+      GpioTabController gpioTabController = gpioLoader.<GpioTabController> getController();
+      tabControllers.add(gpioTabController);
+      Tab gpioTab = new Tab();
+      gpioTab.setText("GPIO Config");
+      tabPane.getTabs().add(gpioTab);
+      gpioTab.setContent(gpioTabContent);
+      gpioTab.setOnSelectionChanged(new EventHandler<Event>() {
+        @Override
+        public void handle(Event t) {
+          handleTabChange();
+        }
+      });
 
+      handleTabChange();
     } catch (IOException e) {
       MainApp.showExceptionMessage(e);
     }
 
   }
 
+  private void handleTabChange() {
+    currentTabController = tabControllers.get(tabPane.getSelectionModel().getSelectedIndex());
+  }
 
+  @Override
+  public MediaUploadData getMediaUploadData() {
+    return currentTabController.getMediaUploadData();
+  }
 
 }

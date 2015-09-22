@@ -27,7 +27,6 @@
 			</font>
 		</Label>
 		<Button layoutX="79.0" layoutY="633.0" mnemonicParsing="false" onAction="#handleAddFileToListView" prefHeight="38.0" prefWidth="161.0" text="Add File..." />
-		<Button fx:id="uploadButton" layoutX="594.0" layoutY="502.0" mnemonicParsing="false" onAction="#hhandleAddConfigToUpload" prefHeight="63.0" prefWidth="179.0" text="Add Config to Upload --&gt;" />
 		<Button layoutX="39.0" layoutY="53.0" mnemonicParsing="false" onAction="#moveItemUp" prefHeight="31.0" prefWidth="29.0" text="⇑" />
 		<Button layoutX="39.0" layoutY="95.0" mnemonicParsing="false" onAction="#moveItemDown" prefHeight="31.0" prefWidth="29.0" text="⇓" />
 		<Button layoutX="264.0" layoutY="633.0" mnemonicParsing="false" onAction="#handleRemove" prefHeight="38.0" prefWidth="152.0" text="Remove selected" />

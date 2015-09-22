@@ -88,7 +88,6 @@
             </AnchorPane>
          </children>
       </GridPane>
-      <Button layoutX="571.0" layoutY="516.0" mnemonicParsing="false" onAction="#handleAddConfigToUpload" prefHeight="52.0" prefWidth="189.0" text="Add config to upload --&gt;" />
       <Button layoutX="571.0" layoutY="577.0" mnemonicParsing="false" onAction="#reset" prefHeight="30.0" prefWidth="189.0" text="Reset" />
       <Label layoutX="309.0" layoutY="256.0" text="Retrigger before video&#10;has finished enabled: " />
       <Label layoutX="309.0" layoutY="320.0" text="Retriggerdelay:" />

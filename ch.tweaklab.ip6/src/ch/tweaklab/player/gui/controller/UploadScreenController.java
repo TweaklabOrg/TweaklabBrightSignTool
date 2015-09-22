@@ -9,21 +9,11 @@ import java.util.List;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Cursor;
-import javafx.scene.Node;
-import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.SplitPane;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import ch.tweaklab.player.configurator.PlayerDisplaySettings;
 import ch.tweaklab.player.configurator.PlayerGeneralSettings;
@@ -33,12 +23,11 @@ import ch.tweaklab.player.connector.Connector;
 import ch.tweaklab.player.gui.view.WaitScreen;
 import ch.tweaklab.player.model.Keys;
 import ch.tweaklab.player.model.MediaUploadData;
-import ch.tweaklab.player.util.KeyValueData;
 
 /**
  * /*
  * 
- * @author Alf
+ * @author Alain
  *
  */
 public class UploadScreenController {
@@ -68,13 +57,18 @@ public class UploadScreenController {
   @FXML
   private CheckBox uploadGeneralSettingsheckbox;
   @FXML
-  private CheckBox initalizeSystemCheckobx;
-  @FXML
   private TextField newHostnameField;
   @FXML
   private TextField newIPField;
   @FXML
   private TextField volumeField;
+  @FXML
+  private TextField gatewayField;
+  @FXML
+  private TextField subnetField;
+  @FXML
+  private CheckBox dhcpCheckbox;
+
   @FXML
   private CheckBox uploadScriptsCheckbox;
 
@@ -139,7 +133,9 @@ public class UploadScreenController {
     } else {
       this.newIPField.setText(settings.getIp());
     }
-    this.initalizeSystemCheckobx.setSelected(settings.getInitialize());
+    this.dhcpCheckbox.setSelected(Boolean.valueOf(settings.getDhcp()));
+    this.gatewayField.setText(settings.getGateway());
+    this.subnetField.setText(settings.getNetmask());
     this.volumeField.setText(String.valueOf(settings.getVolume()));
 
   }
@@ -155,7 +151,7 @@ public class UploadScreenController {
   }
 
   private Boolean validateFields() {
-    if (ControllerMediator.getInstance().getUploadData() == null) {
+    if (ControllerMediator.getInstance().getRootController().getMediaUploadData() == null) {
       MainApp.showErrorMessage("No Media Data", "Please add a media config to upload!");
       return false;
     }
@@ -197,6 +193,7 @@ public class UploadScreenController {
 
       if (this.uploadGeneralSettingsheckbox.isSelected()) {
         File generalSettingsXml = createGeneralDisplaySettingsXML();
+
         systemFilesForUpload.add(generalSettingsXml);
       }
 
@@ -214,7 +211,7 @@ public class UploadScreenController {
 
       // Create Upload Task and add Events
       Connector connector = ControllerMediator.getInstance().getConnector();
-      MediaUploadData uploadData = ControllerMediator.getInstance().getUploadData();
+      MediaUploadData uploadData = ControllerMediator.getInstance().getRootController().getMediaUploadData();
 
       uploadTask = connector.upload(uploadData, systemFilesForUpload);
 
@@ -241,13 +238,16 @@ public class UploadScreenController {
   }
 
   private File createGeneralDisplaySettingsXML() {
-    PlayerGeneralSettings settings = PlayerGeneralSettings.getDefaulGeneralSettings();
-    settings.setInitialize(this.initalizeSystemCheckobx.isSelected());
-    settings.setHostname(this.newHostnameField.getText());
-    settings.setIp(this.newIPField.getText());
-    settings.setVolume(Integer.parseInt(this.volumeField.getText()));
-    settings.setGateway(this.newIPField.getText());
-    File xmlFile = XMLConfigCreator.createGeneralSettingsXml(settings);
+    PlayerGeneralSettings defaultSettings = PlayerGeneralSettings.getDefaulGeneralSettings();
+    PlayerGeneralSettings newSettings = defaultSettings;
+    newSettings.setHostname(this.newHostnameField.getText());
+    newSettings.setIp(this.newIPField.getText());
+    newSettings.setVolume(Integer.parseInt(this.volumeField.getText()));
+    newSettings.setGateway(this.newIPField.getText());
+    newSettings.setNetmask(this.subnetField.getText());
+    newSettings.setGateway(this.gatewayField.getText());
+    newSettings.setDhcp(this.dhcpCheckbox.isSelected());
+    File xmlFile = XMLConfigCreator.createGeneralSettingsXml(newSettings);
     return xmlFile;
   }
 

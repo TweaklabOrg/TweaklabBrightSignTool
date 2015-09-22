@@ -15,7 +15,6 @@ import javafx.stage.FileChooser;
 import ch.tweaklab.player.configurator.XMLConfigCreator;
 import ch.tweaklab.player.model.MediaFile;
 import ch.tweaklab.player.model.MediaUploadData;
-import ch.tweaklab.player.model.PlayModusType;
 
 /**
  * Controller of PushButton Configuration View
@@ -23,7 +22,7 @@ import ch.tweaklab.player.model.PlayModusType;
  * @author Alain
  *
  */
-public class GpioTabController {
+public class GpioTabController implements TabControllerInt {
 
   @FXML
   private AnchorPane rootPane;
@@ -36,7 +35,6 @@ public class GpioTabController {
 
   @FXML
   private Label loopfileNameLabel;
-
 
   MediaFile[] gpioFiles;
   private static int NUMBER_OF_BUTTONS = 4;
@@ -104,7 +102,6 @@ public class GpioTabController {
 
   }
 
-
   @FXML
   private void reset() {
     // rest gpio files
@@ -122,17 +119,15 @@ public class GpioTabController {
     retriggerEnabledCheckbox.setSelected(true);
   }
 
-  @FXML
-  private void handleAddConfigToUpload() {
-
+  @Override
+  public MediaUploadData getMediaUploadData() {
     File gpioConfigFile = XMLConfigCreator.createGpioXML(loopFile, gpioFiles, retriggerEnabledCheckbox.isSelected(), retriggerDelayField.getText());
 
     ArrayList<MediaFile> uploadList = new ArrayList<MediaFile>(Arrays.asList(gpioFiles));
     uploadList.add(loopFile);
 
-    MediaUploadData mediaUploadData = new MediaUploadData(PlayModusType.GPIO, uploadList, gpioConfigFile);
-    ControllerMediator.getInstance().setMediaUploadData(mediaUploadData);
-
+    MediaUploadData mediaUploadData = new MediaUploadData(uploadList, gpioConfigFile);
+    return mediaUploadData;
   }
 
 }

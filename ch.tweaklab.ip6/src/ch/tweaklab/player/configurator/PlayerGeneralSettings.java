@@ -157,4 +157,97 @@ public class PlayerGeneralSettings {
     this.scriptVersion = scriptVersion;
   }
 
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((debug == null) ? 0 : debug.hashCode());
+    result = prime * result + ((dhcp == null) ? 0 : dhcp.hashCode());
+    result = prime * result + ((gateway == null) ? 0 : gateway.hashCode());
+    result = prime * result + ((hostname == null) ? 0 : hostname.hashCode());
+    result = prime * result + ((initialize == null) ? 0 : initialize.hashCode());
+    result = prime * result + ((ip == null) ? 0 : ip.hashCode());
+    result = prime * result + ((mediaFolder == null) ? 0 : mediaFolder.hashCode());
+    result = prime * result + ((mode == null) ? 0 : mode.hashCode());
+    result = prime * result + ((netmask == null) ? 0 : netmask.hashCode());
+    result = prime * result + ((scriptVersion == null) ? 0 : scriptVersion.hashCode());
+    result = prime * result + ((sshPassword == null) ? 0 : sshPassword.hashCode());
+    result = prime * result + tcpPort;
+    result = prime * result + volume;
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    PlayerGeneralSettings other = (PlayerGeneralSettings) obj;
+    if (debug == null) {
+      if (other.debug != null)
+        return false;
+    } else if (!debug.equals(other.debug))
+      return false;
+    if (dhcp == null) {
+      if (other.dhcp != null)
+        return false;
+    } else if (!dhcp.equals(other.dhcp))
+      return false;
+    if (gateway == null) {
+      if (other.gateway != null)
+        return false;
+    } else if (!gateway.equals(other.gateway))
+      return false;
+    if (hostname == null) {
+      if (other.hostname != null)
+        return false;
+    } else if (!hostname.equals(other.hostname))
+      return false;
+    if (initialize == null) {
+      if (other.initialize != null)
+        return false;
+    } else if (!initialize.equals(other.initialize))
+      return false;
+    if (ip == null) {
+      if (other.ip != null)
+        return false;
+    } else if (!ip.equals(other.ip))
+      return false;
+    if (mediaFolder == null) {
+      if (other.mediaFolder != null)
+        return false;
+    } else if (!mediaFolder.equals(other.mediaFolder))
+      return false;
+    if (mode == null) {
+      if (other.mode != null)
+        return false;
+    } else if (!mode.equals(other.mode))
+      return false;
+    if (netmask == null) {
+      if (other.netmask != null)
+        return false;
+    } else if (!netmask.equals(other.netmask))
+      return false;
+    if (scriptVersion == null) {
+      if (other.scriptVersion != null)
+        return false;
+    } else if (!scriptVersion.equals(other.scriptVersion))
+      return false;
+    if (sshPassword == null) {
+      if (other.sshPassword != null)
+        return false;
+    } else if (!sshPassword.equals(other.sshPassword))
+      return false;
+    if (tcpPort != other.tcpPort)
+      return false;
+    if (volume != other.volume)
+      return false;
+    return true;
+  }
+
+  
+  
 }

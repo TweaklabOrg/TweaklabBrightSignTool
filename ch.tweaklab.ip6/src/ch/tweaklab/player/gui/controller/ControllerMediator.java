@@ -13,12 +13,10 @@ public class ControllerMediator {
 
   private RootPageController rootController;
   private UploadScreenController uploadController;
-
+ 
   private Boolean isConnected = false;
 
   private Connector connector;
-
-  private MediaUploadData mediaUploadData;
 
 
   public UploadScreenController getUploadController() {
@@ -45,23 +43,9 @@ public class ControllerMediator {
     this.connector = connector;
   }
 
-  public MediaUploadData getUploadData() {
-    return mediaUploadData;
-  }
-
-  public void setMediaUploadData(MediaUploadData mediaUploadData) {
-    if (isConnected) {
-      this.mediaUploadData = mediaUploadData;
-      this.uploadController.updateCurrentUploadSetLabel(mediaUploadData.getPlayModus().name());
-    } else {
-      MainApp.showErrorMessage("Not connected", "Please connect before you add upload content");
-    }
-
-  }
 
   public void disconnectFromDevice() {
     isConnected = false;
-    mediaUploadData = null;
     connector.disconnect();
     
     rootController.disconnectFromDevice();

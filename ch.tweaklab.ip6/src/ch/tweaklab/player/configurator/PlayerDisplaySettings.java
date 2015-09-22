@@ -67,4 +67,47 @@ public class PlayerDisplaySettings {
     this.interlaced = interlaced;
   }
 
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((auto == null) ? 0 : auto.hashCode());
+    result = prime * result + freq;
+    result = prime * result + height;
+    result = prime * result + ((interlaced == null) ? 0 : interlaced.hashCode());
+    result = prime * result + width;
+    return result;
+  }
+
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    PlayerDisplaySettings other = (PlayerDisplaySettings) obj;
+    if (auto == null) {
+      if (other.auto != null)
+        return false;
+    } else if (!auto.equals(other.auto))
+      return false;
+    if (freq != other.freq)
+      return false;
+    if (height != other.height)
+      return false;
+    if (interlaced == null) {
+      if (other.interlaced != null)
+        return false;
+    } else if (!interlaced.equals(other.interlaced))
+      return false;
+    if (width != other.width)
+      return false;
+    return true;
+  }
+
+  
 }
