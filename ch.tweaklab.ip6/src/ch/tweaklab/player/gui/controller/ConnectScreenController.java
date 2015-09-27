@@ -97,7 +97,7 @@ public class ConnectScreenController {
       Connector connector = (Connector) clazz.newInstance();
       ControllerMediator.getInstance().setConnector(connector);
       if(connector instanceof BrightSignWebConnector){
-        this.targetDescriptionLabel.setText("FQDN:");
+        this.targetDescriptionLabel.setText("Name:");
         targetComboBox.getItems().add(Keys.loadProperty(Keys.DEFAULT_HOSTNAME_PROPS_KEY));
         targetComboBox.getSelectionModel().selectLast();
       }

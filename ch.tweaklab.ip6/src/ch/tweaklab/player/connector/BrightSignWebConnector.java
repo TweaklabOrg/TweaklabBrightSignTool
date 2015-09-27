@@ -54,7 +54,7 @@ public class BrightSignWebConnector extends Connector {
   public boolean connect(String host) {
 
     try {
-      this.target = host;
+      this.target = host +  ".local";
 
       tcpSocket = new Socket(this.target, tcpPort);
       outToTcpServer = new DataOutputStream(tcpSocket.getOutputStream());
@@ -62,6 +62,7 @@ public class BrightSignWebConnector extends Connector {
       uploadRootUrl = "http://" + this.target + "/upload.html?rp=sd";
       this.isConnected = sendGetRequest("http://" + this.target);
     } catch (Exception e) {
+      e.printStackTrace();
       this.isConnected = false;
     }
     return this.isConnected;

@@ -4,7 +4,7 @@
   <scriptVersion>1.0</scriptVersion>
   <mediaFolder>media</mediaFolder>
   <mode>gpio</mode>
-  <ip>192.168.35.66</ip>
+  <ip>192.168.0.66</ip>
   <netmask>255.255.255.0</netmask>
   <!--Unfortunately the gateway must be defined to make the network diagnostics happy.-->
   <!--Chose any reachable ip if you don't have a gateway.-->
