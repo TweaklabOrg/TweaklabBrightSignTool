@@ -17,17 +17,41 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 /**
- * Scans the local net for a open specified port
- * 
- * @author Alf
+ * Contains some helper methods for network scanning
+ * @author Alain
  *
  */
-public class PortScanner {
+public class NetworkUtils {
 
-  final static int timeout = 200;
+  public static void main(String[] args) {
 
+  }
 
+  /**
+   * resolve a hostname to an ip adress. 
+   * @param hostname
+   * @return ip adress or null
+   */
+  public static String resolveHostName(String hostname) {
+    String ip = "";
+    InetAddress address = null;
+    try {
+      address = InetAddress.getByName(hostname);
+
+      ip = address.getHostAddress();
+    } catch (UnknownHostException e) {
+
+    }
+    return ip;
+  }
+
+  /**
+   * Scan all ip adresses in same subnet as network adapter for the given port
+   * @param port
+   * @return
+   */
   public static List<String> getAllIpWithOpenPortInLocalSubnet(int port) {
+    final int timeout = 200;
     List<String> foundIps = new ArrayList<>();
     try {
 
@@ -79,5 +103,4 @@ public class PortScanner {
       }
     });
   }
-
 }

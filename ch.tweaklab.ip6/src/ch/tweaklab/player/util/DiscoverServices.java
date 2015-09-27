@@ -40,17 +40,17 @@ public class DiscoverServices {
     
     @Override
     public void serviceAdded(ServiceEvent event) {
-      targets.add(event.getName());
+      targets.add(event.getName()+ ".local");
     }
 
     @Override
     public void serviceRemoved(ServiceEvent event) {
-      targets.remove(event.getName());
+      targets.remove(event.getName()+ ".local");
     }
 
     @Override
     public void serviceResolved(ServiceEvent event) {
-      targets.add(event.getName());
+      targets.add(event.getName() + ".local");
     }
   }
 }

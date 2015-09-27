@@ -2,6 +2,7 @@ package ch.tweaklab.player.gui.controller;
 
 import java.io.File;
 import java.util.Collections;
+import java.util.List;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -64,12 +65,18 @@ public class PlaylistTabController extends TabController {
   @FXML
   private void handleAddFileToListView() {
     final FileChooser fileChooser = new FileChooser();
-    File choosenFile = fileChooser.showOpenDialog(MainApp.primaryStage);
-    if (choosenFile != null) {
-      MediaFile mediaFile = new MediaFile(choosenFile);
-      listView.getItems().add(mediaFile);
-      listView.getSelectionModel().selectLast();
-      handleMouseClickedInListView();
+    List<File> choosenFiles = fileChooser.showOpenMultipleDialog(MainApp.primaryStage);
+    for (File choosenFile : choosenFiles) {
+      if (choosenFile != null) {
+        if (this.validateFileFormat(choosenFile.getName()) == false) {
+          MainApp.showErrorMessage("Wrong File", "This filetype is not supported. Add this type in the property file if you need it.");
+          return;
+        }
+        MediaFile mediaFile = new MediaFile(choosenFile);
+        listView.getItems().add(mediaFile);
+        listView.getSelectionModel().selectLast();
+        handleMouseClickedInListView();
+      }
     }
   }
 

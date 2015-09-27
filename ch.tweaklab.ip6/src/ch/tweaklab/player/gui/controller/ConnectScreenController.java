@@ -19,6 +19,7 @@ import javafx.scene.layout.BorderPane;
 import ch.tweaklab.player.connector.BrightSignSdCardConnector;
 import ch.tweaklab.player.connector.BrightSignWebConnector;
 import ch.tweaklab.player.connector.Connector;
+import ch.tweaklab.player.model.Keys;
 import ch.tweaklab.player.util.KeyValueData;
 
 /**
@@ -34,8 +35,9 @@ public class ConnectScreenController {
  
 
   @FXML
-  private Label hostNameLabel;
-
+  private Label targetDescriptionLabel;
+  
+  
   @FXML
   private ComboBox<KeyValueData> connectorComboBox;
 
@@ -58,10 +60,8 @@ public class ConnectScreenController {
 
     KeyValueData sdConnector = new KeyValueData(BrightSignSdCardConnector.CLASS_DISPLAY_NAME, BrightSignSdCardConnector.class.getName());
     KeyValueData webConnector = new KeyValueData(BrightSignWebConnector.CLASS_DISPLAY_NAME, BrightSignWebConnector.class.getName());
-
     connectorComboBox.setItems(FXCollections.observableArrayList(webConnector, sdConnector));
     connectorComboBox.getSelectionModel().selectFirst();
-
     handleChangeConnector();
     
   }
@@ -78,7 +78,7 @@ public class ConnectScreenController {
   private void ScanTargetFinished(Task<List<String>> possibleTargetsTask) {
     try {
       targetComboBox.getItems().setAll(possibleTargetsTask.get());
-      targetComboBox.getSelectionModel().selectFirst();
+      targetComboBox.getSelectionModel().selectLast();
       MainApp.primaryStage.getScene().setCursor(Cursor.DEFAULT);
     } catch (Exception e) {
       MainApp.showExceptionMessage(e);
@@ -96,6 +96,15 @@ public class ConnectScreenController {
       clazz = Class.forName(className);
       Connector connector = (Connector) clazz.newInstance();
       ControllerMediator.getInstance().setConnector(connector);
+      if(connector instanceof BrightSignWebConnector){
+        this.targetDescriptionLabel.setText("FQDN:");
+        targetComboBox.getItems().add(Keys.loadProperty(Keys.DEFAULT_HOSTNAME_PROPS_KEY));
+        targetComboBox.getSelectionModel().selectLast();
+      }
+      else if(connector instanceof BrightSignSdCardConnector){
+        this.targetDescriptionLabel.setText("Path to SD-Card:");
+      }
+        
     } catch (Exception e) {
       MainApp.showExceptionMessage(e);
     }

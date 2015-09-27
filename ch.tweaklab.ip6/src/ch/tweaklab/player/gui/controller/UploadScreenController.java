@@ -23,6 +23,7 @@ import ch.tweaklab.player.connector.Connector;
 import ch.tweaklab.player.gui.view.WaitScreen;
 import ch.tweaklab.player.model.Keys;
 import ch.tweaklab.player.model.MediaUploadData;
+import ch.tweaklab.player.util.NetworkUtils;
 
 /**
  * /*
@@ -32,8 +33,6 @@ import ch.tweaklab.player.model.MediaUploadData;
  */
 public class UploadScreenController {
 
-  @FXML
-  private Label hostNameLabel;
   @FXML
   private Label targetAddressLabel;
   @FXML
@@ -88,7 +87,6 @@ public class UploadScreenController {
   @FXML
   private void initialize() {
     mediator = ControllerMediator.getInstance();
-    this.hostNameLabel.setText(ControllerMediator.getInstance().getConnector().getTarget());
     mediator.setUploadController(this);
     this.targetAddressLabel.setText(mediator.getConnector().getTarget());
 
@@ -127,12 +125,18 @@ public class UploadScreenController {
   private void setGeneralSettingsDefaultValues() {
     PlayerGeneralSettings settings = PlayerGeneralSettings.getDefaulGeneralSettings();
 
-    this.newHostnameField.setText(settings.getHostname());
-    if (mediator.getConnector() instanceof BrightSignWebConnector) {
-      this.newIPField.setText(mediator.getConnector().getTarget());
+    Connector currentConnector = ControllerMediator.getInstance().getConnector();
+    if (currentConnector instanceof BrightSignWebConnector) {
+      this.newHostnameField.setText(currentConnector.getTarget());
+      String ip = NetworkUtils.resolveHostName(this.newHostnameField.getText());
+      if (ip != "") {
+        this.newIPField.setText(ip);
+      }
     } else {
+      this.newHostnameField.setText(settings.getHostname());
       this.newIPField.setText(settings.getIp());
     }
+
     this.dhcpCheckbox.setSelected(Boolean.valueOf(settings.getDhcp()));
     this.gatewayField.setText(settings.getGateway());
     this.subnetField.setText(settings.getNetmask());
@@ -186,23 +190,22 @@ public class UploadScreenController {
       }
       List<File> systemFilesForUpload = new ArrayList<File>();
 
+      // create and upload settings.xml
       if (this.uploadDisplaySettingsCheckbox.isSelected()) {
         File displaySettingsXML = createDisplaySettingsXML();
         systemFilesForUpload.add(displaySettingsXML);
       }
 
+      // create and upload display.xml
       if (this.uploadGeneralSettingsheckbox.isSelected()) {
         File generalSettingsXml = createGeneralDisplaySettingsXML();
 
         systemFilesForUpload.add(generalSettingsXml);
       }
 
-      if (this.uploadScriptsCheckbox.isSelected()) {
-
-        List<File> scripts = getScripts();
-        systemFilesForUpload.addAll(scripts);
-
-      }
+      // upload bs-scripts
+      List<File> scripts = getScripts();
+      systemFilesForUpload.addAll(scripts);
 
       // Show waitscreen
       waitScreen = new WaitScreen();

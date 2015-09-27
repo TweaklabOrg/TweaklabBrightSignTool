@@ -58,7 +58,10 @@ public class GpioTabController extends TabController {
     File choosenFile = fileChooser.showOpenDialog(MainApp.primaryStage);
     if (choosenFile != null) {
       loopFile = new MediaFile(choosenFile);
-
+      if (this.validateFileFormat(choosenFile.getName()) == false){
+        MainApp.showErrorMessage("Wrong File", "This filetype is not supported. Add this type in the property file if you need it.");
+        return;
+      }
       String fileNameToDisplay = choosenFile.getName();
       if (fileNameToDisplay.length() > MAX_FILE_NAME_LENGTH_SHOW) {
         fileNameToDisplay = fileNameToDisplay.substring(0, 22) + "...";
@@ -87,6 +90,10 @@ public class GpioTabController extends TabController {
     File choosenFile = fileChooser.showOpenDialog(MainApp.primaryStage);
 
     if (choosenFile != null) {
+      if (this.validateFileFormat(choosenFile.getName()) == false){
+        MainApp.showErrorMessage("Wrong File", "This filetype is not supported. Add this type in the property file if you need it.");
+        return;
+      }
       MediaFile mediaFile = new MediaFile(choosenFile);
       gpioFiles[buttonNumber] = mediaFile;
 

@@ -88,7 +88,7 @@
             </AnchorPane>
          </children>
       </GridPane>
-      <Button layoutX="571.0" layoutY="577.0" mnemonicParsing="false" onAction="#reset" prefHeight="30.0" prefWidth="189.0" text="Reset" />
+      <Button layoutX="345.0" layoutY="409.0" mnemonicParsing="false" onAction="#reset" prefHeight="30.0" prefWidth="189.0" text="Reset" />
       <Label layoutX="309.0" layoutY="256.0" text="Retrigger before video&#10;has finished enabled: " />
       <Label layoutX="309.0" layoutY="320.0" text="Retriggerdelay:" />
       <CheckBox fx:id="retriggerEnabledCheckbox" layoutX="507.0" layoutY="265.0" mnemonicParsing="false" />

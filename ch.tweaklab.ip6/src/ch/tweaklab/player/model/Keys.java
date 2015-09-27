@@ -28,7 +28,7 @@ public class Keys {
   public static final String DEFAULT_MEDIA_FOLDER_PROPS_KEY = "default_mediaFolder";
   public static final String DEFAULT_DEBUG_PROPS_KEY = "default_debug";
 
-  public static final String DEFAULT_NAME_PROPS_KEY = "default_hostname";
+  public static final String DEFAULT_HOSTNAME_PROPS_KEY = "default_hostname";
   public static final String DEFAULT_IP_PROPS_KEY = "default_ip";
   public static final String DEFAULT_GATEWAYS_PROPS_KEY = "default_gateways";
   public static final String DEFAULT_NETWORK_PROPS_KEY = "default_netmask";

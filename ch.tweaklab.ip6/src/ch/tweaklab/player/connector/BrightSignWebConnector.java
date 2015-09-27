@@ -54,7 +54,7 @@ public class BrightSignWebConnector extends Connector {
   public boolean connect(String host) {
 
     try {
-      this.target = host + ".local";
+      this.target = host;
 
       tcpSocket = new Socket(this.target, tcpPort);
       outToTcpServer = new DataOutputStream(tcpSocket.getOutputStream());
@@ -92,7 +92,7 @@ public class BrightSignWebConnector extends Connector {
             if (!success)
               return false;
 
-            // upload new file to mediafolder
+            // upload new file system file to root folder
             success = uploadFile("/", systemFile);
             if (!success)
               return false;
@@ -106,13 +106,11 @@ public class BrightSignWebConnector extends Connector {
           return false;
         }
 
-        // upload config file
-        success = deleteFile("/", uploadData.getConfigFile());
-        if (!success)
+        // upload media config file
+        success = uploadFile(mediaFolder, uploadData.getConfigFile());
+        if (!success){
           return false;
-        success = uploadFile("/", uploadData.getConfigFile());
-        if (!success)
-          return false;
+        }
 
         // upload Media
         for (MediaFile mediaFile : uploadData.getUploadList()) {

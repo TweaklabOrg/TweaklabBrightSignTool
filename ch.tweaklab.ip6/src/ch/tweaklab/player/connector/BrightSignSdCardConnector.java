@@ -30,7 +30,7 @@ import ch.tweaklab.player.util.OSValidator;
  */
 public class BrightSignSdCardConnector extends Connector {
 
-  public static final String CLASS_DISPLAY_NAME = "BS SC-Card Connector";
+  public static final String CLASS_DISPLAY_NAME = "BS SD-Card Connector";
 
   private String mediaFolderPath;
 
@@ -58,40 +58,7 @@ public class BrightSignSdCardConnector extends Connector {
     return true;
   }
 
-  @Override
-  public Task<List<String>> getPossibleTargets() {
 
-    Task<List<String>> getTargetTask = new Task<List<String>>() {
-      @Override
-      public List<String> call() throws Exception {
-        List<String> targetList = new ArrayList<String>();
-
-        if (OSValidator.isWindows()) {
-          File[] paths;
-          FileSystemView fsv = FileSystemView.getFileSystemView();
-
-          paths = File.listRoots();
-          for (File path : paths) {
-            String description = fsv.getSystemTypeDescription(path);
-            if (description.equals("Removable Disk")) {
-              targetList.add(path.getAbsolutePath());
-            }
-          }
-
-        } else if (OSValidator.isMac()) {
-          File volumes = new File("/Volumes");
-          File files[] = volumes.listFiles();
-          for (File f : files) {
-            // TODO: Stephan: parse .-files
-            // TODO: Stephan: only add removeable disks
-            targetList.add(f.getAbsolutePath());
-          }
-        }
-        return targetList;
-      }
-    };
-    return getTargetTask;
-  }
 
   private void copyOrReplaceFile(File sourceFile, String destPath) throws Exception {
     if (!destPath.endsWith("/")) {
@@ -155,7 +122,7 @@ public class BrightSignSdCardConnector extends Connector {
         mediaFolder.mkdir();
 
         // copy xml config file
-        copyOrReplaceFile(uploadData.getConfigFile(), target);
+        copyOrReplaceFile(uploadData.getConfigFile(), target + "/" + mediaFolderPath);
 
         // copy each mediafile
         for (MediaFile mediaFile : uploadData.getUploadList()) {
@@ -175,6 +142,40 @@ public class BrightSignSdCardConnector extends Connector {
     // }
   }
 
+  @Override
+  public Task<List<String>> getPossibleTargets() {
+
+    Task<List<String>> getTargetTask = new Task<List<String>>() {
+      @Override
+      public List<String> call() throws Exception {
+        List<String> targetList = new ArrayList<String>();
+
+        if (OSValidator.isWindows()) {
+          File[] paths;
+          FileSystemView fsv = FileSystemView.getFileSystemView();
+
+          paths = File.listRoots();
+          for (File path : paths) {
+            String description = fsv.getSystemTypeDescription(path);
+            if (description.equals("Removable Disk") || description.equals("Wechseldatenträger")) {
+              targetList.add(path.getAbsolutePath());
+            }
+          }
+
+        } else if (OSValidator.isMac()) {
+          File volumes = new File("/Volumes");
+          File files[] = volumes.listFiles();
+          for (File f : files) {
+            // TODO: Stephan: parse .-files
+            // TODO: Stephan: only add removeable disks
+            targetList.add(f.getAbsolutePath());
+          }
+        }
+        return targetList;
+      }
+    };
+    return getTargetTask;
+  }
 
 
 }

@@ -17,7 +17,6 @@ public abstract class Connector {
  public static final String CLASS_DISPLAY_NAME = "Abstract Connector (Field not overwritten)"; 
  protected Boolean isConnected = false;
  protected String target = "";
- protected String targetName = "";
 
  
  
@@ -62,11 +61,6 @@ public abstract class Connector {
     return target;
   }
   
-  
-
-  public void setTargetName(String targetName) {
-    this.targetName = targetName;
-  }
 
   public abstract Task<List<String>> getPossibleTargets();
 

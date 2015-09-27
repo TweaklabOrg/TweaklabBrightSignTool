@@ -3,6 +3,6 @@
   <auto>false</auto>
   <width>720</width>
   <height>576</height>
-  <freq>100</freq>
+  <freq>60</freq>
   <interlaced>false</interlaced>
 </displaySettings>
