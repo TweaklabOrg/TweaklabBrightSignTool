@@ -81,8 +81,7 @@ public class RootPageController  {
         splitPane.getItems().remove(1);
       }
       // Load root layout from fxml file.
-      FXMLLoader loader = new FXMLLoader();
-      loader.setLocation(this.getClass().getResource(Keys.CONNECT_SCREEN_FXML_PATH));
+      FXMLLoader loader = new FXMLLoader(getClass().getResource(Keys.CONNECT_SCREEN_FXML_PATH));
       AnchorPane connectLayout = (AnchorPane) loader.load();
 
       splitPane.setDividerPosition(0, 0.75);

@@ -54,7 +54,7 @@ public class BrightSignWebConnector extends Connector {
   public boolean connect(String host) {
 
     try {
-      this.target = host +  ".local";
+      this.target = host + ".local";
 
       tcpSocket = new Socket(this.target, tcpPort);
       outToTcpServer = new DataOutputStream(tcpSocket.getOutputStream());
@@ -63,6 +63,7 @@ public class BrightSignWebConnector extends Connector {
       this.isConnected = sendGetRequest("http://" + this.target);
     } catch (Exception e) {
       e.printStackTrace();
+      MainApp.showExceptionMessage(e);
       this.isConnected = false;
     }
     return this.isConnected;
@@ -73,7 +74,7 @@ public class BrightSignWebConnector extends Connector {
     try {
       tcpSocket.close();
     } catch (IOException e) {
-      // TODO Auto-generated catch block
+      MainApp.showExceptionMessage(e);
       e.printStackTrace();
     }
     return true;
@@ -101,35 +102,37 @@ public class BrightSignWebConnector extends Connector {
 
         }
 
-        // run script to delete whole media folder
-        String answer = sendTCPCommand("resetFilestructure");
-        if (!answer.equals("OK")) {
-          return false;
-        }
-
-        // upload media config file
-        success = uploadFile(mediaFolder, uploadData.getConfigFile());
-        if (!success){
-          return false;
-        }
-
-        // upload Media
-        for (MediaFile mediaFile : uploadData.getUploadList()) {
-          if (this.isCancelled()) {
+        if (uploadData != null) {
+          // run script to delete whole media folder
+          String answer = sendTCPCommand("resetFilestructure");
+          if (!answer.equals("OK")) {
             return false;
           }
 
-          if (mediaFile != null) {
-            // TODO: zzAlain: just needed while uploading config File, Remove if finished
-            // delete file in rootpath
-            success = deleteFile(mediaFolder,mediaFile.getFile());
-            if (!success)
-              return false;
+          // upload media config file
+          success = uploadFile(mediaFolder, uploadData.getConfigFile());
+          if (!success) {
+            return false;
+          }
 
-            // upload new file to mediafolder
-            success = uploadFile(mediaFolder, mediaFile.getFile());
-            if (!success)
+          // upload Media
+          for (MediaFile mediaFile : uploadData.getUploadList()) {
+            if (this.isCancelled()) {
               return false;
+            }
+
+            if (mediaFile != null) {
+              // TODO: zzAlain: just needed while uploading config File, Remove if finished
+              // delete file in rootpath
+              success = deleteFile(mediaFolder, mediaFile.getFile());
+              if (!success)
+                return false;
+
+              // upload new file to mediafolder
+              success = uploadFile(mediaFolder, mediaFile.getFile());
+              if (!success)
+                return false;
+            }
           }
         }
         return success;
@@ -148,7 +151,8 @@ public class BrightSignWebConnector extends Connector {
     request.setEntity(multiPartBuilder.build());
     HttpClient client = HttpClientBuilder.create().build();
     HttpResponse response = client.execute(request);
-    if (!response.getStatusLine().toString().contains("200")) {
+    if (!response.getStatusLine().toString().contains("200")) {  
+      MainApp.showErrorMessage("Upload Error", "Error while upload. Status was:" + response.getStatusLine().toString());
       return false;
     }
     return true;
@@ -169,7 +173,9 @@ public class BrightSignWebConnector extends Connector {
     huc.connect();
     int returnCode = huc.getResponseCode();
     if (returnCode != 200) {
+      MainApp.showErrorMessage("URL Error", "Wrong return code for url " + url + ". Code was:" + returnCode);
       return false;
+     
     }
     return true;
   }
@@ -179,7 +185,9 @@ public class BrightSignWebConnector extends Connector {
     try {
       outToTcpServer.writeBytes(command + '\n');
       answer = inFromTcpServer.readLine();
+      System.out.println(answer);
     } catch (Exception e) {
+      MainApp.showExceptionMessage(e);
       e.printStackTrace();
     }
     return answer;

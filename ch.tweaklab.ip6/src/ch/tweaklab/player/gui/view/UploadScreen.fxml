@@ -9,7 +9,7 @@
 
 <AnchorPane prefHeight="700.0" prefWidth="250.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.tweaklab.player.gui.controller.UploadScreenController">
    <children>
-      <Pane fx:id="generalSettingsPane" layoutX="4.0" layoutY="313.0" prefHeight="238.0" prefWidth="242.0">
+      <Pane fx:id="generalSettingsPane" layoutX="8.0" layoutY="257.0" prefHeight="238.0" prefWidth="242.0">
          <children>
             <GridPane layoutX="11.0" layoutY="33.0" prefHeight="208.0" prefWidth="210.0">
               <columnConstraints>
@@ -42,7 +42,7 @@
             </GridPane>
          </children>
       </Pane>
-      <Pane fx:id="displaySettingsPane" layoutX="9.0" layoutY="120.0" prefHeight="108.0" prefWidth="233.0">
+      <Pane fx:id="displaySettingsPane" layoutX="12.0" layoutY="101.0" prefHeight="108.0" prefWidth="233.0">
          <children>
             <CheckBox fx:id="autoDisplaySolutionCheckbox" layoutX="108.0" layoutY="6.0" mnemonicParsing="false" />
             <GridPane layoutX="7.0" layoutY="31.0" prefHeight="70.0" prefWidth="223.0">
@@ -79,26 +79,37 @@
             <Font name="System Bold" size="15.0" />
          </font>
       </Label>
-      <CheckBox fx:id="uploadDisplaySettingsCheckbox" layoutX="169.0" layoutY="103.0" mnemonicParsing="false" selected="true" text="Upload ">
+      <CheckBox fx:id="uploadDisplaySettingsCheckbox" layoutX="169.0" layoutY="78.0" mnemonicParsing="false" selected="true" text="Upload ">
          <font>
             <Font size="12.0" />
          </font></CheckBox>
-      <Label layoutX="11.0" layoutY="268.0" text="System Settings:">
+      <Label layoutX="11.0" layoutY="218.0" text="System Settings:">
          <font>
             <Font name="System Bold" size="15.0" />
          </font>
       </Label>
-      <CheckBox fx:id="uploadGeneralSettingsheckbox" layoutX="169.0" layoutY="305.0" mnemonicParsing="false" selected="true" text="Upload ">
+      <CheckBox fx:id="uploadGeneralSettingsheckbox" layoutX="169.0" layoutY="240.0" mnemonicParsing="false" selected="true" text="Upload ">
          <font>
             <Font size="12.0" />
          </font></CheckBox>
-      <Label layoutX="10.0" layoutY="74.0" text="Display Settings:">
+      <Label layoutX="10.0" layoutY="56.0" text="Display Settings:">
          <font>
             <Font name="System Bold" size="15.0" />
          </font>
       </Label>
-      <Line endX="110.0" layoutX="119.0" layoutY="95.0" startX="-110.0" />
+      <Line endX="110.0" layoutX="121.0" layoutY="77.0" startX="-110.0" />
       <Line endX="110.0" layoutX="120.0" layoutY="35.0" startX="-110.0" />
-      <Line endX="110.0" layoutX="120.0" layoutY="296.0" startX="-110.0" />
+      <Line endX="110.0" layoutX="125.0" layoutY="239.0" startX="-110.0" />
+      <Label layoutX="10.0" layoutY="515.0" text="Media">
+         <font>
+            <Font name="System Bold" size="15.0" />
+         </font>
+      </Label>
+      <Line endX="110.0" layoutX="120.0" layoutY="536.0" startX="-110.0" />
+      <CheckBox fx:id="uploadMediaCheckbox" layoutX="169.0" layoutY="537.0" mnemonicParsing="false" selected="true" text="Upload ">
+         <font>
+            <Font size="12.0" />
+         </font>
+      </CheckBox>
    </children>
 </AnchorPane>

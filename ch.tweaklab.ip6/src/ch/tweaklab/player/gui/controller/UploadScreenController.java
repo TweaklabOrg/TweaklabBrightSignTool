@@ -49,6 +49,9 @@ public class UploadScreenController {
   private CheckBox interlacedCheckbox;
 
   @FXML
+  private CheckBox uploadMediaCheckbox;
+
+  @FXML
   private Pane displaySettingsPane;
   @FXML
   private Pane generalSettingsPane;
@@ -214,8 +217,11 @@ public class UploadScreenController {
 
       // Create Upload Task and add Events
       Connector connector = ControllerMediator.getInstance().getConnector();
-      MediaUploadData uploadData = ControllerMediator.getInstance().getRootController().getMediaUploadData();
+      MediaUploadData uploadData = null;
+      if (uploadMediaCheckbox.isSelected()) {
 
+        uploadData = ControllerMediator.getInstance().getRootController().getMediaUploadData();
+      }
       uploadTask = connector.upload(uploadData, systemFilesForUpload);
 
       uploadTask.setOnSucceeded(event -> uploadTaskSucceedFinish());

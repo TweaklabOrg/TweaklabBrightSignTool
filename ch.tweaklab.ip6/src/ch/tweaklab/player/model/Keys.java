@@ -49,12 +49,12 @@ public class Keys {
   public static final String DEFAULT_DISPLAY_INTERLACED_PROPS_KEY = "default_display_interlaced";
 
   // Path to the fxml files:
-  public static final String CONNECT_SCREEN_FXML_PATH = "../view/ConnectScreen.fxml";
-  public static final String GPIO_TAB_FXML_PATH = "../view/GpioTab.fxml";
-  public static final String PLAYLIST_TAB_FXML_PATH = "../view/PlaylistTab.fxml";
-  public static final String ROOT_PAGE_FXML_PATH = "../view/RootPage.fxml";
-  public static final String UPLOAD_SCREEN_FXML_PATH = "../view/UploadScreen.fxml";
-  public static final String WAIT_SCREEN_FXML_PATH = "../view/WaitScreen.fxml";
+  public static final String CONNECT_SCREEN_FXML_PATH = "/ch/tweaklab/player/gui/view/ConnectScreen.fxml";
+  public static final String GPIO_TAB_FXML_PATH =       "/ch/tweaklab/player/gui/view/GpioTab.fxml";
+  public static final String PLAYLIST_TAB_FXML_PATH =   "/ch/tweaklab/player/gui/view/PlaylistTab.fxml";
+  public static final String ROOT_PAGE_FXML_PATH =      "/ch/tweaklab/player/gui/view/RootPage.fxml";
+  public static final String UPLOAD_SCREEN_FXML_PATH =  "/ch/tweaklab/player/gui/view/UploadScreen.fxml";
+  public static final String WAIT_SCREEN_FXML_PATH =    "/ch/tweaklab/player/gui/view/WaitScreen.fxml";
 
   
   public static String loadProperty(String key) {

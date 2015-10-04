@@ -3,20 +3,16 @@ package ch.tweaklab.player.connector;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.nio.channels.FileChannel;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
-import static java.nio.file.StandardCopyOption.*;
+
 import javafx.concurrent.Task;
 
 import javax.swing.filechooser.FileSystemView;
 
 import org.apache.commons.io.FileUtils;
 
-import ch.tweaklab.player.gui.controller.MainApp;
 import ch.tweaklab.player.model.Keys;
 import ch.tweaklab.player.model.MediaFile;
 import ch.tweaklab.player.model.MediaUploadData;
@@ -58,8 +54,6 @@ public class BrightSignSdCardConnector extends Connector {
     return true;
   }
 
-
-
   private void copyOrReplaceFile(File sourceFile, String destPath) throws Exception {
     if (!destPath.endsWith("/")) {
       destPath = destPath + "/";
@@ -92,7 +86,7 @@ public class BrightSignSdCardConnector extends Connector {
   }
 
   @Override
-  public Task<Boolean> upload(MediaUploadData uploadData,List<File> systemFiles) throws Exception {
+  public Task<Boolean> upload(MediaUploadData uploadData, List<File> systemFiles) throws Exception {
     // if (OSValidator.isWindows()) {
     Task<Boolean> uploadTask = new Task<Boolean>() {
       Boolean success;
@@ -100,7 +94,7 @@ public class BrightSignSdCardConnector extends Connector {
       @Override
       public Boolean call() throws Exception {
         success = true;
-        
+
         // writeSystemFiles
         for (File systemFile : systemFiles) {
           if (systemFile != null) {
@@ -110,31 +104,34 @@ public class BrightSignSdCardConnector extends Connector {
           }
 
         }
-        
-        // reset media folder on sd card
-        if ((target.endsWith("/") || target.endsWith("\\")) == false) {
-          target = target + "/";
-        }
-        File mediaFolder = new File(target + "/" + mediaFolderPath);
-        if (mediaFolder.exists()) {
-          FileUtils.deleteDirectory(mediaFolder);
-        }
-        mediaFolder.mkdir();
 
-        // copy xml config file
-        copyOrReplaceFile(uploadData.getConfigFile(), target + "/" + mediaFolderPath);
-
-        // copy each mediafile
-        for (MediaFile mediaFile : uploadData.getUploadList()) {
-          if (this.isCancelled()) {
-            return false;
+        if (uploadData != null) {
+          // reset media folder on sd card
+          if ((target.endsWith("/") || target.endsWith("\\")) == false) {
+            target = target + "/";
           }
-          if (mediaFile != null) {
-            copyOrReplaceFile(mediaFile.getFile(), mediaFolder.getPath());
+          File mediaFolder = new File(target + "/" + mediaFolderPath);
+          if (mediaFolder.exists()) {
+            FileUtils.deleteDirectory(mediaFolder);
+          }
+          mediaFolder.mkdir();
+
+          // copy xml config file
+          copyOrReplaceFile(uploadData.getConfigFile(), target + "/" + mediaFolderPath);
+
+          // copy each mediafile
+          for (MediaFile mediaFile : uploadData.getUploadList()) {
+            if (this.isCancelled()) {
+              return false;
+            }
+            if (mediaFile != null) {
+              copyOrReplaceFile(mediaFile.getFile(), mediaFolder.getPath());
+            }
           }
         }
         return success;
       }
+
     };
     return uploadTask;
     // } else {
@@ -157,7 +154,10 @@ public class BrightSignSdCardConnector extends Connector {
           paths = File.listRoots();
           for (File path : paths) {
             String description = fsv.getSystemTypeDescription(path);
-            if (description.equals("Removable Disk") || description.equals("Wechseldatenträger")) {
+            // TODO: enable after problem sovled with ant
+            // if (description.equals("Removable Disk") ||
+            // description.equals("Wechseldatentraeger")) {
+            if (description.equals("Removable Disk")) {
               targetList.add(path.getAbsolutePath());
             }
           }
@@ -176,6 +176,5 @@ public class BrightSignSdCardConnector extends Connector {
     };
     return getTargetTask;
   }
-
 
 }
