@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<gpio>
+  <loop type="IMAGE">IMG_20120624_145313 (2).jpg</loop>
+  <gpio3 type="IMAGE">WPID22_1920x1080.jpg</gpio3>
+  <retriggerEnabled>true</retriggerEnabled>
+  <retriggerEnabled>2000</retriggerEnabled>
+</gpio>
