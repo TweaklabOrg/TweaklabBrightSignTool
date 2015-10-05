@@ -1,5 +1,7 @@
 package ch.tweaklab.player.model;
 
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.Properties;
 
 import ch.tweaklab.player.gui.controller.MainApp;
@@ -61,7 +63,10 @@ public class Keys {
     Properties configFile = new Properties();
     String value = "";
     try {
-      configFile.load(Keys.class.getClassLoader().getResourceAsStream(Keys.CONFIG_FILE_NAME));
+    		String path = Keys.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+    		path = path.toString().substring(0, path.lastIndexOf("/")+1)+ Keys.CONFIG_FILE_NAME;	
+    		InputStream resource = new FileInputStream(path);
+      configFile.load(resource);
       value = configFile.getProperty(key);
     } catch (Exception e) {
       e.printStackTrace();
