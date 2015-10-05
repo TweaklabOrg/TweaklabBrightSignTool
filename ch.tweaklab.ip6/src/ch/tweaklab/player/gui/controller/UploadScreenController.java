@@ -1,7 +1,9 @@
 package ch.tweaklab.player.gui.controller;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -261,7 +263,10 @@ public class UploadScreenController {
   }
 
   private List<File> getScripts() {
-    String scriptsFolderPath = Keys.loadProperty(Keys.SCRIPTS_DIRECTORY_PROPS_KEY);
+	  
+	  String scriptsFolderPath = Keys.getAppFolderPath() + Keys.loadProperty(Keys.SCRIPTS_DIRECTORY_PROPS_KEY);	
+	  
+   // String scriptsFolderPath = Keys.loadProperty(Keys.SCRIPTS_DIRECTORY_PROPS_KEY);
     List<File> scriptFiles = new ArrayList<File>();
 
     try {

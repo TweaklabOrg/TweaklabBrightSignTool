@@ -15,6 +15,5 @@
 	<classpathentry kind="lib" path="lib/httpcore-4.4.1.jar"/>
 	<classpathentry kind="lib" path="lib/httpmime-4.5.jar"/>
 	<classpathentry kind="lib" path="lib/jmdns.jar"/>
-	<classpathentry kind="lib" path="lib/tl-player.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

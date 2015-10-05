@@ -26,12 +26,13 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import ch.tweaklab.player.gui.controller.MainApp;
+import ch.tweaklab.player.model.Keys;
 import ch.tweaklab.player.model.MediaFile;
 import ch.tweaklab.player.model.MediaType;
 
 public class XMLConfigCreator {
 
-  private final static String WORK_DIRECTORY = "work";
+  private final static String WORK_DIRECTORY = Keys.getAppFolderPath() + Keys.loadProperty(Keys.WORK_DIRECTORY_PROPS_KEY);
 
   /**
    * Creates an Display Settings xml file and stores it in work folder

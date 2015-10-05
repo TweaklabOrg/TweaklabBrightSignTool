@@ -58,14 +58,17 @@ public class Keys {
   public static final String UPLOAD_SCREEN_FXML_PATH =  "/ch/tweaklab/player/gui/view/UploadScreen.fxml";
   public static final String WAIT_SCREEN_FXML_PATH =    "/ch/tweaklab/player/gui/view/WaitScreen.fxml";
 
+  public static String getAppFolderPath(){
+	  String path = Keys.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+		path = path.toString().substring(0, path.lastIndexOf("/")+1);
+		return path;
+  }
   
   public static String loadProperty(String key) {
     Properties configFile = new Properties();
     String value = "";
     try {
-    		String path = Keys.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-    		path = path.toString().substring(0, path.lastIndexOf("/")+1)+ Keys.CONFIG_FILE_NAME;	
-    		InputStream resource = new FileInputStream(path);
+    		InputStream resource = new FileInputStream(getAppFolderPath() + Keys.CONFIG_FILE_NAME);
       configFile.load(resource);
       value = configFile.getProperty(key);
     } catch (Exception e) {

@@ -7,7 +7,7 @@
 	<property name="src.dir" location="src"/>
 	<property name="build.dir" location="build"/>
 	<property name="dist.dir" location="dist"/>
-	<property name="misc.dir" location="resources/misc"/>
+	<property name="res.dir" location="resources"/>
 	<property name="lib.dir" location="lib"/>
 
 	<path id="class.path">
@@ -21,6 +21,7 @@
 		<mkdir dir="${build.dir}/zip"/>
 		<mkdir dir="${build.dir}/zip/lib"/>
 		<mkdir dir="${build.dir}/zip/work"/>
+		<mkdir dir="${build.dir}/zip/bs-scripts"/>
 	</target>
 
 	<target name="compile" depends="init"
@@ -44,8 +45,15 @@
 			<fileset dir="${lib.dir}" />
 		</copy>
 		<copy todir="${build.dir}/zip/">
-			<fileset dir="${misc.dir}" />
+			<fileset dir="${res.dir}/misc" />
 		</copy>
+		<copy todir="${build.dir}/zip/bs-scripts">
+			<fileset dir="${res.dir}/bs-scripts"/>
+		</copy>
+		<copy todir="${build.dir}/zip/">
+			<fileset dir="${res.dir}/" includes="**/*properties"/>
+		</copy>
+
 		<zip destfile="${dist.dir}/player-client.zip">
 			<fileset dir="${build.dir}/zip">
 			</fileset>
