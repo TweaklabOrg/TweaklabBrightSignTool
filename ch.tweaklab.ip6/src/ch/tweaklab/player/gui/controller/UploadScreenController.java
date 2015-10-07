@@ -1,20 +1,5 @@
 package ch.tweaklab.player.gui.controller;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.concurrent.Task;
-import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.Pane;
 import ch.tweaklab.player.configurator.PlayerDisplaySettings;
 import ch.tweaklab.player.configurator.PlayerGeneralSettings;
 import ch.tweaklab.player.configurator.XMLConfigCreator;
@@ -24,6 +9,21 @@ import ch.tweaklab.player.gui.view.WaitScreen;
 import ch.tweaklab.player.model.Keys;
 import ch.tweaklab.player.model.MediaUploadData;
 import ch.tweaklab.player.util.NetworkUtils;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.concurrent.Task;
+import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.Pane;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * /*
@@ -223,6 +223,8 @@ public class UploadScreenController {
         uploadData = ControllerMediator.getInstance().getRootController().getMediaUploadData();
       }
       uploadTask = connector.upload(uploadData, systemFilesForUpload);
+
+      // TODO Stephan: Reboot after upload
 
       uploadTask.setOnSucceeded(event -> uploadTaskSucceedFinish());
       uploadTask.setOnCancelled(event -> uploadTaskAbortFinish());

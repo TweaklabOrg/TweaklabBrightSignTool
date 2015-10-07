@@ -106,6 +106,8 @@
          </font>
       </Label>
       <Line endX="110.0" layoutX="120.0" layoutY="536.0" startX="-110.0" />
+       <!--TODO Stephan: Checkbox should better be calles Upload Mediafiles?-->
+       <!--TODO Stephan: Second Checkbox to upload or not upload playlist/gpio settings? For ex. to change ip settings only...-->
       <CheckBox fx:id="uploadMediaCheckbox" layoutX="169.0" layoutY="537.0" mnemonicParsing="false" selected="true" text="Upload ">
          <font>
             <Font size="12.0" />

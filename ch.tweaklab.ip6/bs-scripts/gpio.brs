@@ -113,6 +113,7 @@ sub gpioMain(settings as Object, server as Object, connections as Object)
             end if
         ' roVieoEvent can signal various events that a videoPlayer triggers. Handle the MEDIA_ENDED event here.
         else if type(msg) = "roVideoEvent" and msg.GetInt() = m.MEDIA_ENDED then
+            ' TODO Stephan: Black in any case
             if gpioSettings.loop.count() > 0 then 
                 playLoopFile(mediafolder + "/" + gpioSettings.loop.getText(), videoPlayer)
             else
