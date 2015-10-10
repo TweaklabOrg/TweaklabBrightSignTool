@@ -1,5 +1,6 @@
 package ch.tweaklab.player.model;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URISyntaxException;
@@ -67,13 +68,23 @@ public class Keys {
 
   public static Path getAppFolderPath(){
 	  Path path = null;
-    try {
-      path = Paths.get(Keys.class.getProtectionDomain().getCodeSource().getLocation().toURI());
-    } catch (URISyntaxException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-		return path;
+//    try {
+//      path = Paths.get(Keys.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+//    } catch (URISyntaxException e) {
+//      // TODO Auto-generated catch block
+//      e.printStackTrace();
+//    }
+//		return path;
+	  
+	  // ClassLoader classLoader = Keys.class.getClassLoader();
+	    //File classpathRoot = new File(classLoader.getResource("").getPath());
+
+	    path =   Paths.get(System.getProperty("user.dir"));
+
+	    System.out.println(path);
+	    return path;
+
+
   }
   
   public static String loadProperty(String key) {

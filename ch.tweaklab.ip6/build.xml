@@ -43,14 +43,13 @@
 
 	<target name="zip" depends="jar" description="Creates inst zip">
 		<copy todir="${build.dir}/zip/">
-			<fileset dir="${res.dir}/misc" />
+			<fileset dir="misc" />
 		</copy>
 		<copy todir="${build.dir}/zip/bs-scripts">
-			<fileset dir="${res.dir}/bs-scripts"/>
+			<fileset dir="bs-scripts"/>
 		</copy>
-		<copy todir="${build.dir}/zip/">
-			<fileset dir="${res.dir}/" includes="**/*properties"/>
-		</copy>
+		
+		 <copy file="config.properties" todir="${build.dir}/zip/"/>
 
 		<zip destfile="${dist.dir}/player-client.zip">
 			<fileset dir="${build.dir}/zip">
