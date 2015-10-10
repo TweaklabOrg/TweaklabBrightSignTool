@@ -1,5 +1,4 @@
 sichere features für milestone:
-- wenn dhcp gecheckt, ip ect. grau
 - er ändert gateway und ip trotz dhcp
 - evt. startup menu nur anzeigen falls dhcp adresse bezogen, oder andere lösung
 - wenn dhcp oder video resolution auf auto: auch leere felder akzeptieren

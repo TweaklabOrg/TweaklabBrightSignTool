@@ -7,7 +7,6 @@
 	<property name="src.dir" location="src"/>
 	<property name="build.dir" location="build"/>
 	<property name="dist.dir" location="dist"/>
-	<property name="res.dir" location="resources"/>
 	<property name="lib.dir" location="lib"/>
 
 	<path id="class.path">
@@ -45,12 +44,10 @@
 		<copy todir="${build.dir}/zip/">
 			<fileset dir="misc" />
 		</copy>
+		 <copy file="config.properties" todir="${build.dir}/zip/"/>
 		<copy todir="${build.dir}/zip/bs-scripts">
 			<fileset dir="bs-scripts"/>
 		</copy>
-		
-		 <copy file="config.properties" todir="${build.dir}/zip/"/>
-
 		<zip destfile="${dist.dir}/player-client.zip">
 			<fileset dir="${build.dir}/zip">
 			</fileset>
