@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -61,13 +62,23 @@ public class UploadScreenController {
   @FXML
   private CheckBox uploadGeneralSettingsheckbox;
   @FXML
+  private TextField volumeField;
+
+  @FXML
   private TextField newHostnameField;
+
+  @FXML
+  private Label newIPlabel;
   @FXML
   private TextField newIPField;
+
   @FXML
-  private TextField volumeField;
+  private Label gatewayLabel;
   @FXML
   private TextField gatewayField;
+
+  @FXML
+  private Label subnetLabel;
   @FXML
   private TextField subnetField;
   @FXML
@@ -118,6 +129,21 @@ public class UploadScreenController {
       }
     });
 
+    dhcpCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+      public void changed(ObservableValue ov, Boolean old_val, Boolean new_val) {
+        disableIpField(new_val);
+      }
+    });
+
+  }
+
+  private void disableIpField(boolean b) {
+    newIPField.setDisable(b);
+    newIPlabel.setDisable(b);
+    gatewayField.setDisable(b);
+    gatewayLabel.setDisable(b);
+    subnetField.setDisable(b);
+    subnetLabel.setDisable(b);
   }
 
   private void disableDisplayResolutionElements(boolean disable) {
@@ -258,19 +284,18 @@ public class UploadScreenController {
     newSettings.setNetmask(this.subnetField.getText());
     newSettings.setGateway(this.gatewayField.getText());
     newSettings.setDhcp(this.dhcpCheckbox.isSelected());
+   newSettings.setMode(ControllerMediator.getInstance().getRootController().getMediaUploadData().getMode().toString());
     File xmlFile = XMLConfigCreator.createGeneralSettingsXml(newSettings);
     return xmlFile;
   }
 
   private List<File> getScripts() {
-	  
-	  String scriptsFolderPath = Keys.getAppFolderPath() + Keys.loadProperty(Keys.SCRIPTS_DIRECTORY_PROPS_KEY);	
-	  
-   // String scriptsFolderPath = Keys.loadProperty(Keys.SCRIPTS_DIRECTORY_PROPS_KEY);
+
+    Path scriptsFolderPath = Keys.getAppFolderPath().resolve(Keys.SCRIPTS_DIRECTORY);
     List<File> scriptFiles = new ArrayList<File>();
 
     try {
-      Files.walk(Paths.get(scriptsFolderPath)).forEach(filePath -> {
+      Files.walk(Paths.get(scriptsFolderPath.toUri())).forEach(filePath -> {
         if (Files.isRegularFile(filePath)) {
           scriptFiles.add(filePath.toFile());
         }

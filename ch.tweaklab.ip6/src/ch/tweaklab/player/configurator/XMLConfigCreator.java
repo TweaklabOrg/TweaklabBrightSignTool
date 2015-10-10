@@ -2,6 +2,7 @@ package ch.tweaklab.player.configurator;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
@@ -32,7 +33,7 @@ import ch.tweaklab.player.model.MediaType;
 
 public class XMLConfigCreator {
 
-  private final static String WORK_DIRECTORY = Keys.getAppFolderPath() + Keys.loadProperty(Keys.WORK_DIRECTORY_PROPS_KEY);
+  private final static Path workDirectory = Keys.getAppFolderPath().resolve(Keys.WORK_DIRECTORY);
 
   /**
    * Creates an Display Settings xml file and stores it in work folder
@@ -116,7 +117,7 @@ public class XMLConfigCreator {
       debugElement.appendChild(doc.createTextNode(generalSettings.getDebug().toString()));
       rootElement.appendChild(debugElement);
 
-      xmlFile = transformDocToXmlFile(doc, WORK_DIRECTORY + "/settings.xml");
+      xmlFile = transformDocToXmlFile(doc, workDirectory.resolve("settings.xml"));
 
     } catch (Exception e) {
       MainApp.showExceptionMessage(e);
@@ -167,7 +168,7 @@ public class XMLConfigCreator {
       interlacedElement.appendChild(doc.createTextNode(displaySettings.getInterlaced().toString()));
       rootElement.appendChild(interlacedElement);
 
-      xmlFile = transformDocToXmlFile(doc, WORK_DIRECTORY + "/display.xml");
+      xmlFile = transformDocToXmlFile(doc, workDirectory.resolve("display.xml"));
 
     } catch (Exception e) {
       MainApp.showExceptionMessage(e);
@@ -215,7 +216,7 @@ public class XMLConfigCreator {
 
       }
 
-      xmlFile = transformDocToXmlFile(doc, WORK_DIRECTORY + "/playlist.xml");
+      xmlFile = transformDocToXmlFile(doc, workDirectory.resolve("playlist.xml"));
 
     } catch (Exception e) {
       MainApp.showExceptionMessage(e);
@@ -281,7 +282,7 @@ public class XMLConfigCreator {
       retriggerDelayElement.appendChild(doc.createTextNode(retriggerDelay));
       rootElement.appendChild(retriggerDelayElement);
 
-      xmlFile = transformDocToXmlFile(doc, WORK_DIRECTORY + "/gpio.xml");
+      xmlFile = transformDocToXmlFile(doc, workDirectory.resolve("gpio.xml"));
 
     } catch (Exception e) {
       MainApp.showExceptionMessage(e);
@@ -292,7 +293,7 @@ public class XMLConfigCreator {
 
   }
 
-  private static File transformDocToXmlFile(Document doc, String filePath) {
+  private static File transformDocToXmlFile(Document doc, Path path) {
     File xmlFile = null;
     Transformer transformer = null;
     TransformerFactory transformerFactory = null;
@@ -308,7 +309,7 @@ public class XMLConfigCreator {
       DOMSource source = new DOMSource(doc);
 
       // create file in workfolder
-      xmlFile = new File(filePath);
+      xmlFile = new File(path.toUri());
       if (xmlFile.exists()) {
         xmlFile.delete();
       }

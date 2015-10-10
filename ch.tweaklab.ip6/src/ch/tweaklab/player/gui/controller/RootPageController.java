@@ -67,7 +67,7 @@ public class RootPageController  {
       AnchorPane connectLayout = (AnchorPane) loader.load();
 
       splitPane.getItems().add(connectLayout);
-      splitPane.setDividerPosition(0, 0.75);
+      splitPane.setDividerPosition(0, 0.7);
 
     } catch (IOException e) {
       e.printStackTrace();
@@ -84,7 +84,7 @@ public class RootPageController  {
       FXMLLoader loader = new FXMLLoader(getClass().getResource(Keys.CONNECT_SCREEN_FXML_PATH));
       AnchorPane connectLayout = (AnchorPane) loader.load();
 
-      splitPane.setDividerPosition(0, 0.75);
+      splitPane.setDividerPosition(0, 0.7);
       splitPane.getItems().add(connectLayout);
 
     } catch (IOException e) {

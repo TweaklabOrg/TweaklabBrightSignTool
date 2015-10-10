@@ -2,6 +2,9 @@ package ch.tweaklab.player.model;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.net.URISyntaxException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Properties;
 
 import ch.tweaklab.player.gui.controller.MainApp;
@@ -14,10 +17,14 @@ public class Keys {
   public static final String APPLICATION_TITLE = "Tweaklab Media Player";
   public static final String APPLICATION_VERSION = "1.0";
 
-  // PROPS KEY
-  public static final String WORK_DIRECTORY_PROPS_KEY = "work_directory";
-  public static final String SCRIPTS_DIRECTORY_PROPS_KEY = "scripts_directory";
+  public static final String WORK_DIRECTORY = "work";
+  public static final String SCRIPTS_DIRECTORY= "bs-scripts";
 
+   
+  
+  
+  
+  // PROPS KEY
   public static final String IMAGE_REGEX_PROPS_KEY = "image_regex";
   public static final String VIDEO_REGEX_PROPS_KEY = "video_regex";
   public static final String AUDIO_REGEX_PROPS_KEY = "audio_regex";
@@ -58,9 +65,14 @@ public class Keys {
   public static final String UPLOAD_SCREEN_FXML_PATH =  "/ch/tweaklab/player/gui/view/UploadScreen.fxml";
   public static final String WAIT_SCREEN_FXML_PATH =    "/ch/tweaklab/player/gui/view/WaitScreen.fxml";
 
-  public static String getAppFolderPath(){
-	  String path = Keys.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-		path = path.toString().substring(0, path.lastIndexOf("/")+1);
+  public static Path getAppFolderPath(){
+	  Path path = null;
+    try {
+      path = Paths.get(Keys.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+    } catch (URISyntaxException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
 		return path;
   }
   
@@ -68,7 +80,7 @@ public class Keys {
     Properties configFile = new Properties();
     String value = "";
     try {
-    		InputStream resource = new FileInputStream(getAppFolderPath() + Keys.CONFIG_FILE_NAME);
+    		InputStream resource = new FileInputStream(getAppFolderPath().resolve(Keys.CONFIG_FILE_NAME).toString());
       configFile.load(resource);
       value = configFile.getProperty(key);
     } catch (Exception e) {

@@ -15,6 +15,7 @@ import ch.tweaklab.player.configurator.XMLConfigCreator;
 import ch.tweaklab.player.model.MediaFile;
 import ch.tweaklab.player.model.MediaType;
 import ch.tweaklab.player.model.MediaUploadData;
+import ch.tweaklab.player.model.ModeType;
 
 /**
  * Controller Class for ContentManagerTab.fxml Manages Upload of a playlist to device
@@ -147,7 +148,7 @@ public class PlaylistTabController extends TabController {
 
     File configFile = XMLConfigCreator.createPlayListXML(listView.getItems());
 
-    MediaUploadData mediaUploadData = new MediaUploadData(listView.getItems(), configFile);
+    MediaUploadData mediaUploadData = new MediaUploadData(listView.getItems(), configFile,ModeType.PLAYLIST);
 
     return mediaUploadData;
   }

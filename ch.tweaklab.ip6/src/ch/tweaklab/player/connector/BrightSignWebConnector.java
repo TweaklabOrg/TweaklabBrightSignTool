@@ -151,7 +151,7 @@ public class BrightSignWebConnector extends Connector {
     request.setEntity(multiPartBuilder.build());
     HttpClient client = HttpClientBuilder.create().build();
     HttpResponse response = client.execute(request);
-    if (!response.getStatusLine().toString().contains("200")) {  
+    if (!response.getStatusLine().toString().contains("200")) {
       MainApp.showErrorMessage("Upload Error", "Error while upload. Status was:" + response.getStatusLine().toString());
       return false;
     }
@@ -175,7 +175,7 @@ public class BrightSignWebConnector extends Connector {
     if (returnCode != 200) {
       MainApp.showErrorMessage("URL Error", "Wrong return code for url " + url + ". Code was:" + returnCode);
       return false;
-     
+
     }
     return true;
   }
@@ -184,7 +184,7 @@ public class BrightSignWebConnector extends Connector {
     String answer = "";
     try {
       outToTcpServer.writeBytes(command + '\n');
-      answer = inFromTcpServer.readLine();
+       answer = inFromTcpServer.readLine();
       System.out.println(answer);
     } catch (Exception e) {
       MainApp.showExceptionMessage(e);

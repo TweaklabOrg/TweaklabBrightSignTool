@@ -15,6 +15,7 @@ import javafx.stage.FileChooser;
 import ch.tweaklab.player.configurator.XMLConfigCreator;
 import ch.tweaklab.player.model.MediaFile;
 import ch.tweaklab.player.model.MediaUploadData;
+import ch.tweaklab.player.model.ModeType;
 
 /**
  * Controller of PushButton Configuration View
@@ -133,7 +134,7 @@ public class GpioTabController extends TabController {
     ArrayList<MediaFile> uploadList = new ArrayList<MediaFile>(Arrays.asList(gpioFiles));
     uploadList.add(loopFile);
 
-    MediaUploadData mediaUploadData = new MediaUploadData(uploadList, gpioConfigFile);
+    MediaUploadData mediaUploadData = new MediaUploadData(uploadList, gpioConfigFile,ModeType.GPIO);
     return mediaUploadData;
   }
 

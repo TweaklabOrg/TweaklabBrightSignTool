@@ -19,7 +19,6 @@
 		<mkdir dir="${build.dir}"/>
 		<mkdir dir="${build.dir}/classes"/>
 		<mkdir dir="${build.dir}/zip"/>
-		<mkdir dir="${build.dir}/zip/lib"/>
 		<mkdir dir="${build.dir}/zip/work"/>
 		<mkdir dir="${build.dir}/zip/bs-scripts"/>
 	</target>
@@ -34,16 +33,15 @@
 		<jar destfile="${build.dir}/zip/tl-player.jar" >
 			<fileset dir="${build.dir}/classes"/>
 			<fileset dir="${src.dir}" includes="**/*.fxml"/>
-			<!-- <manifest>
+			<zipgroupfileset dir="${lib.dir}" includes="*.jar"/>
+			
+			 <manifest>
 				<attribute name="Main-Class" value="ch.tweaklab.player.gui.controller.MainApp"/>
-			</manifest> -->
+			</manifest>
 		</jar>
 	</target>
 
 	<target name="zip" depends="jar" description="Creates inst zip">
-		<copy todir="${build.dir}/zip/lib">
-			<fileset dir="${lib.dir}" />
-		</copy>
 		<copy todir="${build.dir}/zip/">
 			<fileset dir="${res.dir}/misc" />
 		</copy>

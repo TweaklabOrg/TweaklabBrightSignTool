@@ -13,7 +13,16 @@ public class MediaUploadData {
 
   private List<MediaFile> uploadList;
   private File configFile;
+  private ModeType mode;
 
+
+  public MediaUploadData(List<MediaFile> uploadList, File configFile, ModeType mode) {
+    super();
+    this.uploadList = uploadList;
+    this.configFile = configFile;
+    this.mode = mode;
+  }
+  
   public List<MediaFile> getUploadList() {
     return uploadList;
   }
@@ -22,10 +31,13 @@ public class MediaUploadData {
     return configFile;
   }
 
-  public MediaUploadData(List<MediaFile> uploadList, File configFile) {
-    super();
-    this.uploadList = uploadList;
-    this.configFile = configFile;
+  /**
+   * @return the mode
+   */
+  public ModeType getMode() {
+    return mode;
   }
+  
+  
 
 }
