@@ -14,7 +14,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import ch.tweaklab.player.configurator.UploadFile;
-import ch.tweaklab.player.configurator.XMLConfigCreator;
+import ch.tweaklab.player.configurator.XmlConfigCreator;
 import ch.tweaklab.player.connector.BrightSignSdCardConnector;
 import ch.tweaklab.player.gui.controller.ControllerMediator;
 import ch.tweaklab.player.gui.controller.MainApp;
@@ -97,7 +97,7 @@ public static void initJFX() {
       List<UploadFile> systemFiles = TestUtil.getSystemFiles();
       List<MediaFile> mediaFiles = TestUtil.getMediaFiles();
  
-      UploadFile uploadFile = XMLConfigCreator.createPlayListXML(mediaFiles);
+      UploadFile uploadFile = XmlConfigCreator.createPlayListXML(mediaFiles);
       MediaUploadData uploadData = new MediaUploadData(mediaFiles, uploadFile, ModeType.GPIO);
       Task<Boolean> uploadTask = sdConnector.upload(uploadData,systemFiles);
       uploadTask.setOnSucceeded(event -> success = true);

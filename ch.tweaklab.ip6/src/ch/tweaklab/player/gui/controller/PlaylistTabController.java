@@ -11,7 +11,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
-import ch.tweaklab.player.configurator.XMLConfigCreator;
+import ch.tweaklab.player.configurator.XmlConfigCreator;
 import ch.tweaklab.player.configurator.UploadFile;
 import ch.tweaklab.player.model.MediaFile;
 import ch.tweaklab.player.model.MediaType;
@@ -71,7 +71,7 @@ public class PlaylistTabController extends TabController {
     for (File choosenFile : choosenFiles) {
       if (choosenFile != null) {
         if (this.validateFileFormat(choosenFile.getName()) == false) {
-          MainApp.showErrorMessage("Wrong File", "This filetype is not supported. Add this type in the property file if you need it.");
+          MainApp.showErrorMessage("Wrong File", "This filetype is not supported.");
           return;
         }
         MediaFile mediaFile = new MediaFile(choosenFile);
@@ -146,11 +146,8 @@ public class PlaylistTabController extends TabController {
 
   @Override
   public MediaUploadData getMediaUploadData() {
-
-	UploadFile configFile = XMLConfigCreator.createPlayListXML(listView.getItems());
-
+	UploadFile configFile = XmlConfigCreator.createPlayListXML(listView.getItems());
     MediaUploadData mediaUploadData = new MediaUploadData(listView.getItems(), configFile,ModeType.PLAYLIST);
-
     return mediaUploadData;
   }
 

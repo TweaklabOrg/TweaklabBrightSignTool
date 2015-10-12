@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.ExecutionException;
 
 import javafx.application.Application;
 import javafx.concurrent.Task;
@@ -15,7 +16,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import ch.tweaklab.player.configurator.UploadFile;
-import ch.tweaklab.player.configurator.XMLConfigCreator;
+import ch.tweaklab.player.configurator.XmlConfigCreator;
 import ch.tweaklab.player.connector.BrightSignWebConnector;
 import ch.tweaklab.player.gui.controller.ControllerMediator;
 import ch.tweaklab.player.gui.controller.MainApp;
@@ -53,34 +54,28 @@ public class BrightSignWebConnectorTest {
     webConnector = new BrightSignWebConnector();
     configFile = new Properties();
     configFile.load(this.getClass().getClassLoader().getResourceAsStream("config.properties"));
-    connect();
+    webConnector.connect("tl-player");
 
   }
 
   @Test
-  public void connect() {
-    Task<List<String>> possibleTargetsTask = ControllerMediator.getInstance().getConnector().getPossibleTargets();
-    possibleTargetsTask.setOnSucceeded(event -> ScanTargetFinished(possibleTargetsTask));
+  public void ScanTargets() {
+    Task<List<String>> possibleTargetsTask = webConnector.getPossibleTargets();
+    possibleTargetsTask.setOnSucceeded(event -> {
+      List<String> targetList = null;
+      try {
+        targetList = possibleTargetsTask.get();
+      } catch (Exception e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+      assertTrue(targetList.size() > 1);
+    });
     Thread uploadThread = new Thread(possibleTargetsTask);
     uploadThread.start();
   }
 
-  private void ScanTargetFinished(Task<List<String>> possibleTargetsTask) {
-    try {
 
-      String target;
-      List<String> targetList = possibleTargetsTask.get();
-      if (targetList.size() > 0) {
-        target = targetList.get(0);
-      } else {
-        target = "192.168.0.66";
-      }
-      Boolean connected = webConnector.connect(target);
-      assertTrue(connected);
-    } catch (Exception e) {
-      MainApp.showExceptionMessage(e);
-    }
-  }
 
   @Test
   public void uploadFiles() {
@@ -88,7 +83,7 @@ public class BrightSignWebConnectorTest {
 
       List<UploadFile> systemFiles = TestUtil.getSystemFiles();
       List<MediaFile> mediaFiles = TestUtil.getMediaFiles();
-      UploadFile configFile = XMLConfigCreator.createPlayListXML(mediaFiles);
+      UploadFile configFile = XmlConfigCreator.createPlayListXML(mediaFiles);
       MediaUploadData uploadData = new MediaUploadData(mediaFiles, configFile,ModeType.PLAYLIST);
       Task<Boolean> uploadTask = webConnector.upload(uploadData, systemFiles);
       uploadTask.setOnSucceeded(event -> success = true);

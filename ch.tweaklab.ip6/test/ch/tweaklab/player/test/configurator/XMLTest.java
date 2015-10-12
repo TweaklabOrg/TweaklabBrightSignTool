@@ -13,7 +13,7 @@ import org.junit.Test;
 import ch.tweaklab.player.configurator.PlayerDisplaySettings;
 import ch.tweaklab.player.configurator.PlayerGeneralSettings;
 import ch.tweaklab.player.configurator.UploadFile;
-import ch.tweaklab.player.configurator.XMLConfigCreator;
+import ch.tweaklab.player.configurator.XmlConfigCreator;
 import ch.tweaklab.player.model.MediaFile;
 import ch.tweaklab.player.test.util.TestUtil;
 
@@ -30,14 +30,14 @@ public class XMLTest {
   public void createDisplaySettingsDefaultXML(){
     
     PlayerDisplaySettings defaultDisplaySettings = PlayerDisplaySettings.getDefaultDisplaySettings();
-    XMLConfigCreator.createDisplaySettingsXml(defaultDisplaySettings);
+    XmlConfigCreator.createDisplaySettingsXml(defaultDisplaySettings);
   }
 
   @Test
   public void createGeneralSettingsDefaultXML(){
     
     PlayerGeneralSettings settings = PlayerGeneralSettings.getDefaulGeneralSettings();
-    XMLConfigCreator.createGeneralSettingsXml(settings);
+    XmlConfigCreator.createGeneralSettingsXml(settings);
   }
 
   
@@ -48,7 +48,7 @@ public class XMLTest {
  
     List<MediaFile> mediaFiles = TestUtil.getMediaFiles();
 
-    UploadFile uploadFile = XMLConfigCreator.createPlayListXML(mediaFiles);
+    UploadFile uploadFile = XmlConfigCreator.createPlayListXML(mediaFiles);
 
     File destFile = new File("work/playlist.xml");
     try {
@@ -72,7 +72,7 @@ public class XMLTest {
     }
 
     mediaFilesArray[2] = null;
-    UploadFile uploadFile = XMLConfigCreator.createGpioXML(mediaFiles.get(2), mediaFilesArray, true, "1000");
+    UploadFile uploadFile = XmlConfigCreator.createGpioXML(mediaFiles.get(2), mediaFilesArray, true, "1000");
 
     File destFile = new File("work/gpio.xml");
     try {

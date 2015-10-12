@@ -13,7 +13,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
 import ch.tweaklab.player.configurator.UploadFile;
-import ch.tweaklab.player.configurator.XMLConfigCreator;
+import ch.tweaklab.player.configurator.XmlConfigCreator;
 import ch.tweaklab.player.model.MediaFile;
 import ch.tweaklab.player.model.MediaUploadData;
 import ch.tweaklab.player.model.ModeType;
@@ -93,7 +93,7 @@ public class GpioTabController extends TabController {
 
     if (choosenFile != null) {
       if (this.validateFileFormat(choosenFile.getName()) == false){
-        MainApp.showErrorMessage("Wrong File", "This filetype is not supported. Add this type in the property file if you need it.");
+        MainApp.showErrorMessage("Wrong File", "This filetype is not supported.");
         return;
       }
       MediaFile mediaFile = new MediaFile(choosenFile);
@@ -130,7 +130,7 @@ public class GpioTabController extends TabController {
 
   @Override
   public MediaUploadData getMediaUploadData() {
-    UploadFile gpioConfigFile = XMLConfigCreator.createGpioXML(loopFile, gpioFiles, retriggerEnabledCheckbox.isSelected(), retriggerDelayField.getText());
+    UploadFile gpioConfigFile = XmlConfigCreator.createGpioXML(loopFile, gpioFiles, retriggerEnabledCheckbox.isSelected(), retriggerDelayField.getText());
 
     ArrayList<MediaFile> uploadList = new ArrayList<MediaFile>(Arrays.asList(gpioFiles));
     uploadList.add(loopFile);

@@ -85,7 +85,7 @@ public class BrightSignWebConnector extends Connector {
   }
 
   @Override
-  public Task<Boolean> upload(MediaUploadData uploadData, List<UploadFile> systemFiles) throws Exception {
+  public Task<Boolean> upload(MediaUploadData mediaUploadData, List<UploadFile> systemFiles) throws Exception {
     Task<Boolean> uploadTask = new Task<Boolean>() {
       @Override
       public Boolean call() throws Exception {
@@ -100,31 +100,31 @@ public class BrightSignWebConnector extends Connector {
               return false;
 
             // upload new file system file to root folder
-            success = uploadFile("/", systemFile);
+            success = uploadFile("", systemFile);
             if (!success)
               return false;
           }
 
         }
 
-        if (uploadData != null) {
+        if (mediaUploadData != null) {
           // run script to delete whole media folder
           String answer = sendTCPCommand("resetFilestructure");
           if (!answer.equals("OK")) {
             return false;
           }
 
-          success = deleteFile("/", uploadData.getConfigFile().getFileName());
+          success = deleteFile("/", mediaUploadData.getConfigFile().getFileName());
           if (!success)
             return false;
           // upload media config file
-          success = uploadFile("/", uploadData.getConfigFile());
+          success = uploadFile("/", mediaUploadData.getConfigFile());
           if (!success) {
             return false;
           }
 
           // upload Media
-          for (MediaFile mediaFile : uploadData.getUploadList()) {
+          for (MediaFile mediaFile : mediaUploadData.getUploadList()) {
             if (this.isCancelled()) {
               return false;
             }
@@ -171,10 +171,11 @@ public class BrightSignWebConnector extends Connector {
 	    MultipartEntityBuilder multiPartBuilder = MultipartEntityBuilder.create();
 	    multiPartBuilder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
 	    
-	    ContentBody mimePart = new ByteArrayBody(uploadFile.getFileAsBytes(), "filename");
+	    ContentBody mimePart = new ByteArrayBody(uploadFile.getFileAsBytes(), uploadFile.getFileName());
 	    multiPartBuilder.addPart(mimePart.getFilename(), mimePart);
 	    
 	    HttpPost request = new HttpPost(uploadRootUrl + destinationFolder);
+
 	    request.setEntity(multiPartBuilder.build());
 	    HttpClient client = HttpClientBuilder.create().build();
 	    HttpResponse response = client.execute(request);

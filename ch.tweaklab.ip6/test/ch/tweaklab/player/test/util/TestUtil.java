@@ -12,7 +12,7 @@ import org.junit.Test;
 import ch.tweaklab.player.configurator.PlayerDisplaySettings;
 import ch.tweaklab.player.configurator.PlayerGeneralSettings;
 import ch.tweaklab.player.configurator.UploadFile;
-import ch.tweaklab.player.configurator.XMLConfigCreator;
+import ch.tweaklab.player.configurator.XmlConfigCreator;
 import ch.tweaklab.player.model.MediaFile;
 import ch.tweaklab.player.util.DiscoverServices;
 
@@ -21,9 +21,9 @@ public class TestUtil {
   public static List<UploadFile> getSystemFiles(){
     
     List<UploadFile> systemFiles = new ArrayList<UploadFile>();
-    UploadFile file = XMLConfigCreator.createGeneralSettingsXml(PlayerGeneralSettings.getDefaulGeneralSettings());
+    UploadFile file = XmlConfigCreator.createGeneralSettingsXml(PlayerGeneralSettings.getDefaulGeneralSettings());
     systemFiles.add(file);
-    file = XMLConfigCreator.createDisplaySettingsXml(PlayerDisplaySettings.getDefaultDisplaySettings());
+    file = XmlConfigCreator.createDisplaySettingsXml(PlayerDisplaySettings.getDefaultDisplaySettings());
     systemFiles.add(file);
     
     return systemFiles;
@@ -33,20 +33,12 @@ public class TestUtil {
   public static List<MediaFile> getMediaFiles(){
     List<MediaFile> mediaFiles = new ArrayList<MediaFile>();
     
-    URL path = MediaFile.class.getClassLoader().getResource("testmedia/test-image.jpg");
-    MediaFile mediaFile = new MediaFile(new File(path.getFile()));
-    mediaFile.setDisplayTime(10);
-    mediaFiles.add(mediaFile);
-    
-    path = mediaFile.getClass().getClassLoader().getResource("testmedia/test-movie.mp4");
+    MediaFile mediaFile = null;
+    URL path = MediaFile.class.getClassLoader().getResource("testmedia/test-movie.mp4");
     mediaFile = new MediaFile(new File(path.getFile()));
     mediaFiles.add(mediaFile);
     
-    path = mediaFile.getClass().getClassLoader().getResource("testmedia/test-unknown.txt");
-    mediaFile = new MediaFile(new File(path.getFile()));
-    mediaFiles.add(mediaFile);
-    
-    path = mediaFile.getClass().getClassLoader().getResource("testmedia/test-audio.mp3");
+    path = MediaFile.class.getClassLoader().getResource("testmedia/test-audio.mp3");
     mediaFile = new MediaFile(new File(path.getFile()));
     mediaFiles.add(mediaFile);
     

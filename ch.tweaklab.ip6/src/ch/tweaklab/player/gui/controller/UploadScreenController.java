@@ -25,7 +25,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import ch.tweaklab.player.configurator.PlayerDisplaySettings;
 import ch.tweaklab.player.configurator.PlayerGeneralSettings;
-import ch.tweaklab.player.configurator.XMLConfigCreator;
+import ch.tweaklab.player.configurator.XmlConfigCreator;
 import ch.tweaklab.player.configurator.UploadFile;
 import ch.tweaklab.player.connector.BrightSignWebConnector;
 import ch.tweaklab.player.connector.Connector;
@@ -164,15 +164,12 @@ public class UploadScreenController {
 
 		Connector currentConnector = ControllerMediator.getInstance().getConnector();
 		if (currentConnector instanceof BrightSignWebConnector) {
-			this.newHostnameField.setText(currentConnector.getTarget());
+			this.newHostnameField.setText(currentConnector.getName());
 			String ip = NetworkUtils.resolveHostName(this.newHostnameField.getText());
 			if (ip != "") {
 				this.newIPField.setText(ip);
 			}
-		} else {
-			this.newHostnameField.setText(settings.getHostname());
-		}
-
+		} 
 		this.dhcpCheckbox.setSelected(Boolean.valueOf(settings.getDhcp()));
 		this.volumeField.setText(String.valueOf(settings.getVolume()));
 
@@ -224,23 +221,25 @@ public class UploadScreenController {
 			// upload bs-scripts
 			List<UploadFile> scripts = getScripts();
 			systemFilesForUpload.addAll(scripts);
+			
+	     // Create Upload Task and add Events
+      Connector connector = ControllerMediator.getInstance().getConnector();
+      MediaUploadData uploadData = null;
+      if (uploadMediaCheckbox.isSelected()) {
 
+        uploadData = ControllerMediator.getInstance().getRootController().getMediaUploadData();
+        if (uploadData.getUploadList().size() < 1) {
+          MainApp.showErrorMessage("no Files", "No media files for upload added!");
+          return;
+        }
+      }
+			
 			// Show waitscreen
 			waitScreen = new WaitScreen();
 			waitScreen.setOnCancel(event -> uploadTask.cancel());
 			waitScreen.setOnClose(event -> uploadTask.cancel());
 
-			// Create Upload Task and add Events
-			Connector connector = ControllerMediator.getInstance().getConnector();
-			MediaUploadData uploadData = null;
-			if (uploadMediaCheckbox.isSelected()) {
 
-				uploadData = ControllerMediator.getInstance().getRootController().getMediaUploadData();
-				if (uploadData.getUploadList().size() < 1) {
-					MainApp.showErrorMessage("no Files", "No media files for upload added!");
-					return;
-				}
-			}
 			uploadTask = connector.upload(uploadData, systemFilesForUpload);
 
 			uploadTask.setOnSucceeded(event -> uploadTaskSucceedFinish());
@@ -261,7 +260,7 @@ public class UploadScreenController {
 		displaySettings.setHeight(Integer.parseInt(this.heightField.getText()));
 		displaySettings.setFreq(Integer.parseInt(this.frequencyField.getText()));
 		displaySettings.setInterlaced(this.interlacedCheckbox.isSelected());
-		UploadFile xmlFile = XMLConfigCreator.createDisplaySettingsXml(displaySettings);
+		UploadFile xmlFile = XmlConfigCreator.createDisplaySettingsXml(displaySettings);
 		return xmlFile;
 	}
 
@@ -271,13 +270,12 @@ public class UploadScreenController {
 		newSettings.setHostname(this.newHostnameField.getText());
 		newSettings.setIp(this.newIPField.getText());
 		newSettings.setVolume(Integer.parseInt(this.volumeField.getText()));
-		newSettings.setGateway(this.newIPField.getText());
 		newSettings.setNetmask(this.subnetField.getText());
 		newSettings.setGateway(this.gatewayField.getText());
 		newSettings.setDhcp(this.dhcpCheckbox.isSelected());
 		newSettings.setMode(
 				ControllerMediator.getInstance().getRootController().getMediaUploadData().getMode().toString());
-		UploadFile xmlFile = XMLConfigCreator.createGeneralSettingsXml(newSettings);
+		UploadFile xmlFile = XmlConfigCreator.createGeneralSettingsXml(newSettings);
 		return xmlFile;
 	}
 

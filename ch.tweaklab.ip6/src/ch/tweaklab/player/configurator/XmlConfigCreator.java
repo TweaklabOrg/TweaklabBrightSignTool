@@ -32,7 +32,7 @@ import ch.tweaklab.player.model.Keys;
 import ch.tweaklab.player.model.MediaFile;
 import ch.tweaklab.player.model.MediaType;
 
-public class XMLConfigCreator {
+public class XmlConfigCreator {
 
   
   /**

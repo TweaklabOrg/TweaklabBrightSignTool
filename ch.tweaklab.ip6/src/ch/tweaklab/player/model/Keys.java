@@ -44,7 +44,7 @@ public class Keys {
   public static final String DEFAULT_INITIALIZE_PROPS_KEY = "default_initialize";
 
   // DISPLAY PROPS KEY
-  public static final String DEFAULT_DISPLAY_AUTO_PROPS_KEY = "default__display_auto";
+  public static final String DEFAULT_DISPLAY_AUTO_PROPS_KEY = "default_display_auto";
   public static final String DEFAULT_DISPLAY_WIDTH_PROPS_KEY = "default_display_width";
   public static final String DEFAULT_DISPLAY_HEIGHT_PROPS_KEY = "default_display_height";
   public static final String DEFAULT_DISPLAY_FREQ_PROPS_KEY = "default_display_freq";

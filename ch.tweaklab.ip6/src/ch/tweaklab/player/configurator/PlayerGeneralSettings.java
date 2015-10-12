@@ -10,20 +10,20 @@ public class PlayerGeneralSettings {
 
   private String mediaFolder;
 
-  private String hostname;
-  private String ip;
-  private String netmask;
-  private String gateway;
+  private String hostname = "";
+  private String ip= "";
+  private String netmask= "";
+  private String gateway= "";
   private Boolean dhcp;
 
-  private String sshPassword;
-  private int tcpPort;
+  private String sshPassword= "";
+  private int tcpPort= 0;
   private Boolean debug;
-  private String mode;
+  private String mode= "";
 
-  private int volume;
-  private Boolean initialize;
-  private String scriptVersion;
+  private int volume= 100;
+  private Boolean initialize= true;
+  private String scriptVersion= "";
 
   public static PlayerGeneralSettings getDefaulGeneralSettings() {
 
@@ -32,7 +32,6 @@ public class PlayerGeneralSettings {
     settings.mediaFolder = Keys.loadProperty(Keys.DEFAULT_MEDIA_FOLDER_PROPS_KEY);
     settings.hostname = Keys.loadProperty(Keys.DEFAULT_HOSTNAME_PROPS_KEY);
     settings.dhcp = Boolean.parseBoolean(Keys.loadProperty(Keys.DEFAULT_DHCP_PROPS_KEY));
-
     settings.tcpPort = Integer.parseInt(Keys.loadProperty(Keys.DEFAULT_TCP_PORT_PROPS_KEY));
     settings.volume = Integer.parseInt(Keys.loadProperty(Keys.DEFAULT_VOLUME_PROPS_KEY));
 
