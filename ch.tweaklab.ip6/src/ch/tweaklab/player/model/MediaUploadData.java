@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import ch.tweaklab.player.configurator.UploadFile;
+
 /**
  * Contains the media Files and the associated XML config file
  * @author Alain
@@ -12,11 +14,11 @@ import java.util.List;
 public class MediaUploadData {
 
   private List<MediaFile> uploadList;
-  private File configFile;
+  private UploadFile configFile;
   private ModeType mode;
 
 
-  public MediaUploadData(List<MediaFile> uploadList, File configFile, ModeType mode) {
+  public MediaUploadData(List<MediaFile> uploadList, UploadFile configFile, ModeType mode) {
     super();
     this.uploadList = uploadList;
     this.configFile = configFile;
@@ -27,7 +29,7 @@ public class MediaUploadData {
     return uploadList;
   }
 
-  public File getConfigFile() {
+  public UploadFile getConfigFile() {
     return configFile;
   }
 

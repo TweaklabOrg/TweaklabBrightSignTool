@@ -5,6 +5,7 @@ package ch.tweaklab.player.connector;
  * Connects to a BrightSign Device via HTTP and SSH
  */
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -23,9 +24,12 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.entity.mime.content.ByteArrayBody;
+import org.apache.http.entity.mime.content.ContentBody;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.HttpClientBuilder;
 
+import ch.tweaklab.player.configurator.UploadFile;
 import ch.tweaklab.player.gui.controller.MainApp;
 import ch.tweaklab.player.model.Keys;
 import ch.tweaklab.player.model.MediaFile;
@@ -81,16 +85,17 @@ public class BrightSignWebConnector extends Connector {
   }
 
   @Override
-  public Task<Boolean> upload(MediaUploadData uploadData, List<File> systemFiles) throws Exception {
+  public Task<Boolean> upload(MediaUploadData uploadData, List<UploadFile> systemFiles) throws Exception {
     Task<Boolean> uploadTask = new Task<Boolean>() {
       @Override
       public Boolean call() throws Exception {
         Boolean success = true;
 
+
         // uploadSystemFiles
-        for (File systemFile : systemFiles) {
+        for (UploadFile systemFile : systemFiles) {
           if (systemFile != null) {
-            success = deleteFile("/", systemFile);
+            success = deleteFile("/", systemFile.getFileName());
             if (!success)
               return false;
 
@@ -109,7 +114,7 @@ public class BrightSignWebConnector extends Connector {
             return false;
           }
 
-          success = deleteFile("/", uploadData.getConfigFile());
+          success = deleteFile("/", uploadData.getConfigFile().getFileName());
           if (!success)
             return false;
           // upload media config file
@@ -127,7 +132,7 @@ public class BrightSignWebConnector extends Connector {
             if (mediaFile != null) {
               // TODO: zzAlain: just needed while uploading config File, Remove if finished
               // delete file in rootpath
-              success = deleteFile(mediaFolder, mediaFile.getFile());
+              success = deleteFile(mediaFolder, mediaFile.getFile().getName());
               if (!success)
                 return false;
 
@@ -160,13 +165,35 @@ public class BrightSignWebConnector extends Connector {
     }
     return true;
   }
+  
+  private Boolean uploadFile(String destinationFolder, UploadFile uploadFile) throws Exception {
 
-  private Boolean deleteFile(String destinationFolder, File file) throws Exception {
-    String urlFileName = file.getName().replace(" ", "+");
-    String urlFilePath = destinationFolder.replace("/", "%2F") + "%2F" + urlFileName;
-    String deleteUrl = "http://" + target + "/delete?filename=sd" + urlFilePath + "&delete=Delete";
-    return sendGetRequest(deleteUrl);
-  }
+	    MultipartEntityBuilder multiPartBuilder = MultipartEntityBuilder.create();
+	    multiPartBuilder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
+	    
+	    ContentBody mimePart = new ByteArrayBody(uploadFile.getFileAsBytes(), "filename");
+	    multiPartBuilder.addPart(mimePart.getFilename(), mimePart);
+	    
+	    HttpPost request = new HttpPost(uploadRootUrl + destinationFolder);
+	    request.setEntity(multiPartBuilder.build());
+	    HttpClient client = HttpClientBuilder.create().build();
+	    HttpResponse response = client.execute(request);
+	    if (!response.getStatusLine().toString().contains("200")) {
+	      MainApp.showErrorMessage("Upload Error", "Error while upload. Status was:" + response.getStatusLine().toString());
+	      return false;
+	    }
+	    return true;
+	  }
+  
+  
+  private Boolean deleteFile(String destinationFolder, String fileName) throws Exception {
+	    String urlFileName = fileName.replace(" ", "+");
+	    String urlFilePath = destinationFolder.replace("/", "%2F") + "%2F" + urlFileName;
+	    String deleteUrl = "http://" + target + "/delete?filename=sd" + urlFilePath + "&delete=Delete";
+	    return sendGetRequest(deleteUrl);
+	  }
+
+
 
   private Boolean sendGetRequest(String url) throws Exception {
     URL u = new URL(url);

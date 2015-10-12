@@ -13,6 +13,7 @@ import javax.swing.filechooser.FileSystemView;
 
 import org.apache.commons.io.FileUtils;
 
+import ch.tweaklab.player.configurator.UploadFile;
 import ch.tweaklab.player.model.Keys;
 import ch.tweaklab.player.model.MediaFile;
 import ch.tweaklab.player.model.MediaUploadData;
@@ -55,30 +56,7 @@ public class BrightSignSdCardConnector extends Connector {
     return true;
   }
 
-  private void copyOrReplaceFile(File sourceFile, String destPath) throws Exception {
-    if (!destPath.endsWith("/")) {
-      destPath = destPath + "/";
-    }
-    File destFile = new File(destPath + sourceFile.getName());
-    if (destFile.exists()) {
-      destFile.delete();
-    }
-    destFile.createNewFile();
 
-    FileChannel source = null;
-    FileChannel destination = null;
-
-    source = new FileInputStream(sourceFile).getChannel();
-    destination = new FileOutputStream(destFile).getChannel();
-    destination.transferFrom(source, 0, source.size());
-
-    if (source != null) {
-      source.close();
-    }
-    if (destination != null) {
-      destination.close();
-    }
-  }
 
   @Override
   public boolean disconnect() {
@@ -87,7 +65,7 @@ public class BrightSignSdCardConnector extends Connector {
   }
 
   @Override
-  public Task<Boolean> upload(MediaUploadData uploadData, List<File> systemFiles) throws Exception {
+  public Task<Boolean> upload(MediaUploadData uploadData, List<UploadFile> systemFiles) throws Exception {
     // if (OSValidator.isWindows()) {
     Task<Boolean> uploadTask = new Task<Boolean>() {
       Boolean success;
@@ -97,11 +75,11 @@ public class BrightSignSdCardConnector extends Connector {
         success = true;
 
         // writeSystemFiles
-        for (File systemFile : systemFiles) {
+        for (UploadFile systemFile : systemFiles) {
           if (systemFile != null) {
-            File targetFile = new File(target + "/" + systemFile.getName());
+            File targetFile = new File(target + "/" + systemFile.getFileName());
             // write file to root folder
-            FileUtils.copyFile(systemFile, targetFile);
+            FileUtils.writeByteArrayToFile(targetFile, systemFile.getFileAsBytes());
           }
 
         }
@@ -178,4 +156,40 @@ public class BrightSignSdCardConnector extends Connector {
     return getTargetTask;
   }
 
+  private void copyOrReplaceFile(File sourceFile, String destPath) throws Exception {
+	    if (!destPath.endsWith("/")) {
+	      destPath = destPath + "/";
+	    }
+	    File destFile = new File(destPath + sourceFile.getName());
+	    if (destFile.exists()) {
+	      destFile.delete();
+	    }
+	    destFile.createNewFile();
+
+	    FileChannel source = null;
+	    FileChannel destination = null;
+
+	    source = new FileInputStream(sourceFile).getChannel();
+	    destination = new FileOutputStream(destFile).getChannel();
+	    destination.transferFrom(source, 0, source.size());
+
+	    if (source != null) {
+	      source.close();
+	    }
+	    if (destination != null) {
+	      destination.close();
+	    }
+	  }
+  
+  private void copyOrReplaceFile(UploadFile sourceFile, String destPath) throws Exception {
+	    if (!destPath.endsWith("/")) {
+	      destPath = destPath + "/";
+	    }
+	    File destFile = new File(destPath + sourceFile.getFileName());
+	    if (destFile.exists()) {
+	      destFile.delete();
+	    }
+	    FileUtils.writeByteArrayToFile(destFile, sourceFile.getFileAsBytes());
+	  
+	  }
 }

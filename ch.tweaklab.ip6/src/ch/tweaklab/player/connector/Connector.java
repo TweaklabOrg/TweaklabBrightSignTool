@@ -9,6 +9,7 @@ import java.io.File;
 import java.util.List;
 
 import javafx.concurrent.Task;
+import ch.tweaklab.player.configurator.UploadFile;
 import ch.tweaklab.player.model.MediaFile;
 import ch.tweaklab.player.model.MediaUploadData;
 
@@ -42,7 +43,7 @@ public abstract class Connector {
   * @return
   * @throws Exception
   */
-  public abstract Task<Boolean> upload(MediaUploadData uploadData, List<File> systemFiles) throws Exception;
+  public abstract Task<Boolean> upload(MediaUploadData uploadData, List<UploadFile> systemFiles) throws Exception;
 
 
   /**
@@ -67,6 +68,8 @@ public abstract class Connector {
 }
 
 public abstract Task<List<String>> getPossibleTargets();
+
+
 
 
   

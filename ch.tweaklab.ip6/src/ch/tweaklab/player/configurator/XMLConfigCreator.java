@@ -1,5 +1,6 @@
 package ch.tweaklab.player.configurator;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -33,16 +34,15 @@ import ch.tweaklab.player.model.MediaType;
 
 public class XMLConfigCreator {
 
-  private final static Path workDirectory = Keys.getAppFolderPath().resolve(Keys.WORK_DIRECTORY);
-
+  
   /**
    * Creates an Display Settings xml file and stores it in work folder
    * 
    * @param mediaFiles
    * @return
    */
-  public static File createGeneralSettingsXml(PlayerGeneralSettings generalSettings) {
-    File xmlFile = null;
+  public static UploadFile createGeneralSettingsXml(PlayerGeneralSettings generalSettings) {
+	  UploadFile xmlFile = null;
 
     try {
       // xml factory
@@ -117,7 +117,7 @@ public class XMLConfigCreator {
       debugElement.appendChild(doc.createTextNode(generalSettings.getDebug().toString()));
       rootElement.appendChild(debugElement);
 
-      xmlFile = transformDocToXmlFile(doc, workDirectory.resolve("settings.xml"));
+      xmlFile = transformDocToXmlFile(doc, "settings.xml");
 
     } catch (Exception e) {
       MainApp.showExceptionMessage(e);
@@ -134,8 +134,8 @@ public class XMLConfigCreator {
    * @param mediaFiles
    * @return
    */
-  public static File createDisplaySettingsXml(PlayerDisplaySettings displaySettings) {
-    File xmlFile = null;
+  public static UploadFile createDisplaySettingsXml(PlayerDisplaySettings displaySettings) {
+	  UploadFile xmlFile = null;
 
     try {
       // xml factory
@@ -168,7 +168,7 @@ public class XMLConfigCreator {
       interlacedElement.appendChild(doc.createTextNode(displaySettings.getInterlaced().toString()));
       rootElement.appendChild(interlacedElement);
 
-      xmlFile = transformDocToXmlFile(doc, workDirectory.resolve("display.xml"));
+      xmlFile = transformDocToXmlFile(doc, "display.xml");
 
     } catch (Exception e) {
       MainApp.showExceptionMessage(e);
@@ -185,8 +185,8 @@ public class XMLConfigCreator {
    * @param mediaFiles
    * @return
    */
-  public static File createPlayListXML(List<MediaFile> mediaFiles) {
-    File xmlFile = null;
+  public static UploadFile createPlayListXML(List<MediaFile> mediaFiles) {
+	  UploadFile xmlFile = null;
 
     try {
 
@@ -216,7 +216,7 @@ public class XMLConfigCreator {
 
       }
 
-      xmlFile = transformDocToXmlFile(doc, workDirectory.resolve("playlist.xml"));
+      xmlFile = transformDocToXmlFile(doc, "playlist.xml");
 
     } catch (Exception e) {
       MainApp.showExceptionMessage(e);
@@ -235,8 +235,8 @@ public class XMLConfigCreator {
    * @param retriggerDelay
    * @return
    */
-  public static File createGpioXML(MediaFile loopFile, MediaFile[] gpioFiles, Boolean retriggerEnabled, String retriggerDelay) {
-    File xmlFile = null;
+  public static UploadFile createGpioXML(MediaFile loopFile, MediaFile[] gpioFiles, Boolean retriggerEnabled, String retriggerDelay) {
+	  UploadFile xmlFile = null;
 
     try {
 
@@ -282,7 +282,7 @@ public class XMLConfigCreator {
       retriggerDelayElement.appendChild(doc.createTextNode(retriggerDelay));
       rootElement.appendChild(retriggerDelayElement);
 
-      xmlFile = transformDocToXmlFile(doc, workDirectory.resolve("gpio.xml"));
+      xmlFile = transformDocToXmlFile(doc, "gpio.xml");
 
     } catch (Exception e) {
       MainApp.showExceptionMessage(e);
@@ -293,8 +293,9 @@ public class XMLConfigCreator {
 
   }
 
-  private static File transformDocToXmlFile(Document doc, Path path) {
-    File xmlFile = null;
+  private static UploadFile transformDocToXmlFile(Document doc, String fileName) {
+
+    ByteArrayOutputStream xmlStream=new ByteArrayOutputStream();
     Transformer transformer = null;
     TransformerFactory transformerFactory = null;
     try {
@@ -308,13 +309,7 @@ public class XMLConfigCreator {
 
       DOMSource source = new DOMSource(doc);
 
-      // create file in workfolder
-      xmlFile = new File(path.toUri());
-      if (xmlFile.exists()) {
-        xmlFile.delete();
-      }
-      xmlFile.createNewFile();
-      StreamResult result = new StreamResult(xmlFile);
+      StreamResult result = new StreamResult(xmlStream);
 
       transformer.transform(source, result);
     } catch (Exception e) {
@@ -323,7 +318,7 @@ public class XMLConfigCreator {
     } finally {
 
     }
-    return xmlFile;
+    return new UploadFile(fileName,xmlStream);
   }
 
 }

@@ -14,6 +14,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import ch.tweaklab.player.configurator.UploadFile;
 import ch.tweaklab.player.configurator.XMLConfigCreator;
 import ch.tweaklab.player.connector.BrightSignWebConnector;
 import ch.tweaklab.player.gui.controller.ControllerMediator;
@@ -85,9 +86,9 @@ public class BrightSignWebConnectorTest {
   public void uploadFiles() {
     try {
 
-      List<File> systemFiles = TestUtil.getSystemFiles();
+      List<UploadFile> systemFiles = TestUtil.getSystemFiles();
       List<MediaFile> mediaFiles = TestUtil.getMediaFiles();
-      File configFile = XMLConfigCreator.createPlayListXML(mediaFiles);
+      UploadFile configFile = XMLConfigCreator.createPlayListXML(mediaFiles);
       MediaUploadData uploadData = new MediaUploadData(mediaFiles, configFile,ModeType.PLAYLIST);
       Task<Boolean> uploadTask = webConnector.upload(uploadData, systemFiles);
       uploadTask.setOnSucceeded(event -> success = true);

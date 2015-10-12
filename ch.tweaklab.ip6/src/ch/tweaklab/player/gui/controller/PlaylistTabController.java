@@ -12,6 +12,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 import ch.tweaklab.player.configurator.XMLConfigCreator;
+import ch.tweaklab.player.configurator.UploadFile;
 import ch.tweaklab.player.model.MediaFile;
 import ch.tweaklab.player.model.MediaType;
 import ch.tweaklab.player.model.MediaUploadData;
@@ -146,7 +147,7 @@ public class PlaylistTabController extends TabController {
   @Override
   public MediaUploadData getMediaUploadData() {
 
-    File configFile = XMLConfigCreator.createPlayListXML(listView.getItems());
+	UploadFile configFile = XMLConfigCreator.createPlayListXML(listView.getItems());
 
     MediaUploadData mediaUploadData = new MediaUploadData(listView.getItems(), configFile,ModeType.PLAYLIST);
 

@@ -13,6 +13,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import ch.tweaklab.player.configurator.UploadFile;
 import ch.tweaklab.player.configurator.XMLConfigCreator;
 import ch.tweaklab.player.connector.BrightSignSdCardConnector;
 import ch.tweaklab.player.gui.controller.ControllerMediator;
@@ -93,11 +94,11 @@ public static void initJFX() {
   @Test
   public void uploadFiles() {
     try {
-      List<File> systemFiles = TestUtil.getSystemFiles();
+      List<UploadFile> systemFiles = TestUtil.getSystemFiles();
       List<MediaFile> mediaFiles = TestUtil.getMediaFiles();
  
-      File configFile = XMLConfigCreator.createPlayListXML(mediaFiles);
-      MediaUploadData uploadData = new MediaUploadData(mediaFiles, configFile, ModeType.GPIO);
+      UploadFile uploadFile = XMLConfigCreator.createPlayListXML(mediaFiles);
+      MediaUploadData uploadData = new MediaUploadData(mediaFiles, uploadFile, ModeType.GPIO);
       Task<Boolean> uploadTask = sdConnector.upload(uploadData,systemFiles);
       uploadTask.setOnSucceeded(event -> success = true);
       uploadTask.setOnCancelled(event -> success = false);

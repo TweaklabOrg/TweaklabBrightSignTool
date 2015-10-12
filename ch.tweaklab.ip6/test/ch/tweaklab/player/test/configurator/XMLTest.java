@@ -3,13 +3,16 @@ package ch.tweaklab.player.test.configurator;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
 
 import ch.tweaklab.player.configurator.PlayerDisplaySettings;
 import ch.tweaklab.player.configurator.PlayerGeneralSettings;
+import ch.tweaklab.player.configurator.UploadFile;
 import ch.tweaklab.player.configurator.XMLConfigCreator;
 import ch.tweaklab.player.model.MediaFile;
 import ch.tweaklab.player.test.util.TestUtil;
@@ -45,9 +48,16 @@ public class XMLTest {
  
     List<MediaFile> mediaFiles = TestUtil.getMediaFiles();
 
-    File xmlFile = XMLConfigCreator.createPlayListXML(mediaFiles);
+    UploadFile uploadFile = XMLConfigCreator.createPlayListXML(mediaFiles);
 
-    assertTrue(xmlFile.exists());
+    File destFile = new File("work/playlist.xml");
+    try {
+		FileUtils.writeByteArrayToFile(destFile, uploadFile.getFileAsBytes());
+	} catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+    assertTrue(destFile.exists());
 
   }
 
@@ -62,9 +72,16 @@ public class XMLTest {
     }
 
     mediaFilesArray[2] = null;
-    xmlFile1 = XMLConfigCreator.createGpioXML(mediaFiles.get(2), mediaFilesArray, true, "1000");
+    UploadFile uploadFile = XMLConfigCreator.createGpioXML(mediaFiles.get(2), mediaFilesArray, true, "1000");
 
-    assertTrue(xmlFile1.exists());
+    File destFile = new File("work/gpio.xml");
+    try {
+		FileUtils.writeByteArrayToFile(destFile, uploadFile.getFileAsBytes());
+	} catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+    assertTrue(destFile.exists());
 
 
   }

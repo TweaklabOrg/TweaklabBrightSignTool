@@ -12,6 +12,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
+import ch.tweaklab.player.configurator.UploadFile;
 import ch.tweaklab.player.configurator.XMLConfigCreator;
 import ch.tweaklab.player.model.MediaFile;
 import ch.tweaklab.player.model.MediaUploadData;
@@ -129,7 +130,7 @@ public class GpioTabController extends TabController {
 
   @Override
   public MediaUploadData getMediaUploadData() {
-    File gpioConfigFile = XMLConfigCreator.createGpioXML(loopFile, gpioFiles, retriggerEnabledCheckbox.isSelected(), retriggerDelayField.getText());
+    UploadFile gpioConfigFile = XMLConfigCreator.createGpioXML(loopFile, gpioFiles, retriggerEnabledCheckbox.isSelected(), retriggerDelayField.getText());
 
     ArrayList<MediaFile> uploadList = new ArrayList<MediaFile>(Arrays.asList(gpioFiles));
     uploadList.add(loopFile);

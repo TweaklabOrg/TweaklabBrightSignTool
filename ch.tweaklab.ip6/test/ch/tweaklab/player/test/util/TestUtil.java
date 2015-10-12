@@ -11,16 +11,17 @@ import org.junit.Test;
 
 import ch.tweaklab.player.configurator.PlayerDisplaySettings;
 import ch.tweaklab.player.configurator.PlayerGeneralSettings;
+import ch.tweaklab.player.configurator.UploadFile;
 import ch.tweaklab.player.configurator.XMLConfigCreator;
 import ch.tweaklab.player.model.MediaFile;
 import ch.tweaklab.player.util.DiscoverServices;
 
 public class TestUtil {
 
-  public static List<File> getSystemFiles(){
+  public static List<UploadFile> getSystemFiles(){
     
-    List<File> systemFiles = new ArrayList<File>();
-    File file = XMLConfigCreator.createGeneralSettingsXml(PlayerGeneralSettings.getDefaulGeneralSettings());
+    List<UploadFile> systemFiles = new ArrayList<UploadFile>();
+    UploadFile file = XMLConfigCreator.createGeneralSettingsXml(PlayerGeneralSettings.getDefaulGeneralSettings());
     systemFiles.add(file);
     file = XMLConfigCreator.createDisplaySettingsXml(PlayerDisplaySettings.getDefaultDisplaySettings());
     systemFiles.add(file);

@@ -1,5 +1,6 @@
 package ch.tweaklab.player.gui.controller;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -12,6 +13,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
+
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
@@ -23,6 +26,7 @@ import javafx.scene.layout.Pane;
 import ch.tweaklab.player.configurator.PlayerDisplaySettings;
 import ch.tweaklab.player.configurator.PlayerGeneralSettings;
 import ch.tweaklab.player.configurator.XMLConfigCreator;
+import ch.tweaklab.player.configurator.UploadFile;
 import ch.tweaklab.player.connector.BrightSignWebConnector;
 import ch.tweaklab.player.connector.Connector;
 import ch.tweaklab.player.gui.view.WaitScreen;
@@ -202,23 +206,23 @@ public class UploadScreenController {
 			if (!validateFields()) {
 				return;
 			}
-			List<File> systemFilesForUpload = new ArrayList<File>();
+			List<UploadFile> systemFilesForUpload = new ArrayList<UploadFile>();
 
 			// create and upload settings.xml
 			if (this.uploadDisplaySettingsCheckbox.isSelected()) {
-				File displaySettingsXML = createDisplaySettingsXML();
+				UploadFile displaySettingsXML = createDisplaySettingsXML();
 				systemFilesForUpload.add(displaySettingsXML);
 			}
 
 			// create and upload display.xml
 			if (this.uploadGeneralSettingsheckbox.isSelected()) {
-				File generalSettingsXml = createGeneralDisplaySettingsXML();
+				UploadFile generalSettingsXml = createGeneralDisplaySettingsXML();
 
 				systemFilesForUpload.add(generalSettingsXml);
 			}
 
 			// upload bs-scripts
-			List<File> scripts = getScripts();
+			List<UploadFile> scripts = getScripts();
 			systemFilesForUpload.addAll(scripts);
 
 			// Show waitscreen
@@ -250,18 +254,18 @@ public class UploadScreenController {
 		}
 	}
 
-	private File createDisplaySettingsXML() {
+	private UploadFile createDisplaySettingsXML() {
 		PlayerDisplaySettings displaySettings = PlayerDisplaySettings.getDefaultDisplaySettings();
 		displaySettings.setAuto(this.autoDisplaySolutionCheckbox.isSelected());
 		displaySettings.setWidth(Integer.parseInt(this.widthField.getText()));
 		displaySettings.setHeight(Integer.parseInt(this.heightField.getText()));
 		displaySettings.setFreq(Integer.parseInt(this.frequencyField.getText()));
 		displaySettings.setInterlaced(this.interlacedCheckbox.isSelected());
-		File xmlFile = XMLConfigCreator.createDisplaySettingsXml(displaySettings);
+		UploadFile xmlFile = XMLConfigCreator.createDisplaySettingsXml(displaySettings);
 		return xmlFile;
 	}
 
-	private File createGeneralDisplaySettingsXML() {
+	private UploadFile createGeneralDisplaySettingsXML() {
 		PlayerGeneralSettings defaultSettings = PlayerGeneralSettings.getDefaulGeneralSettings();
 		PlayerGeneralSettings newSettings = defaultSettings;
 		newSettings.setHostname(this.newHostnameField.getText());
@@ -273,11 +277,11 @@ public class UploadScreenController {
 		newSettings.setDhcp(this.dhcpCheckbox.isSelected());
 		newSettings.setMode(
 				ControllerMediator.getInstance().getRootController().getMediaUploadData().getMode().toString());
-		File xmlFile = XMLConfigCreator.createGeneralSettingsXml(newSettings);
+		UploadFile xmlFile = XMLConfigCreator.createGeneralSettingsXml(newSettings);
 		return xmlFile;
 	}
 
-	private List<File> getScripts() {
+	private List<UploadFile> getScripts() {
 
 		URI scriptsFolderPath = null;
 		try {
@@ -286,15 +290,16 @@ public class UploadScreenController {
 			MainApp.showExceptionMessage(e1);
 			e1.printStackTrace();
 		}
-		List<File> scriptFiles = new ArrayList<File>();
+		List<UploadFile> scriptFiles = new ArrayList<UploadFile>();
 
 		try {
 			Files.walk(Paths.get(scriptsFolderPath)).forEach(filePath -> {
-				if (Files.isRegularFile(filePath)) {
-					scriptFiles.add(filePath.toFile());
+				if (Files.isRegularFile(filePath)) {			
+							UploadFile configFile = new UploadFile(filePath.toFile());
+							scriptFiles.add(configFile);	
 				}
 			});
-		} catch (IOException e) {
+		} catch (Exception e) {
 			MainApp.showExceptionMessage(e);
 			e.printStackTrace();
 		}
