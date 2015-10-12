@@ -39,7 +39,7 @@ public class BrightSignWebConnector extends Connector {
   private String uploadRootUrl;
   Properties configFile;
   private String mediaFolder;
-
+  
   private int tcpPort;
 
   private Socket tcpSocket;
@@ -55,7 +55,7 @@ public class BrightSignWebConnector extends Connector {
 
     try {
       this.target = host + ".local";
-
+      this.name = host;
       tcpSocket = new Socket(this.target, tcpPort);
       outToTcpServer = new DataOutputStream(tcpSocket.getOutputStream());
       inFromTcpServer = new BufferedReader(new InputStreamReader(tcpSocket.getInputStream()));
@@ -109,8 +109,11 @@ public class BrightSignWebConnector extends Connector {
             return false;
           }
 
+          success = deleteFile("/", uploadData.getConfigFile());
+          if (!success)
+            return false;
           // upload media config file
-          success = uploadFile(mediaFolder, uploadData.getConfigFile());
+          success = uploadFile("/", uploadData.getConfigFile());
           if (!success) {
             return false;
           }

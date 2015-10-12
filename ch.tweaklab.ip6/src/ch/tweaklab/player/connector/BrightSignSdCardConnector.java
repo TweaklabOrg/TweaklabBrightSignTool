@@ -39,6 +39,7 @@ public class BrightSignSdCardConnector extends Connector {
   @Override
   public boolean connect(String path) {
     if (isPathValid(path)) {
+    	this.name = path;
       this.target = path;
       this.isConnected = true;
     } else {

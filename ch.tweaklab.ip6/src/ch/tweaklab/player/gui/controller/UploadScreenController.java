@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -36,294 +38,303 @@ import ch.tweaklab.player.util.NetworkUtils;
  */
 public class UploadScreenController {
 
-  @FXML
-  private Label targetAddressLabel;
-  @FXML
-  private CheckBox uploadDisplaySettingsCheckbox;
-  @FXML
-  private CheckBox autoDisplaySolutionCheckbox;
-  @FXML
-  private TextField widthField;
-  @FXML
-  private TextField heightField;
-  @FXML
-  private TextField frequencyField;
-  @FXML
-  private CheckBox interlacedCheckbox;
+	@FXML
+	private Label targetAddressLabel;
+	@FXML
+	private CheckBox uploadDisplaySettingsCheckbox;
+	@FXML
+	private CheckBox autoDisplaySolutionCheckbox;
+	@FXML
+	private TextField widthField;
+	@FXML
+	private TextField heightField;
+	@FXML
+	private TextField frequencyField;
+	@FXML
+	private CheckBox interlacedCheckbox;
 
-  @FXML
-  private CheckBox uploadMediaCheckbox;
+	@FXML
+	private CheckBox uploadMediaCheckbox;
 
-  @FXML
-  private Pane displaySettingsPane;
-  @FXML
-  private Pane generalSettingsPane;
+	@FXML
+	private Pane displaySettingsPane;
+	@FXML
+	private Pane generalSettingsPane;
 
-  @FXML
-  private CheckBox uploadGeneralSettingsheckbox;
-  @FXML
-  private TextField volumeField;
+	@FXML
+	private CheckBox uploadGeneralSettingsheckbox;
+	@FXML
+	private TextField volumeField;
 
-  @FXML
-  private TextField newHostnameField;
+	@FXML
+	private TextField newHostnameField;
 
-  @FXML
-  private Label newIPlabel;
-  @FXML
-  private TextField newIPField;
+	@FXML
+	private Label newIPlabel;
+	@FXML
+	private TextField newIPField;
 
-  @FXML
-  private Label gatewayLabel;
-  @FXML
-  private TextField gatewayField;
+	@FXML
+	private Label gatewayLabel;
+	@FXML
+	private TextField gatewayField;
 
-  @FXML
-  private Label subnetLabel;
-  @FXML
-  private TextField subnetField;
-  @FXML
-  private CheckBox dhcpCheckbox;
+	@FXML
+	private Label subnetLabel;
+	@FXML
+	private TextField subnetField;
+	@FXML
+	private CheckBox dhcpCheckbox;
 
-  @FXML
-  private CheckBox uploadScriptsCheckbox;
+	@FXML
+	private CheckBox uploadScriptsCheckbox;
 
-  WaitScreen waitScreen;
-  Task<Boolean> uploadTask;
-  private Thread uploadThread;
+	WaitScreen waitScreen;
+	Task<Boolean> uploadTask;
+	private Thread uploadThread;
 
-  @FXML
-  private Label currentUploadSetLabel;
+	@FXML
+	private Label currentUploadSetLabel;
 
-  ControllerMediator mediator;
+	ControllerMediator mediator;
 
-  /**
-   * Initializes the controller class. This method is automatically called after the fxml file has
-   * been loaded.
-   */
-  @FXML
-  private void initialize() {
-    mediator = ControllerMediator.getInstance();
-    mediator.setUploadController(this);
-    this.targetAddressLabel.setText(mediator.getConnector().getTarget());
+	/**
+	 * Initializes the controller class. This method is automatically called
+	 * after the fxml file has been loaded.
+	 */
+	@FXML
+	private void initialize() {
+		mediator = ControllerMediator.getInstance();
+		mediator.setUploadController(this);
+		this.targetAddressLabel.setText(mediator.getConnector().getName());
 
-    setDisplaySettingsDefaultValues();
-    setGeneralSettingsDefaultValues();
+		setDisplaySettingsDefaultValues();
+		setGeneralSettingsDefaultValues();
 
-    disableDisplayResolutionElements(this.autoDisplaySolutionCheckbox.isSelected());
+		disableDisplayResolutionElements(this.autoDisplaySolutionCheckbox.isSelected());
 
-    autoDisplaySolutionCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
-      public void changed(ObservableValue ov, Boolean old_val, Boolean new_val) {
-        disableDisplayResolutionElements(new_val);
-      }
-    });
+		autoDisplaySolutionCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+			public void changed(ObservableValue ov, Boolean old_val, Boolean new_val) {
+				disableDisplayResolutionElements(new_val);
+			}
+		});
 
-    uploadDisplaySettingsCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
-      public void changed(ObservableValue ov, Boolean old_val, Boolean new_val) {
-        displaySettingsPane.setDisable(!new_val);
-      }
-    });
+		uploadDisplaySettingsCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+			public void changed(ObservableValue ov, Boolean old_val, Boolean new_val) {
+				displaySettingsPane.setDisable(!new_val);
+			}
+		});
 
-    uploadGeneralSettingsheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
-      public void changed(ObservableValue ov, Boolean old_val, Boolean new_val) {
-        generalSettingsPane.setDisable(!new_val);
-      }
-    });
+		uploadGeneralSettingsheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+			public void changed(ObservableValue ov, Boolean old_val, Boolean new_val) {
+				generalSettingsPane.setDisable(!new_val);
+			}
+		});
 
-    dhcpCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
-      public void changed(ObservableValue ov, Boolean old_val, Boolean new_val) {
-        disableIpField(new_val);
-      }
-    });
+		dhcpCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+			public void changed(ObservableValue ov, Boolean old_val, Boolean new_val) {
+				disableIpField(new_val);
+			}
+		});
 
-  }
+	}
 
-  private void disableIpField(boolean b) {
-    newIPField.setDisable(b);
-    newIPlabel.setDisable(b);
-    gatewayField.setDisable(b);
-    gatewayLabel.setDisable(b);
-    subnetField.setDisable(b);
-    subnetLabel.setDisable(b);
-  }
+	private void disableIpField(boolean b) {
+		newIPField.setDisable(b);
+		newIPlabel.setDisable(b);
+		gatewayField.setDisable(b);
+		gatewayLabel.setDisable(b);
+		subnetField.setDisable(b);
+		subnetLabel.setDisable(b);
+	}
 
-  private void disableDisplayResolutionElements(boolean disable) {
-    this.widthField.setDisable(disable);
-    this.heightField.setDisable(disable);
-    this.frequencyField.setDisable(disable);
-    this.interlacedCheckbox.setDisable(disable);
-  }
+	private void disableDisplayResolutionElements(boolean disable) {
+		this.widthField.setDisable(disable);
+		this.heightField.setDisable(disable);
+		this.frequencyField.setDisable(disable);
+		this.interlacedCheckbox.setDisable(disable);
+	}
 
-  private void setGeneralSettingsDefaultValues() {
-    PlayerGeneralSettings settings = PlayerGeneralSettings.getDefaulGeneralSettings();
+	private void setGeneralSettingsDefaultValues() {
+		PlayerGeneralSettings settings = PlayerGeneralSettings.getDefaulGeneralSettings();
 
-    Connector currentConnector = ControllerMediator.getInstance().getConnector();
-    if (currentConnector instanceof BrightSignWebConnector) {
-      this.newHostnameField.setText(currentConnector.getTarget());
-      String ip = NetworkUtils.resolveHostName(this.newHostnameField.getText());
-      if (ip != "") {
-        this.newIPField.setText(ip);
-      }
-    } else {
-      this.newHostnameField.setText(settings.getHostname());
-      this.newIPField.setText(settings.getIp());
-    }
+		Connector currentConnector = ControllerMediator.getInstance().getConnector();
+		if (currentConnector instanceof BrightSignWebConnector) {
+			this.newHostnameField.setText(currentConnector.getTarget());
+			String ip = NetworkUtils.resolveHostName(this.newHostnameField.getText());
+			if (ip != "") {
+				this.newIPField.setText(ip);
+			}
+		} else {
+			this.newHostnameField.setText(settings.getHostname());
+		}
 
-    this.dhcpCheckbox.setSelected(Boolean.valueOf(settings.getDhcp()));
-    this.gatewayField.setText(settings.getGateway());
-    this.subnetField.setText(settings.getNetmask());
-    this.volumeField.setText(String.valueOf(settings.getVolume()));
+		this.dhcpCheckbox.setSelected(Boolean.valueOf(settings.getDhcp()));
+		this.volumeField.setText(String.valueOf(settings.getVolume()));
 
-  }
+	}
 
-  private void setDisplaySettingsDefaultValues() {
-    PlayerDisplaySettings displaySettings = PlayerDisplaySettings.getDefaultDisplaySettings();
+	private void setDisplaySettingsDefaultValues() {
+		PlayerDisplaySettings displaySettings = PlayerDisplaySettings.getDefaultDisplaySettings();
 
-    this.autoDisplaySolutionCheckbox.setSelected(displaySettings.getAuto());
-    this.widthField.setText(String.valueOf(displaySettings.getWidth()));
-    this.heightField.setText(String.valueOf(displaySettings.getHeight()));
-    this.interlacedCheckbox.setSelected(displaySettings.getInterlaced());
-    this.frequencyField.setText(String.valueOf(displaySettings.getFreq()));
-  }
+		this.autoDisplaySolutionCheckbox.setSelected(displaySettings.getAuto());
+		this.widthField.setText(String.valueOf(displaySettings.getWidth()));
+		this.heightField.setText(String.valueOf(displaySettings.getHeight()));
+		this.interlacedCheckbox.setSelected(displaySettings.getInterlaced());
+		this.frequencyField.setText(String.valueOf(displaySettings.getFreq()));
+	}
 
-  private Boolean validateFields() {
-    if (ControllerMediator.getInstance().getRootController().getMediaUploadData() == null) {
-      MainApp.showErrorMessage("No Media Data", "Please add a media config to upload!");
-      return false;
-    }
+	@FXML
+	private void handleDisconnect() {
 
-    if (this.widthField.getText().equals("") || this.frequencyField.getText().equals("") || this.heightField.getText().equals("")
-        || this.newHostnameField.getText().equals("") || this.newIPField.getText().equals("") || this.volumeField.getText().equals("")) {
-      MainApp.showErrorMessage("Empty Field", "No empty fields are allowed!");
-      return false;
-    }
+		ControllerMediator.getInstance().disconnectFromDevice();
+	}
 
-    return true;
+	public void updateCurrentUploadSetLabel(String playType) {
+		this.currentUploadSetLabel.setText(playType);
+	}
 
-  }
+	@FXML
+	private void handleUpload() {
 
-  @FXML
-  private void handleDisconnect() {
+		try {
 
-    ControllerMediator.getInstance().disconnectFromDevice();
-  }
+			if (!validateFields()) {
+				return;
+			}
+			List<File> systemFilesForUpload = new ArrayList<File>();
 
-  public void updateCurrentUploadSetLabel(String playType) {
-    this.currentUploadSetLabel.setText(playType);
-  }
+			// create and upload settings.xml
+			if (this.uploadDisplaySettingsCheckbox.isSelected()) {
+				File displaySettingsXML = createDisplaySettingsXML();
+				systemFilesForUpload.add(displaySettingsXML);
+			}
 
-  @FXML
-  private void handleUpload() {
+			// create and upload display.xml
+			if (this.uploadGeneralSettingsheckbox.isSelected()) {
+				File generalSettingsXml = createGeneralDisplaySettingsXML();
 
-    try {
+				systemFilesForUpload.add(generalSettingsXml);
+			}
 
-      if (!validateFields()) {
-        return;
-      }
-      List<File> systemFilesForUpload = new ArrayList<File>();
+			// upload bs-scripts
+			List<File> scripts = getScripts();
+			systemFilesForUpload.addAll(scripts);
 
-      // create and upload settings.xml
-      if (this.uploadDisplaySettingsCheckbox.isSelected()) {
-        File displaySettingsXML = createDisplaySettingsXML();
-        systemFilesForUpload.add(displaySettingsXML);
-      }
+			// Show waitscreen
+			waitScreen = new WaitScreen();
+			waitScreen.setOnCancel(event -> uploadTask.cancel());
+			waitScreen.setOnClose(event -> uploadTask.cancel());
 
-      // create and upload display.xml
-      if (this.uploadGeneralSettingsheckbox.isSelected()) {
-        File generalSettingsXml = createGeneralDisplaySettingsXML();
+			// Create Upload Task and add Events
+			Connector connector = ControllerMediator.getInstance().getConnector();
+			MediaUploadData uploadData = null;
+			if (uploadMediaCheckbox.isSelected()) {
 
-        systemFilesForUpload.add(generalSettingsXml);
-      }
+				uploadData = ControllerMediator.getInstance().getRootController().getMediaUploadData();
+				if (uploadData.getUploadList().size() < 1) {
+					MainApp.showErrorMessage("no Files", "No media files for upload added!");
+					return;
+				}
+			}
+			uploadTask = connector.upload(uploadData, systemFilesForUpload);
 
-      // upload bs-scripts
-      List<File> scripts = getScripts();
-      systemFilesForUpload.addAll(scripts);
+			uploadTask.setOnSucceeded(event -> uploadTaskSucceedFinish());
+			uploadTask.setOnCancelled(event -> uploadTaskAbortFinish());
+			uploadTask.setOnFailed(event -> uploadTaskAbortFinish());
 
-      // Show waitscreen
-      waitScreen = new WaitScreen();
-      waitScreen.setOnCancel(event -> uploadTask.cancel());
-      waitScreen.setOnClose(event -> uploadTask.cancel());
+			uploadThread = new Thread(uploadTask);
+			uploadThread.start();
+		} catch (Exception e) {
+			MainApp.showExceptionMessage(e);
+		}
+	}
 
-      // Create Upload Task and add Events
-      Connector connector = ControllerMediator.getInstance().getConnector();
-      MediaUploadData uploadData = null;
-      if (uploadMediaCheckbox.isSelected()) {
+	private File createDisplaySettingsXML() {
+		PlayerDisplaySettings displaySettings = PlayerDisplaySettings.getDefaultDisplaySettings();
+		displaySettings.setAuto(this.autoDisplaySolutionCheckbox.isSelected());
+		displaySettings.setWidth(Integer.parseInt(this.widthField.getText()));
+		displaySettings.setHeight(Integer.parseInt(this.heightField.getText()));
+		displaySettings.setFreq(Integer.parseInt(this.frequencyField.getText()));
+		displaySettings.setInterlaced(this.interlacedCheckbox.isSelected());
+		File xmlFile = XMLConfigCreator.createDisplaySettingsXml(displaySettings);
+		return xmlFile;
+	}
 
-        uploadData = ControllerMediator.getInstance().getRootController().getMediaUploadData();
-      }
-      uploadTask = connector.upload(uploadData, systemFilesForUpload);
+	private File createGeneralDisplaySettingsXML() {
+		PlayerGeneralSettings defaultSettings = PlayerGeneralSettings.getDefaulGeneralSettings();
+		PlayerGeneralSettings newSettings = defaultSettings;
+		newSettings.setHostname(this.newHostnameField.getText());
+		newSettings.setIp(this.newIPField.getText());
+		newSettings.setVolume(Integer.parseInt(this.volumeField.getText()));
+		newSettings.setGateway(this.newIPField.getText());
+		newSettings.setNetmask(this.subnetField.getText());
+		newSettings.setGateway(this.gatewayField.getText());
+		newSettings.setDhcp(this.dhcpCheckbox.isSelected());
+		newSettings.setMode(
+				ControllerMediator.getInstance().getRootController().getMediaUploadData().getMode().toString());
+		File xmlFile = XMLConfigCreator.createGeneralSettingsXml(newSettings);
+		return xmlFile;
+	}
 
-      uploadTask.setOnSucceeded(event -> uploadTaskSucceedFinish());
-      uploadTask.setOnCancelled(event -> uploadTaskAbortFinish());
-      uploadTask.setOnFailed(event -> uploadTaskAbortFinish());
+	private List<File> getScripts() {
 
-      uploadThread = new Thread(uploadTask);
-      uploadThread.start();
-    } catch (Exception e) {
-      MainApp.showExceptionMessage(e);
-    }
-  }
+		URI scriptsFolderPath = null;
+		try {
+			scriptsFolderPath = this.getClass().getResource("/bs-scripts").toURI();
+		} catch (URISyntaxException e1) {
+			MainApp.showExceptionMessage(e1);
+			e1.printStackTrace();
+		}
+		List<File> scriptFiles = new ArrayList<File>();
 
-  private File createDisplaySettingsXML() {
-    PlayerDisplaySettings displaySettings = PlayerDisplaySettings.getDefaultDisplaySettings();
-    displaySettings.setAuto(this.autoDisplaySolutionCheckbox.isSelected());
-    displaySettings.setWidth(Integer.parseInt(this.widthField.getText()));
-    displaySettings.setHeight(Integer.parseInt(this.heightField.getText()));
-    displaySettings.setFreq(Integer.parseInt(this.frequencyField.getText()));
-    displaySettings.setInterlaced(this.interlacedCheckbox.isSelected());
-    File xmlFile = XMLConfigCreator.createDisplaySettingsXml(displaySettings);
-    return xmlFile;
-  }
+		try {
+			Files.walk(Paths.get(scriptsFolderPath)).forEach(filePath -> {
+				if (Files.isRegularFile(filePath)) {
+					scriptFiles.add(filePath.toFile());
+				}
+			});
+		} catch (IOException e) {
+			MainApp.showExceptionMessage(e);
+			e.printStackTrace();
+		}
 
-  private File createGeneralDisplaySettingsXML() {
-    PlayerGeneralSettings defaultSettings = PlayerGeneralSettings.getDefaulGeneralSettings();
-    PlayerGeneralSettings newSettings = defaultSettings;
-    newSettings.setHostname(this.newHostnameField.getText());
-    newSettings.setIp(this.newIPField.getText());
-    newSettings.setVolume(Integer.parseInt(this.volumeField.getText()));
-    newSettings.setGateway(this.newIPField.getText());
-    newSettings.setNetmask(this.subnetField.getText());
-    newSettings.setGateway(this.gatewayField.getText());
-    newSettings.setDhcp(this.dhcpCheckbox.isSelected());
-   newSettings.setMode(ControllerMediator.getInstance().getRootController().getMediaUploadData().getMode().toString());
-    File xmlFile = XMLConfigCreator.createGeneralSettingsXml(newSettings);
-    return xmlFile;
-  }
+		return scriptFiles;
+	}
 
-  private List<File> getScripts() {
+	private void uploadTaskSucceedFinish() {
+		try {
+			if (uploadTask.get()) {
+				waitScreen.closeScreen();
+				MainApp.showInfoMessage("Upload finished!");
+			} else {
+				uploadTaskAbortFinish();
+			}
+		} catch (Exception e) {
+			MainApp.showExceptionMessage(e);
+		}
+	}
 
-    Path scriptsFolderPath = Keys.getAppFolderPath().resolve(Keys.SCRIPTS_DIRECTORY);
-    List<File> scriptFiles = new ArrayList<File>();
+	private void uploadTaskAbortFinish() {
+		waitScreen.closeScreen();
+		MainApp.showErrorMessage("Upload Failed", "An error occured during upload. Some files are not uploaded!");
+	}
 
-    try {
-      Files.walk(Paths.get(scriptsFolderPath.toUri())).forEach(filePath -> {
-        if (Files.isRegularFile(filePath)) {
-          scriptFiles.add(filePath.toFile());
-        }
-      });
-    } catch (IOException e) {
-      MainApp.showExceptionMessage(e);
-      e.printStackTrace();
-    }
+	private Boolean validateFields() {
+		if (ControllerMediator.getInstance().getRootController().getMediaUploadData() == null) {
+			MainApp.showErrorMessage("No Media Data", "Please add a media config to upload!");
+			return false;
+		}
 
-    return scriptFiles;
-  }
+		if (this.widthField.getText().equals("") || this.frequencyField.getText().equals("")
+				|| this.heightField.getText().equals("") || this.newHostnameField.getText().equals("")
+				|| this.volumeField.getText().equals("")) {
+			MainApp.showErrorMessage("Empty Field", "No empty fields are allowed!");
+			return false;
+		}
 
-  private void uploadTaskSucceedFinish() {
-    try {
-      if (uploadTask.get()) {
-        waitScreen.closeScreen();
-        MainApp.showInfoMessage("Upload finished!");
-      } else {
-        uploadTaskAbortFinish();
-      }
-    } catch (Exception e) {
-      MainApp.showExceptionMessage(e);
-    }
-  }
+		return true;
 
-  private void uploadTaskAbortFinish() {
-    waitScreen.closeScreen();
-    MainApp.showErrorMessage("Upload Failed", "An error occured during upload. Some files are not uploaded!");
-  }
+	}
 
 }

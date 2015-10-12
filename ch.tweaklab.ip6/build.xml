@@ -8,6 +8,7 @@
 	<property name="build.dir" location="build"/>
 	<property name="dist.dir" location="dist"/>
 	<property name="lib.dir" location="lib"/>
+	<property name="res.dir" location="resources"/>
 
 	<path id="class.path">
 		<dirset dir="${build.dir}" />
@@ -17,9 +18,7 @@
 	<target name="init">
 		<mkdir dir="${build.dir}"/>
 		<mkdir dir="${build.dir}/classes"/>
-		<mkdir dir="${build.dir}/zip"/>
-		<mkdir dir="${build.dir}/zip/work"/>
-		<mkdir dir="${build.dir}/zip/bs-scripts"/>
+		<mkdir dir="${build.dir}/bs-scripts"/>
 	</target>
 
 	<target name="compile" depends="init"
@@ -29,9 +28,10 @@
 
 	<target name="jar" depends="compile"
         description="generate the distribution">
-		<jar destfile="${build.dir}/zip/tl-player.jar" >
+		<jar destfile="${dist.dir}/tl-player.jar" >
 			<fileset dir="${build.dir}/classes"/>
 			<fileset dir="${src.dir}" includes="**/*.fxml"/>
+			<fileset dir="${res.dir}" />
 			<zipgroupfileset dir="${lib.dir}" includes="*.jar"/>
 			
 			 <manifest>
@@ -40,6 +40,7 @@
 		</jar>
 	</target>
 
+	<!--
 	<target name="zip" depends="jar" description="Creates inst zip">
 		<copy todir="${build.dir}/zip/">
 			<fileset dir="misc" />
@@ -53,8 +54,8 @@
 			</fileset>
 		</zip>
 	</target>
-
-	<target name="clean" depends="zip" description="clean up">
+-->
+	<target name="clean" depends="jar" description="clean up">
 		<delete dir="${build.dir}"/>
 	</target>
 </project>

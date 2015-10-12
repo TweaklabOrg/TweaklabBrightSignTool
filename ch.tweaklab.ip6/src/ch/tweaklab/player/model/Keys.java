@@ -20,9 +20,6 @@ public class Keys {
   public static final String WORK_DIRECTORY = "work";
   public static final String SCRIPTS_DIRECTORY= "bs-scripts";
 
-   
-  
-  
   
   // PROPS KEY
   public static final String IMAGE_REGEX_PROPS_KEY = "image_regex";
@@ -38,9 +35,6 @@ public class Keys {
   public static final String DEFAULT_DEBUG_PROPS_KEY = "default_debug";
 
   public static final String DEFAULT_HOSTNAME_PROPS_KEY = "default_hostname";
-  public static final String DEFAULT_IP_PROPS_KEY = "default_ip";
-  public static final String DEFAULT_GATEWAYS_PROPS_KEY = "default_gateways";
-  public static final String DEFAULT_NETWORK_PROPS_KEY = "default_netmask";
   public static final String DEFAULT_VOLUME_PROPS_KEY = "default_volume";
 
   public static final String DEFAULT_SCRIPT_VERSION_PROPS_KEY = "default_script_version";
@@ -68,22 +62,21 @@ public class Keys {
   public static Path getAppFolderPath(){
 	  Path path = null;
       path = Paths.get(System.getProperty("user.dir"));
-
 		return path;
   }
   
   public static String loadProperty(String key) {
-    Properties configFile = new Properties();
-    String value = "";
-    try {
-    		InputStream resource = new FileInputStream(getAppFolderPath().resolve(Keys.CONFIG_FILE_NAME).toString());
-      configFile.load(resource);
-      value = configFile.getProperty(key);
-    } catch (Exception e) {
-      e.printStackTrace();
-      MainApp.showExceptionMessage(e);
-    }
-    return value;
-  }
+	    Properties configFile = new Properties();
+	    String value = "";
+	    try {
+	    		InputStream resource = Keys.class.getResourceAsStream("/config.properties");
+	      configFile.load(resource);
+	      value = configFile.getProperty(key);
+	    } catch (Exception e) {
+	      e.printStackTrace();
+	      MainApp.showExceptionMessage(e);
+	    }
+	    return value;
+	  }
 
 }

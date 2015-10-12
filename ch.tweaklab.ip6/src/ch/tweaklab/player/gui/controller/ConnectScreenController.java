@@ -100,9 +100,11 @@ public class ConnectScreenController {
         this.targetDescriptionLabel.setText("Name:");
         targetComboBox.getItems().add(Keys.loadProperty(Keys.DEFAULT_HOSTNAME_PROPS_KEY));
         targetComboBox.getSelectionModel().selectLast();
+        targetComboBox.setEditable(true);
       }
       else if(connector instanceof BrightSignSdCardConnector){
         this.targetDescriptionLabel.setText("Path to SD-Card:");
+        targetComboBox.setEditable(false);
       }
         
     } catch (Exception e) {
