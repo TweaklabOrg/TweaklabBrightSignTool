@@ -1,20 +1,14 @@
 package ch.tweaklab.player.gui.controller;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.commons.io.FileUtils;
-
+import ch.tweaklab.player.configurator.PlayerDisplaySettings;
+import ch.tweaklab.player.configurator.PlayerGeneralSettings;
+import ch.tweaklab.player.configurator.UploadFile;
+import ch.tweaklab.player.configurator.XmlConfigCreator;
+import ch.tweaklab.player.connector.BrightSignWebConnector;
+import ch.tweaklab.player.connector.Connector;
+import ch.tweaklab.player.gui.view.WaitScreen;
+import ch.tweaklab.player.model.MediaUploadData;
+import ch.tweaklab.player.util.NetworkUtils;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
@@ -23,16 +17,13 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
-import ch.tweaklab.player.configurator.PlayerDisplaySettings;
-import ch.tweaklab.player.configurator.PlayerGeneralSettings;
-import ch.tweaklab.player.configurator.XmlConfigCreator;
-import ch.tweaklab.player.configurator.UploadFile;
-import ch.tweaklab.player.connector.BrightSignWebConnector;
-import ch.tweaklab.player.connector.Connector;
-import ch.tweaklab.player.gui.view.WaitScreen;
-import ch.tweaklab.player.model.Keys;
-import ch.tweaklab.player.model.MediaUploadData;
-import ch.tweaklab.player.util.NetworkUtils;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * /*
@@ -233,7 +224,7 @@ public class UploadScreenController {
           return;
         }
       }
-			
+
 			// Show waitscreen
 			waitScreen = new WaitScreen();
 			waitScreen.setOnCancel(event -> uploadTask.cancel());
@@ -248,6 +239,7 @@ public class UploadScreenController {
 
 			uploadThread = new Thread(uploadTask);
 			uploadThread.start();
+      // TODO Stephan: Reboot after upload
 		} catch (Exception e) {
 			MainApp.showExceptionMessage(e);
 		}

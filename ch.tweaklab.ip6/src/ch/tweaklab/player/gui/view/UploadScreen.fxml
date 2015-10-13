@@ -105,6 +105,8 @@
             <Font name="System Bold" size="15.0" />
          </font>
       </Label>
+       <!--TODO Stephan: Checkbox should better be calles Upload Mediafiles?-->
+       <!--TODO Stephan: Second Checkbox to upload or not upload playlist/gpio settings? For ex. to change ip settings only...-->
       <Line endX="150.0" layoutX="140.0" layoutY="596.0" startX="-110.0" stroke="#00000080" strokeWidth="0.5" />
       <CheckBox fx:id="uploadMediaCheckbox" layoutX="228.0" layoutY="577.0" mnemonicParsing="false" selected="true" text="Upload ">
          <font>

@@ -1,9 +1,11 @@
 package ch.tweaklab.player.gui.controller;
 
-import java.io.File;
-import java.util.Collections;
-import java.util.List;
-
+import ch.tweaklab.player.configurator.UploadFile;
+import ch.tweaklab.player.configurator.XmlConfigCreator;
+import ch.tweaklab.player.model.MediaFile;
+import ch.tweaklab.player.model.MediaType;
+import ch.tweaklab.player.model.MediaUploadData;
+import ch.tweaklab.player.model.ModeType;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -11,12 +13,10 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
-import ch.tweaklab.player.configurator.XmlConfigCreator;
-import ch.tweaklab.player.configurator.UploadFile;
-import ch.tweaklab.player.model.MediaFile;
-import ch.tweaklab.player.model.MediaType;
-import ch.tweaklab.player.model.MediaUploadData;
-import ch.tweaklab.player.model.ModeType;
+
+import java.io.File;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Controller Class for ContentManagerTab.fxml Manages Upload of a playlist to device
@@ -68,6 +68,7 @@ public class PlaylistTabController extends TabController {
   private void handleAddFileToListView() {
     final FileChooser fileChooser = new FileChooser();
     List<File> choosenFiles = fileChooser.showOpenMultipleDialog(MainApp.primaryStage);
+    // TODO Stephan: handle no files where chosen
     for (File choosenFile : choosenFiles) {
       if (choosenFile != null) {
         if (this.validateFileFormat(choosenFile.getName()) == false) {

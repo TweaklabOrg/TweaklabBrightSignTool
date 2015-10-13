@@ -21,7 +21,7 @@
         </rowConstraints>
          <children>
          
-         
+            <!--TODO Stephan: Something wrong with the order GPIO 0, 3, 2, 1-->
             <AnchorPane prefHeight="152.0" prefWidth="331.0">
                <children>
                   <AnchorPane layoutX="9.0" prefHeight="91.0" prefWidth="212.0">
@@ -89,6 +89,7 @@
          </children>
       </GridPane>
       <Button layoutX="345.0" layoutY="409.0" mnemonicParsing="false" onAction="#reset" prefHeight="30.0" prefWidth="189.0" text="Reset" />
+      <!--TODO Stephan: We need a better name for retrigger...-->
       <Label layoutX="309.0" layoutY="256.0" text="Retrigger before video&#10;has finished enabled: " />
       <Label layoutX="309.0" layoutY="320.0" text="Retriggerdelay:" />
       <CheckBox fx:id="retriggerEnabledCheckbox" layoutX="507.0" layoutY="265.0" mnemonicParsing="false" />
