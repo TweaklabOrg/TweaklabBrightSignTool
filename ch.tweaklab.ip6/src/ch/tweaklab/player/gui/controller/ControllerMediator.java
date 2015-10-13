@@ -1,7 +1,6 @@
 package ch.tweaklab.player.gui.controller;
 
 import ch.tweaklab.player.connector.Connector;
-import ch.tweaklab.player.model.MediaUploadData;
 
 /**
  * singelton class which contains data to communicate over the applications

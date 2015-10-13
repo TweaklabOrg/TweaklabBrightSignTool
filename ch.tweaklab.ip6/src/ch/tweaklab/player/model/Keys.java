@@ -1,13 +1,12 @@
 package ch.tweaklab.player.model;
 
+import ch.tweaklab.player.gui.controller.MainApp;
+
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Properties;
-
-import ch.tweaklab.player.gui.controller.MainApp;
 
 public class Keys {
 
@@ -35,6 +34,9 @@ public class Keys {
   public static final String DEFAULT_DEBUG_PROPS_KEY = "default_debug";
 
   public static final String DEFAULT_HOSTNAME_PROPS_KEY = "default_hostname";
+  public static final String DEFAULT_IP_PROPS_KEY = "default_ip";
+  public static final String DEFAULT_GATEWAY_PROPS_KEY = "default_gateway";
+  public static final String DEFAULT_NETWORK_PROPS_KEY = "default_netmask";
   public static final String DEFAULT_VOLUME_PROPS_KEY = "default_volume";
 
   public static final String DEFAULT_SCRIPT_VERSION_PROPS_KEY = "default_script_version";
@@ -66,17 +68,16 @@ public class Keys {
   }
   
   public static String loadProperty(String key) {
-	    Properties configFile = new Properties();
-	    String value = "";
-	    try {
-	    		InputStream resource = Keys.class.getResourceAsStream("/config.properties");
-	      configFile.load(resource);
-	      value = configFile.getProperty(key);
-	    } catch (Exception e) {
-	      e.printStackTrace();
-	      MainApp.showExceptionMessage(e);
-	    }
-	    return value;
-	  }
-
+    Properties configFile = new Properties();
+    String value = "";
+    try {
+      InputStream resource = new FileInputStream(getAppFolderPath().resolve("resources/" + Keys.CONFIG_FILE_NAME).toString());
+      configFile.load(resource);
+      value = configFile.getProperty(key);
+    } catch (Exception e) {
+      e.printStackTrace();
+      MainApp.showExceptionMessage(e);
+    }
+    return value;
+  }
 }

@@ -155,15 +155,20 @@ public class UploadScreenController {
 
 		Connector currentConnector = ControllerMediator.getInstance().getConnector();
 		if (currentConnector instanceof BrightSignWebConnector) {
-			this.newHostnameField.setText(currentConnector.getName());
+			this.newHostnameField.setText(currentConnector.getTarget());
 			String ip = NetworkUtils.resolveHostName(this.newHostnameField.getText());
 			if (ip != "") {
 				this.newIPField.setText(ip);
 			}
-		} 
-		this.dhcpCheckbox.setSelected(Boolean.valueOf(settings.getDhcp()));
-		this.volumeField.setText(String.valueOf(settings.getVolume()));
+		} else {
+			this.newHostnameField.setText(settings.getHostname());
+			this.newIPField.setText(settings.getIp());
+		}
 
+		this.dhcpCheckbox.setSelected(Boolean.valueOf(settings.getDhcp()));
+		this.gatewayField.setText(settings.getGateway());
+		this.subnetField.setText(settings.getNetmask());
+		this.volumeField.setText(String.valueOf(settings.getVolume()));
 	}
 
 	private void setDisplaySettingsDefaultValues() {
@@ -248,9 +253,9 @@ public class UploadScreenController {
 	private UploadFile createDisplaySettingsXML() {
 		PlayerDisplaySettings displaySettings = PlayerDisplaySettings.getDefaultDisplaySettings();
 		displaySettings.setAuto(this.autoDisplaySolutionCheckbox.isSelected());
-		displaySettings.setWidth(Integer.parseInt(this.widthField.getText()));
-		displaySettings.setHeight(Integer.parseInt(this.heightField.getText()));
-		displaySettings.setFreq(Integer.parseInt(this.frequencyField.getText()));
+		displaySettings.setWidth(this.widthField.getText());
+		displaySettings.setHeight(this.heightField.getText());
+		displaySettings.setFreq(this.frequencyField.getText());
 		displaySettings.setInterlaced(this.interlacedCheckbox.isSelected());
 		UploadFile xmlFile = XmlConfigCreator.createDisplaySettingsXml(displaySettings);
 		return xmlFile;

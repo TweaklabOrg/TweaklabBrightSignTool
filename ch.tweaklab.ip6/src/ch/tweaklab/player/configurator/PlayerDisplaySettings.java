@@ -1,27 +1,23 @@
 package ch.tweaklab.player.configurator;
 
-import java.io.IOException;
-import java.util.Properties;
-
-import ch.tweaklab.player.gui.controller.MainApp;
 import ch.tweaklab.player.model.Keys;
 
 public class PlayerDisplaySettings {
 
   private Boolean auto;
-  private int width;
-  private int height;
-  private int freq;
+  private String width;
+  private String height;
+  private String freq;
   private Boolean interlaced;
 
   public static PlayerDisplaySettings getDefaultDisplaySettings() {
 
     PlayerDisplaySettings displaySettings = new PlayerDisplaySettings();
 
-    displaySettings.auto = Boolean.parseBoolean((Keys.loadProperty(Keys.DEFAULT_DISPLAY_AUTO_PROPS_KEY)));
-    displaySettings.width = Integer.parseInt(Keys.loadProperty(Keys.DEFAULT_DISPLAY_WIDTH_PROPS_KEY));
-    displaySettings.height = Integer.parseInt(Keys.loadProperty(Keys.DEFAULT_DISPLAY_HEIGHT_PROPS_KEY));
-    displaySettings.freq = Integer.parseInt(Keys.loadProperty(Keys.DEFAULT_DISPLAY_FREQ_PROPS_KEY));
+    displaySettings.auto = Boolean.parseBoolean(Keys.loadProperty(Keys.DEFAULT_DISPLAY_AUTO_PROPS_KEY));
+    displaySettings.width = Keys.loadProperty(Keys.DEFAULT_DISPLAY_WIDTH_PROPS_KEY);
+    displaySettings.height = Keys.loadProperty(Keys.DEFAULT_DISPLAY_HEIGHT_PROPS_KEY);
+    displaySettings.freq = Keys.loadProperty(Keys.DEFAULT_DISPLAY_FREQ_PROPS_KEY);
     displaySettings.interlaced = Boolean.parseBoolean((Keys.loadProperty(Keys.DEFAULT_DISPLAY_INTERLACED_PROPS_KEY)));
 
     return displaySettings;
@@ -31,15 +27,15 @@ public class PlayerDisplaySettings {
     return auto;
   }
 
-  public int getWidth() {
+  public String getWidth() {
     return width;
   }
 
-  public int getHeight() {
+  public String getHeight() {
     return height;
   }
 
-  public int getFreq() {
+  public String getFreq() {
     return freq;
   }
 
@@ -51,15 +47,15 @@ public class PlayerDisplaySettings {
     this.auto = auto;
   }
 
-  public void setWidth(int width) {
+  public void setWidth(String width) {
     this.width = width;
   }
 
-  public void setHeight(int height) {
+  public void setHeight(String height) {
     this.height = height;
   }
 
-  public void setFreq(int freq) {
+  public void setFreq(String freq) {
     this.freq = freq;
   }
 
@@ -73,10 +69,10 @@ public class PlayerDisplaySettings {
     final int prime = 31;
     int result = 1;
     result = prime * result + ((auto == null) ? 0 : auto.hashCode());
-    result = prime * result + freq;
-    result = prime * result + height;
+    result = prime * result + Integer.valueOf(freq);
+    result = prime * result + Integer.valueOf(height);
     result = prime * result + ((interlaced == null) ? 0 : interlaced.hashCode());
-    result = prime * result + width;
+    result = prime * result + Integer.valueOf(width);
     return result;
   }
 

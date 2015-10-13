@@ -1,9 +1,5 @@
 package ch.tweaklab.player.configurator;
 
-import java.io.IOException;
-import java.util.Properties;
-
-import ch.tweaklab.player.gui.controller.MainApp;
 import ch.tweaklab.player.model.Keys;
 
 public class PlayerGeneralSettings {
@@ -32,6 +28,14 @@ public class PlayerGeneralSettings {
     settings.mediaFolder = Keys.loadProperty(Keys.DEFAULT_MEDIA_FOLDER_PROPS_KEY);
     settings.hostname = Keys.loadProperty(Keys.DEFAULT_HOSTNAME_PROPS_KEY);
     settings.dhcp = Boolean.parseBoolean(Keys.loadProperty(Keys.DEFAULT_DHCP_PROPS_KEY));
+    settings.ip = Keys.loadProperty(Keys.DEFAULT_IP_PROPS_KEY);
+
+    settings.gateway = Keys.loadProperty(Keys.DEFAULT_GATEWAY_PROPS_KEY);
+    if (settings.gateway == null || settings.gateway.equals("")) {
+      settings.gateway = settings.ip;
+    }
+    settings.netmask = Keys.loadProperty(Keys.DEFAULT_NETWORK_PROPS_KEY);
+
     settings.tcpPort = Integer.parseInt(Keys.loadProperty(Keys.DEFAULT_TCP_PORT_PROPS_KEY));
     settings.volume = Integer.parseInt(Keys.loadProperty(Keys.DEFAULT_VOLUME_PROPS_KEY));
 

@@ -1,26 +1,19 @@
 package ch.tweaklab.player.gui.controller;
 
-import java.io.IOException;
-import java.util.List;
-
-import javafx.collections.FXCollections;
-import javafx.concurrent.Task;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Cursor;
-import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.SplitPane;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
-import javafx.scene.layout.BorderPane;
 import ch.tweaklab.player.connector.BrightSignSdCardConnector;
 import ch.tweaklab.player.connector.BrightSignWebConnector;
 import ch.tweaklab.player.connector.Connector;
 import ch.tweaklab.player.model.Keys;
 import ch.tweaklab.player.util.KeyValueData;
+import javafx.collections.FXCollections;
+import javafx.concurrent.Task;
+import javafx.fxml.FXML;
+import javafx.scene.Cursor;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+
+import java.util.List;
 
 /**
  * Controller of ConnectScreen.fxml
