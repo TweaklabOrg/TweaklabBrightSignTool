@@ -1,23 +1,20 @@
 package ch.tweaklab.player.connector;
 
+import ch.tweaklab.player.configurator.UploadFile;
+import ch.tweaklab.player.model.Keys;
+import ch.tweaklab.player.model.MediaFile;
+import ch.tweaklab.player.model.MediaUploadData;
+import ch.tweaklab.player.util.OSValidator;
+import javafx.concurrent.Task;
+import org.apache.commons.io.FileUtils;
+
+import javax.swing.filechooser.FileSystemView;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
-
-import javafx.concurrent.Task;
-
-import javax.swing.filechooser.FileSystemView;
-
-import org.apache.commons.io.FileUtils;
-
-import ch.tweaklab.player.configurator.UploadFile;
-import ch.tweaklab.player.model.Keys;
-import ch.tweaklab.player.model.MediaFile;
-import ch.tweaklab.player.model.MediaUploadData;
-import ch.tweaklab.player.util.OSValidator;
 
 /**
  * Connects to a SD Card of Bright Sign Device
@@ -145,9 +142,10 @@ public class BrightSignSdCardConnector extends Connector {
           File volumes = new File("/Volumes");
           File files[] = volumes.listFiles();
           for (File f : files) {
-            // TODO: Stephan: parse .-files
             // TODO: Stephan: only add removeable disks
-            targetList.add(f.getAbsolutePath());
+            if (f.getName().charAt(0) != '.') {
+              targetList.add(f.getAbsolutePath());
+            }
           }
         }
         return targetList;
