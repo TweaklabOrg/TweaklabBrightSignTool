@@ -169,6 +169,8 @@ public class UploadScreenController {
 		this.gatewayField.setText(settings.getGateway());
 		this.subnetField.setText(settings.getNetmask());
 		this.volumeField.setText(String.valueOf(settings.getVolume()));
+
+		disableIpField(Boolean.valueOf(settings.getDhcp()));
 	}
 
 	private void setDisplaySettingsDefaultValues() {
@@ -179,6 +181,8 @@ public class UploadScreenController {
 		this.heightField.setText(String.valueOf(displaySettings.getHeight()));
 		this.interlacedCheckbox.setSelected(displaySettings.getInterlaced());
 		this.frequencyField.setText(String.valueOf(displaySettings.getFreq()));
+
+		disableDisplayResolutionElements(displaySettings.getAuto());
 	}
 
 	@FXML
