@@ -9,9 +9,7 @@ import javafx.concurrent.Task;
 import org.apache.commons.io.FileUtils;
 
 import javax.swing.filechooser.FileSystemView;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.*;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
@@ -144,7 +142,11 @@ public class BrightSignSdCardConnector extends Connector {
           for (File f : files) {
             // TODO: Stephan: only add removeable disks
             if (f.getName().charAt(0) != '.') {
-              targetList.add(f.getAbsolutePath());
+              String volumeInfo = executeCommand("diskutil info " + f);
+              // [\\s\\S] matches all chars, even \n, ...
+              if (volumeInfo.matches("[\\s\\S]*Protocol:( *)Secure Digital[\\s\\S]*")) {
+                targetList.add(f.getAbsolutePath());
+              }
             }
           }
         }
@@ -153,6 +155,29 @@ public class BrightSignSdCardConnector extends Connector {
     };
     return getTargetTask;
   }
+
+  private String executeCommand(String command) {
+    StringBuffer output = new StringBuffer();
+
+    Process p;
+    try {
+      p = Runtime.getRuntime().exec(command);
+      p.waitFor();
+      BufferedReader reader =
+              new BufferedReader(new InputStreamReader(p.getInputStream()));
+
+      String line = "";
+      while ((line = reader.readLine())!= null) {
+        output.append(line + "\n");
+      }
+
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+    return output.toString();
+  }
+
 
   private void copyOrReplaceFile(File sourceFile, String destPath) throws Exception {
 	    if (!destPath.endsWith("/")) {
