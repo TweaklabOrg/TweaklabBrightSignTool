@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 public class DiscoverServices {
 
   public static List<String> searchServices(String servicename, JmmDNS jmmdns) throws IOException {
-    ServiceInfo[] services = jmmdns.list("_ssh" + "._tcp.local.");
+    ServiceInfo[] services = jmmdns.list(servicename + "._tcp.local.");
     return Arrays.stream(services).map(e -> e.getName()).collect(Collectors.toList());
   }
 }
