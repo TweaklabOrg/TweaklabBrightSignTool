@@ -4,21 +4,13 @@ package ch.tweaklab.player.connector;
  * Implementation of Connector.
  * Connects to a BrightSign Device via HTTP and SSH
  */
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.Socket;
-import java.net.URL;
-import java.util.List;
-import java.util.Properties;
-import java.util.concurrent.ExecutionException;
-
+import ch.tweaklab.player.configurator.UploadFile;
+import ch.tweaklab.player.gui.controller.MainApp;
+import ch.tweaklab.player.model.Keys;
+import ch.tweaklab.player.model.MediaFile;
+import ch.tweaklab.player.model.MediaUploadData;
+import ch.tweaklab.player.util.DiscoverServices;
 import javafx.concurrent.Task;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
@@ -29,12 +21,13 @@ import org.apache.http.entity.mime.content.ContentBody;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.HttpClientBuilder;
 
-import ch.tweaklab.player.configurator.UploadFile;
-import ch.tweaklab.player.gui.controller.MainApp;
-import ch.tweaklab.player.model.Keys;
-import ch.tweaklab.player.model.MediaFile;
-import ch.tweaklab.player.model.MediaUploadData;
-import ch.tweaklab.player.util.DiscoverServices;
+import javax.jmdns.JmmDNS;
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.Socket;
+import java.net.URL;
+import java.util.List;
+import java.util.Properties;
 
 public class BrightSignWebConnector extends Connector {
 
@@ -49,6 +42,9 @@ public class BrightSignWebConnector extends Connector {
   private Socket tcpSocket;
   private DataOutputStream outToTcpServer;
   private BufferedReader inFromTcpServer;
+
+  private final JmmDNS jmmdns = JmmDNS.Factory.getInstance();
+
 
   public BrightSignWebConnector() {
     tcpPort = Integer.parseInt(Keys.loadProperty(Keys.DEFAULT_TCP_PORT_PROPS_KEY));
@@ -228,10 +224,11 @@ public class BrightSignWebConnector extends Connector {
   @Override
   public Task<List<String>> getPossibleTargets() {
     // TODO: Stephan: reaction if no target found.
+    // TODO: Stephan: Somehow the app reacts strange after first scan. Divices are not selectable.
     Task<List<String>> getTargetTask = new Task<List<String>>() {
       @Override
       public List<String> call() throws Exception {
-        List<String> result = DiscoverServices.searchServices("_tl");
+        List<String> result = DiscoverServices.searchServices("_tl", jmmdns);
         return result;
       }
     };

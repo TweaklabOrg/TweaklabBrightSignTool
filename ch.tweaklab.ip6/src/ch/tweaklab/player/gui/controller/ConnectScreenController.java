@@ -13,6 +13,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 
+import javax.jmdns.JmmDNS;
 import java.util.List;
 
 /**
@@ -43,7 +44,6 @@ public class ConnectScreenController {
   private ComboBox<String> targetComboBox;
 
 
-
   /**
    * Initializes the controller class. This method is automatically called after the fxml file has
    * been loaded.
@@ -56,7 +56,7 @@ public class ConnectScreenController {
     connectorComboBox.setItems(FXCollections.observableArrayList(webConnector, sdConnector));
     connectorComboBox.getSelectionModel().selectFirst();
     handleChangeConnector();
-    
+
   }
 
   @FXML
