@@ -4,6 +4,7 @@ import ch.tweaklab.player.configurator.UploadFile;
 import ch.tweaklab.player.model.Keys;
 import ch.tweaklab.player.model.MediaFile;
 import ch.tweaklab.player.model.MediaUploadData;
+import ch.tweaklab.player.util.CommandlineTool;
 import ch.tweaklab.player.util.OSValidator;
 import javafx.concurrent.Task;
 import org.apache.commons.io.FileUtils;
@@ -140,9 +141,8 @@ public class BrightSignSdCardConnector extends Connector {
           File volumes = new File("/Volumes");
           File files[] = volumes.listFiles();
           for (File f : files) {
-            // TODO: Stephan: only add removeable disks
             if (f.getName().charAt(0) != '.') {
-              String volumeInfo = executeCommand("diskutil info " + f);
+              String volumeInfo = CommandlineTool.executeCommand("diskutil info " + f);
               // [\\s\\S] matches all chars, even \n, ...
               if (volumeInfo.matches("[\\s\\S]*Protocol:( *)Secure Digital[\\s\\S]*")) {
                 targetList.add(f.getAbsolutePath());
@@ -155,29 +155,6 @@ public class BrightSignSdCardConnector extends Connector {
     };
     return getTargetTask;
   }
-
-  private String executeCommand(String command) {
-    StringBuffer output = new StringBuffer();
-
-    Process p;
-    try {
-      p = Runtime.getRuntime().exec(command);
-      p.waitFor();
-      BufferedReader reader =
-              new BufferedReader(new InputStreamReader(p.getInputStream()));
-
-      String line = "";
-      while ((line = reader.readLine())!= null) {
-        output.append(line + "\n");
-      }
-
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-
-    return output.toString();
-  }
-
 
   private void copyOrReplaceFile(File sourceFile, String destPath) throws Exception {
 	    if (!destPath.endsWith("/")) {

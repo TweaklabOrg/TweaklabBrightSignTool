@@ -1,7 +1,5 @@
 package ch.tweaklab.player.util;
 
-import javax.jmdns.JmmDNS;
-import javax.jmdns.ServiceInfo;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -14,8 +12,13 @@ import java.util.stream.Collectors;
  */
 public class DiscoverServices {
 
-  public static List<String> searchServices(String servicename, JmmDNS jmmdns) throws IOException {
-    ServiceInfo[] services = jmmdns.list(servicename + "._tcp.local.");
-    return Arrays.stream(services).map(e -> e.getName()).collect(Collectors.toList());
+  public static List<String> searchServices(String servicename) throws IOException {
+    // this solution uses the native terminal command. Luckily it works on windows AND Mac.
+    String result = CommandlineTool.executeCommand("dns-sd -B " + "_ssh" + " local", 2000);
+
+    // Collect Service instance names.
+    String[] splittedOutput = result.toString().split("( +)" + "_ssh" + "._tcp.( +)");
+    List<String> withoutFirst = Arrays.asList(splittedOutput).subList(1, splittedOutput.length);
+    return withoutFirst.stream().map(e -> e.split("\n")[0]).collect(Collectors.toList());
   }
 }

@@ -8,7 +8,6 @@ import ch.tweaklab.player.model.MediaFile;
 import ch.tweaklab.player.util.DiscoverServices;
 import org.junit.Test;
 
-import javax.jmdns.JmmDNS;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -53,7 +52,7 @@ public class TestUtil {
     String servicename = "_tl._tcp.local";
     DiscoverServices discoverer = new DiscoverServices();
     try {
-      discoverer.searchServices(servicename, JmmDNS.Factory.getInstance());
+      discoverer.searchServices(servicename);
     } catch (IOException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();

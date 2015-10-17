@@ -13,7 +13,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 
-import javax.jmdns.JmmDNS;
 import java.util.List;
 
 /**
@@ -69,9 +68,10 @@ public class ConnectScreenController {
   }
 
   private void ScanTargetFinished(Task<List<String>> possibleTargetsTask) {
+    // TODO Stephan: somehow the curser disappears, at least on my system.
     try {
       targetComboBox.getItems().setAll(possibleTargetsTask.get());
-      targetComboBox.getSelectionModel().selectLast();
+      targetComboBox.getSelectionModel().selectFirst();
       MainApp.primaryStage.getScene().setCursor(Cursor.DEFAULT);
     } catch (Exception e) {
       MainApp.showExceptionMessage(e);

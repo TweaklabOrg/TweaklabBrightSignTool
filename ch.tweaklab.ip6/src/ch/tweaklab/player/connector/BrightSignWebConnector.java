@@ -21,7 +21,6 @@ import org.apache.http.entity.mime.content.ContentBody;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.HttpClientBuilder;
 
-import javax.jmdns.JmmDNS;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.Socket;
@@ -42,9 +41,6 @@ public class BrightSignWebConnector extends Connector {
   private Socket tcpSocket;
   private DataOutputStream outToTcpServer;
   private BufferedReader inFromTcpServer;
-
-  private final JmmDNS jmmdns = JmmDNS.Factory.getInstance();
-
 
   public BrightSignWebConnector() {
     tcpPort = Integer.parseInt(Keys.loadProperty(Keys.DEFAULT_TCP_PORT_PROPS_KEY));
@@ -228,7 +224,7 @@ public class BrightSignWebConnector extends Connector {
     Task<List<String>> getTargetTask = new Task<List<String>>() {
       @Override
       public List<String> call() throws Exception {
-        List<String> result = DiscoverServices.searchServices("_tl", jmmdns);
+        List<String> result = DiscoverServices.searchServices("_tl");
         return result;
       }
     };
