@@ -2,10 +2,7 @@ package ch.tweaklab.player.model;
 
 import ch.tweaklab.player.gui.controller.MainApp;
 
-import java.io.FileInputStream;
 import java.io.InputStream;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Properties;
 
 public class Keys {
@@ -61,17 +58,11 @@ public class Keys {
   public static final String UPLOAD_SCREEN_FXML_PATH =  "/ch/tweaklab/player/gui/view/UploadScreen.fxml";
   public static final String WAIT_SCREEN_FXML_PATH =    "/ch/tweaklab/player/gui/view/WaitScreen.fxml";
 
-  public static Path getAppFolderPath(){
-	  Path path = null;
-      path = Paths.get(System.getProperty("user.dir"));
-		return path;
-  }
-  
   public static String loadProperty(String key) {
     Properties configFile = new Properties();
     String value = "";
     try {
-      InputStream resource = new FileInputStream(getAppFolderPath().resolve("resources/" + Keys.CONFIG_FILE_NAME).toString());
+      InputStream resource = Keys.class.getResourceAsStream("/config.properties");
       configFile.load(resource);
       value = configFile.getProperty(key);
     } catch (Exception e) {
