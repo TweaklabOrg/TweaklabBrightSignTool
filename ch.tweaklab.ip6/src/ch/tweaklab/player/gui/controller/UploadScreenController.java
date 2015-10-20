@@ -330,10 +330,12 @@ public class UploadScreenController {
 			return false;
 		}
 
-		if (this.widthField.getText().equals("") || this.frequencyField.getText().equals("")
+		
+		if (this.autoDisplaySolutionCheckbox.isSelected() == false &&
+		    ( this.widthField.getText().equals("") || this.frequencyField.getText().equals("")
 				|| this.heightField.getText().equals("") || this.newHostnameField.getText().equals("")
-				|| this.volumeField.getText().equals("")) {
-			MainApp.showErrorMessage("Empty Field", "No empty fields are allowed!");
+				|| this.volumeField.getText().equals(""))) {
+			MainApp.showErrorMessage("Empty Field", "Please select Auto Resolution or set some values!");
 			return false;
 		}
 

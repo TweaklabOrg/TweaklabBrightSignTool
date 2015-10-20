@@ -92,7 +92,7 @@ public class BrightSignSdCardConnector extends Connector {
           mediaFolder.mkdir();
 
           // copy xml config file
-          copyOrReplaceFile(uploadData.getConfigFile(), target + "/" + mediaFolderPath);
+          copyOrReplaceFile(uploadData.getConfigFile(), target);
 
           // copy each mediafile
           for (MediaFile mediaFile : uploadData.getUploadList()) {
@@ -132,7 +132,7 @@ public class BrightSignSdCardConnector extends Connector {
             // TODO: enable after problem sovled with ant
             // if (description.equals("Removable Disk") ||
             // description.equals("Wechseldatentraeger")) {
-            if (description.equals("Removable Disk")) {
+            if (description.equals("Removable Disk") || description.equals("Wechseldatenträger")) {
               targetList.add(path.getAbsolutePath());
             }
           }
