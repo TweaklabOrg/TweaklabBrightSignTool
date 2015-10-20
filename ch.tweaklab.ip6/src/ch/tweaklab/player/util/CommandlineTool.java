@@ -1,6 +1,7 @@
 package ch.tweaklab.player.util;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 
 /**
@@ -12,7 +13,26 @@ public class CommandlineTool {
    * This method should only be used with self-terminating commands where no timeout is needed.
    */
   public static String executeCommand(String command) {
-    return executeCommand(command, 0);
+    StringBuffer output = new StringBuffer();
+    Process process = null;
+    try {
+      process = Runtime.getRuntime().exec(command);
+    } catch (IOException e) {
+      // TODO Stephan: handle exception -> error message?
+      e.printStackTrace();
+    }
+    BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+    try {
+      String line = reader.readLine();
+      while (line != null) {
+        output.append(line + "\n");
+        line = reader.readLine();
+      }
+    } catch (IOException e) {
+      // TODO Stephan: handle exception -> error message?
+      e.printStackTrace();
+    }
+    return output.toString();
   }
 
   /*
@@ -26,7 +46,7 @@ public class CommandlineTool {
     try {
       Thread.sleep(timeoutInMillis);
     } catch (InterruptedException e) {
-      e.printStackTrace();
+      // nothing to handle. If Thread intterupts, it might not have found any results, and test might be repeated.
     }
     searcher.stopSearching();
 
@@ -47,26 +67,33 @@ public class CommandlineTool {
 
     public void run() {
       searching = true;
-      while(searching) {
-        try {
-          process = Runtime.getRuntime().exec(command);
-          BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-          String line = "";
-          while ((line = reader.readLine()) != null) {
-            output.append(line + "\n");
+      try {
+        process = Runtime.getRuntime().exec(command);
+        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        while (searching) {
+          if (reader.ready()) {
+            String line = reader.readLine();
+            if (streamEndReached(line)) {
+              searching = false;
+            } else {
+              output.append(line + "\n");
+            }
+          } else {
+            Thread.sleep(100); // if buffer is empty, poll 10 times a second.
           }
-        } catch (Exception e) {
-          e.printStackTrace();
         }
+      } catch (Exception e) {
+        // TODO Stephan: handle exception -> error message?
+        e.printStackTrace();
       }
     }
 
     public void stopSearching() {
-      // Destroy must be called, as Searcher might be blocked waiting for more output from the InputStream.
-      // Destroying the process, interrupts this blockage.
-      // TODO Stephan: unfortunaltely I couldn't find a way to interrupt reader.readLine() method. Right now the App crashes when it should be shut down, and each search ceates a new thread-zombee
-      process.destroyForcibly();
       searching = false;
+    }
+
+    private boolean streamEndReached(String nextLine) {
+      return nextLine == null;
     }
   }
 }
