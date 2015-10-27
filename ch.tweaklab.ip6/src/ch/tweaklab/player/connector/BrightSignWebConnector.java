@@ -11,6 +11,7 @@ import ch.tweaklab.player.model.MediaFile;
 import ch.tweaklab.player.model.MediaUploadData;
 import ch.tweaklab.player.util.DiscoverServices;
 import javafx.concurrent.Task;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
@@ -35,12 +36,8 @@ public class BrightSignWebConnector extends Connector {
   private String uploadRootUrl;
   Properties configFile;
   private String mediaFolder;
-  
-  private int tcpPort;
 
-  private Socket tcpSocket;
-  private DataOutputStream outToTcpServer;
-  private BufferedReader inFromTcpServer;
+  private int tcpPort;
 
   public BrightSignWebConnector() {
     tcpPort = Integer.parseInt(Keys.loadProperty(Keys.DEFAULT_TCP_PORT_PROPS_KEY));
@@ -52,10 +49,10 @@ public class BrightSignWebConnector extends Connector {
     try {
       this.target = host + ".local";
       this.name = host;
-      tcpSocket = new Socket(this.target, tcpPort);
-      outToTcpServer = new DataOutputStream(tcpSocket.getOutputStream());
-      inFromTcpServer = new BufferedReader(new InputStreamReader(tcpSocket.getInputStream()));
+      Socket tcpSocket = new Socket(this.target, tcpPort);
+      tcpSocket.close();
       uploadRootUrl = "http://" + this.target + "/upload.html?rp=sd";
+
       this.isConnected = sendGetRequest("http://" + this.target);
     } catch (Exception e) {
       e.printStackTrace();
@@ -67,12 +64,6 @@ public class BrightSignWebConnector extends Connector {
 
   @Override
   public boolean disconnect() {
-    try {
-      tcpSocket.close();
-    } catch (IOException e) {
-      MainApp.showExceptionMessage(e);
-      e.printStackTrace();
-    }
     return true;
   }
 
@@ -82,7 +73,6 @@ public class BrightSignWebConnector extends Connector {
       @Override
       public Boolean call() throws Exception {
         Boolean success = true;
-
 
         // uploadSystemFiles
         for (UploadFile systemFile : systemFiles) {
@@ -135,6 +125,10 @@ public class BrightSignWebConnector extends Connector {
             }
           }
         }
+        String answer = sendTCPCommand("reboot");
+        if (!answer.equals("OK")) {
+          return false;
+        }
         return success;
       }
     };
@@ -157,36 +151,33 @@ public class BrightSignWebConnector extends Connector {
     }
     return true;
   }
-  
+
   private Boolean uploadFile(String destinationFolder, UploadFile uploadFile) throws Exception {
 
-	    MultipartEntityBuilder multiPartBuilder = MultipartEntityBuilder.create();
-	    multiPartBuilder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
-	    
-	    ContentBody mimePart = new ByteArrayBody(uploadFile.getFileAsBytes(), uploadFile.getFileName());
-	    multiPartBuilder.addPart(mimePart.getFilename(), mimePart);
-	    
-	    HttpPost request = new HttpPost(uploadRootUrl + destinationFolder);
+    MultipartEntityBuilder multiPartBuilder = MultipartEntityBuilder.create();
+    multiPartBuilder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
 
-	    request.setEntity(multiPartBuilder.build());
-	    HttpClient client = HttpClientBuilder.create().build();
-	    HttpResponse response = client.execute(request);
-	    if (!response.getStatusLine().toString().contains("200")) {
-	      MainApp.showErrorMessage("Upload Error", "Error while upload. Status was:" + response.getStatusLine().toString());
-	      return false;
-	    }
-	    return true;
-	  }
-  
-  
+    ContentBody mimePart = new ByteArrayBody(uploadFile.getFileAsBytes(), uploadFile.getFileName());
+    multiPartBuilder.addPart(mimePart.getFilename(), mimePart);
+
+    HttpPost request = new HttpPost(uploadRootUrl + destinationFolder);
+
+    request.setEntity(multiPartBuilder.build());
+    HttpClient client = HttpClientBuilder.create().build();
+    HttpResponse response = client.execute(request);
+    if (!response.getStatusLine().toString().contains("200")) {
+      MainApp.showErrorMessage("Upload Error", "Error while upload. Status was:" + response.getStatusLine().toString());
+      return false;
+    }
+    return true;
+  }
+
   private Boolean deleteFile(String destinationFolder, String fileName) throws Exception {
-	    String urlFileName = fileName.replace(" ", "+");
-	    String urlFilePath = destinationFolder.replace("/", "%2F") + "%2F" + urlFileName;
-	    String deleteUrl = "http://" + target + "/delete?filename=sd" + urlFilePath + "&delete=Delete";
-	    return sendGetRequest(deleteUrl);
-	  }
-
-
+    String urlFileName = fileName.replace(" ", "+");
+    String urlFilePath = destinationFolder.replace("/", "%2F") + "%2F" + urlFileName;
+    String deleteUrl = "http://" + target + "/delete?filename=sd" + urlFilePath + "&delete=Delete";
+    return sendGetRequest(deleteUrl);
+  }
 
   private Boolean sendGetRequest(String url) throws Exception {
     URL u = new URL(url);
@@ -205,12 +196,24 @@ public class BrightSignWebConnector extends Connector {
 
   public String sendTCPCommand(String command) {
     String answer = "";
+    Socket tcpSocket = null;
+    DataOutputStream outToTcpServer = null;
+    BufferedReader inFromTcpServer = null;
     try {
+      tcpSocket = new Socket(this.target, tcpPort);
+      outToTcpServer = new DataOutputStream(tcpSocket.getOutputStream());
+      inFromTcpServer = new BufferedReader(new InputStreamReader(tcpSocket.getInputStream()));
       outToTcpServer.writeBytes(command + '\n');
-       answer = inFromTcpServer.readLine();
+      answer = inFromTcpServer.readLine();
       System.out.println(answer);
+
     } catch (Exception e) {
       MainApp.showExceptionMessage(e);
+      e.printStackTrace();
+    }
+    try {
+      tcpSocket.close();
+    } catch (Exception e) {
       e.printStackTrace();
     }
     return answer;

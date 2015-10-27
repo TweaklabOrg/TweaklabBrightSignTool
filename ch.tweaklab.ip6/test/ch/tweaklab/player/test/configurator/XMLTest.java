@@ -64,7 +64,6 @@ public class XMLTest {
   @Test
   public void createGpioXML() {
 
-    File xmlFile1;
     List<MediaFile> mediaFiles = TestUtil.getMediaFiles();
     MediaFile[] mediaFilesArray = new MediaFile[10];
     for (int i = 0; i < mediaFiles.size(); i++) {
@@ -72,7 +71,7 @@ public class XMLTest {
     }
 
     mediaFilesArray[2] = null;
-    UploadFile uploadFile = XmlConfigCreator.createGpioXML(mediaFiles.get(2), mediaFilesArray, true, "1000");
+    UploadFile uploadFile = XmlConfigCreator.createGpioXML(mediaFiles.get(0), mediaFilesArray, true, "1000");
 
     File destFile = new File("work/gpio.xml");
     try {

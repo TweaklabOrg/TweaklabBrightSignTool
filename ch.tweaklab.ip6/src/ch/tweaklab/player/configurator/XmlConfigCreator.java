@@ -68,7 +68,7 @@ public class XmlConfigCreator {
       rootElement.appendChild(mediaFolderElement);
 
       Element modeElement = doc.createElement("mode");
-      modeElement.appendChild(doc.createTextNode(String.valueOf(generalSettings.getMode())));
+      modeElement.appendChild(doc.createTextNode(generalSettings.getMode().toLowerCase()));
       rootElement.appendChild(modeElement);
 
       Element ipElement = doc.createElement("ip");
