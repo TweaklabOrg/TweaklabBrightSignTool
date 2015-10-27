@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<gpio>
-  <loop type="UNKNOWN">test-unknown.txt</loop>
-  <gpio0 type="IMAGE">test-image.jpg</gpio0>
-  <gpio1 type="VIDEO">test-movie.mp4</gpio1>
-  <gpio3 type="AUDIO">test-audio.mp3</gpio3>
-  <retriggerEnabled>true</retriggerEnabled>
-  <retriggerEnabled>1000</retriggerEnabled>
-</gpio>

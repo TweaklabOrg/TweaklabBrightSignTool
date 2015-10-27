@@ -18,7 +18,7 @@ import javafx.scene.layout.Priority;
 import javafx.stage.Stage;
 /**
  * Starts the GUI
- * @author Alf
+ * @author Alain
  *
  */
 public class MainApp extends Application {

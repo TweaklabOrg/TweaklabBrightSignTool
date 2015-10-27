@@ -155,7 +155,7 @@ public class UploadScreenController {
 
 		Connector currentConnector = ControllerMediator.getInstance().getConnector();
 		if (currentConnector instanceof BrightSignWebConnector) {
-			this.newHostnameField.setText(currentConnector.getTarget());
+			this.newHostnameField.setText(currentConnector.getName());
 			String ip = NetworkUtils.resolveHostName(this.newHostnameField.getText());
 			if (ip != "") {
 				this.newIPField.setText(ip);

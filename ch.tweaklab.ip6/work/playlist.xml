@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <playlist>
-  <files>
-    <file displayTime="10" type="IMAGE">test-image.jpg</file>
-    <file type="VIDEO">test-movie.mp4</file>
-    <file type="UNKNOWN">test-unknown.txt</file>
-    <file type="AUDIO">test-audio.mp3</file>
-  </files>
+  <task type="VIDEO">test-movie.mp4</task>
+  <task type="AUDIO">test-audio.mp3</task>
 </playlist>

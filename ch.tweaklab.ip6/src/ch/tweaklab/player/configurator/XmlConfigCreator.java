@@ -199,12 +199,10 @@ public class XmlConfigCreator {
       Document doc = docBuilder.newDocument();
       Element rootElement = doc.createElement("playlist");
       doc.appendChild(rootElement);
-      Element files = doc.createElement("files");
-      rootElement.appendChild(files);
 
       for (MediaFile mediaFile : mediaFiles) {
 
-        Element file = doc.createElement("file");
+        Element file = doc.createElement("task");
         file.setAttribute("type", mediaFile.getMediaType().toString());
         file.appendChild(doc.createTextNode(mediaFile.getFile().getName()));
 
@@ -212,7 +210,7 @@ public class XmlConfigCreator {
           file.setAttribute("displayTime", (String.valueOf(mediaFile.getDisplayTime())));
         }
 
-        files.appendChild(file);
+        rootElement.appendChild(file);
 
       }
 
