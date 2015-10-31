@@ -7,9 +7,9 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane fx:id="rootPane" prefHeight="700.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.tweaklab.player.gui.controller.GpioTabController">
+<AnchorPane fx:id="rootPane" prefHeight="700.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.tweaklab.player.gui.controller.GpioTabController">
    <children>
-      <GridPane fx:id="gridPane" layoutX="42.0" layoutY="54.0" prefHeight="404.0" prefWidth="258.0">
+      <GridPane fx:id="gridPane" layoutX="42.0" layoutY="54.0" prefHeight="336.0" prefWidth="680.0">
         <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
         </columnConstraints>
@@ -24,101 +24,88 @@
             <!--TODO Stephan: Something wrong with the order GPIO 0, 3, 2, 1-->
             <AnchorPane prefHeight="152.0" prefWidth="331.0">
                <children>
-                  <AnchorPane layoutX="9.0" prefHeight="91.0" prefWidth="212.0">
+                  <Pane prefHeight="80.0" prefWidth="657.0" style="-fx-background-color: #C8C8C8;">
                      <children>
-                        <Pane layoutX="-5.0" prefHeight="80.0" prefWidth="220.0" style="-fx-background-color: #C8C8C8;">
-                           <children>
-                              <Button id="chooseFileBtn0" layoutX="14.0" layoutY="36.0" mnemonicParsing="false" onAction="#handleChooseGpioFile" prefHeight="30.0" prefWidth="90.0" text="File..." />
-                              <Label layoutX="6.0" layoutY="4.0" text="GPIO 0:">
-                                 <font>
-                                    <Font name="System Bold" size="15.0" />
-                                 </font>
-                              </Label>
-                              <Label id="fileNameLabel0" layoutX="65.0" layoutY="6.0" text="none" />
-                           </children>
-                        </Pane>
-                     </children>
-                  </AnchorPane>
-               </children>
-            </AnchorPane>
-            <AnchorPane prefHeight="94.0" prefWidth="295.0" GridPane.rowIndex="1">
-               <children>
-                  <Pane prefHeight="80.0" prefWidth="220.0" style="-fx-background-color: #C8C8C8;">
-                     <children>
-                        <Button id="chooseFileBtn3" layoutX="20.0" layoutY="40.0" mnemonicParsing="false" onAction="#handleChooseGpioFile" prefHeight="30.0" prefWidth="90.0" text="File..." />
-                        <Label layoutX="6.0" layoutY="4.0" text="GPIO 3:">
+                        <Button id="chooseFileBtn0" layoutX="553.0" layoutY="25.0" mnemonicParsing="false" onAction="#handleChooseGpioFile" prefHeight="30.0" prefWidth="90.0" text="File..." />
+                        <Label layoutX="24.0" layoutY="31.0" text="GPIO 0:">
                            <font>
                               <Font name="System Bold" size="15.0" />
                            </font>
                         </Label>
-                        <Label id="fileNameLabel3" layoutX="65.0" layoutY="6.0" text="none" />
+                        <Label id="fileNameLabel0" layoutX="100.0" layoutY="32.0" prefHeight="16.0" prefWidth="444.0" text="no file selected" />
+                     </children>
+                  </Pane>
+               </children>
+            </AnchorPane>
+            <AnchorPane prefHeight="94.0" prefWidth="295.0" GridPane.rowIndex="1">
+               <children>
+                  <Pane prefHeight="80.0" prefWidth="657.0" style="-fx-background-color: #C8C8C8;">
+                     <children>
+                        <Button id="chooseFileBtn1" layoutX="553.0" layoutY="25.0" mnemonicParsing="false" onAction="#handleChooseGpioFile" prefHeight="30.0" prefWidth="90.0" text="File..." />
+                        <Label layoutX="23.0" layoutY="31.0" text="GPIO 1:">
+                           <font>
+                              <Font name="System Bold" size="15.0" />
+                           </font>
+                        </Label>
+                        <Label id="fileNameLabel1" layoutX="100.0" layoutY="32.0" prefHeight="16.0" prefWidth="444.0" text="no file selected" />
                      </children>
                   </Pane>
                </children>
             </AnchorPane>
             <AnchorPane GridPane.rowIndex="2">
                <children>
-                  <Pane prefHeight="80.0" prefWidth="220.0" style="-fx-background-color: #C8C8C8;">
+                  <Pane prefHeight="80.0" prefWidth="657.0" style="-fx-background-color: #C8C8C8;">
                      <children>
-                        <Button id="chooseFileBtn2" layoutX="14.0" layoutY="35.0" mnemonicParsing="false" onAction="#handleChooseGpioFile" prefHeight="30.0" prefWidth="90.0" text="File..." />
-                        <Label layoutX="6.0" layoutY="4.0" text="GPIO 2:">
+                        <Button id="chooseFileBtn2" layoutX="553.0" layoutY="22.0" mnemonicParsing="false" onAction="#handleChooseGpioFile" prefHeight="30.0" prefWidth="90.0" text="File..." />
+                        <Label layoutX="23.0" layoutY="31.0" text="GPIO 2:">
                            <font>
                               <Font name="System Bold" size="15.0" />
                            </font>
                         </Label>
-                        <Label id="fileNameLabel2" layoutX="65.0" layoutY="6.0" text="none" />
+                        <Label id="fileNameLabel2" layoutX="100.0" layoutY="31.0" prefHeight="16.0" prefWidth="444.0" text="no file selected" />
                      </children>
                   </Pane>
                </children>
             </AnchorPane>
             <AnchorPane prefHeight="107.0" prefWidth="349.0" GridPane.rowIndex="3">
                <children>
-                  <Pane prefHeight="80.0" prefWidth="220.0" style="-fx-background-color: #C8C8C8;">
+                  <Pane prefHeight="80.0" prefWidth="657.0" style="-fx-background-color: #C8C8C8;">
                      <children>
-                        <Button id="chooseFileBtn1" layoutX="14.0" layoutY="38.0" mnemonicParsing="false" onAction="#handleChooseGpioFile" prefHeight="30.0" prefWidth="90.0" text="File..." />
-                        <Label layoutX="6.0" layoutY="4.0" text="GPIO 1:">
+                        <Button id="chooseFileBtn3" layoutX="553.0" layoutY="22.0" mnemonicParsing="false" onAction="#handleChooseGpioFile" prefHeight="30.0" prefWidth="90.0" text="File..." />
+                        <Label layoutX="24.0" layoutY="31.0" text="GPIO 3:">
                            <font>
                               <Font name="System Bold" size="15.0" />
                            </font>
                         </Label>
-                        <Label id="fileNameLabel1" layoutX="65.0" layoutY="6.0" text="none" />
+                        <Label id="fileNameLabel3" layoutX="100.0" layoutY="32.0" prefHeight="16.0" prefWidth="444.0" text="no file selected" />
                      </children>
                   </Pane>
                </children>
             </AnchorPane>
          </children>
       </GridPane>
-      <Button layoutX="345.0" layoutY="409.0" mnemonicParsing="false" onAction="#reset" prefHeight="30.0" prefWidth="189.0" text="Reset" />
+      <Button layoutX="42.0" layoutY="615.0" mnemonicParsing="false" onAction="#reset" prefHeight="38.0" prefWidth="161.0" text="Reset" />
       <!--TODO Stephan: We need a better name for retrigger...-->
-      <Label layoutX="309.0" layoutY="256.0" text="Retrigger before video&#10;has finished enabled: " />
-      <Label layoutX="309.0" layoutY="320.0" text="Retriggerdelay:" />
-      <CheckBox fx:id="retriggerEnabledCheckbox" layoutX="507.0" layoutY="265.0" mnemonicParsing="false" />
-      <TextField fx:id="retriggerDelayField" layoutX="460.0" layoutY="316.0" prefHeight="25.0" prefWidth="68.0" />
-      <Label layoutX="42.0" layoutY="32.0" text="Files to play by GPIO Button:">
+      <Label layoutX="66.0" layoutY="550.0" text="Media interruptable" />
+      <Label layoutX="251.0" layoutY="550.0" text="after" />
+      <CheckBox fx:id="retriggerEnabledCheckbox" layoutX="207.0" layoutY="549.0" mnemonicParsing="false" />
+      <TextField fx:id="retriggerDelayField" layoutX="302.0" layoutY="545.0" prefHeight="25.0" prefWidth="68.0" />
+      <Label layoutX="42.0" layoutY="422.0" text="Settings:">
          <font>
             <Font name="System Bold" size="14.0" />
          </font>
       </Label>
-      <Label layoutX="311.0" layoutY="32.0" text="Standard Loop File:">
-         <font>
-            <Font name="System Bold" size="14.0" />
-         </font>
-      </Label>
-      <Label layoutX="311.0" layoutY="207.0" text="Settings:">
-         <font>
-            <Font name="System Bold" size="14.0" />
-         </font>
-      </Label>
-      <Pane layoutX="311.0" layoutY="54.0" prefHeight="80.0" prefWidth="217.0" style="-fx-background-color: #C8C8C8;">
+      <Pane layoutX="42.0" layoutY="447.0" prefHeight="80.0" prefWidth="657.0" style="-fx-background-color: #C8C8C8;">
          <children>
-            <Button id="chooseFileBtnLoop" layoutX="7.0" layoutY="36.0" mnemonicParsing="false" onAction="#handleChooseLoopFile" prefHeight="30.0" prefWidth="90.0" text="File..." />
-            <Label layoutX="6.0" layoutY="4.0" text="Loop:">
+            <Button id="chooseFileBtnLoop" layoutX="553.0" layoutY="25.0" mnemonicParsing="false" onAction="#handleChooseLoopFile" prefHeight="30.0" prefWidth="90.0" text="File..." />
+            <Label layoutX="24.0" layoutY="31.0" text="Loop:">
                <font>
                   <Font name="System Bold" size="15.0" />
                </font>
             </Label>
-            <Label id="fileNameLabelLoop" fx:id="loopfileNameLabel" layoutX="52.0" layoutY="6.0" text="none" />
+            <Label id="fileNameLabelLoop" fx:id="loopfileNameLabel" layoutX="100.0" layoutY="31.0" prefHeight="16.0" prefWidth="444.0" text="no file selected" />
          </children>
       </Pane>
+      <Label layoutX="389.0" layoutY="550.0" text="milliseconds." />
    </children>
 </AnchorPane>

@@ -1,9 +1,10 @@
 package ch.tweaklab.player.gui.controller;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-
+import ch.tweaklab.player.configurator.UploadFile;
+import ch.tweaklab.player.configurator.XmlConfigCreator;
+import ch.tweaklab.player.model.MediaFile;
+import ch.tweaklab.player.model.MediaUploadData;
+import ch.tweaklab.player.model.ModeType;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -12,11 +13,10 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
-import ch.tweaklab.player.configurator.UploadFile;
-import ch.tweaklab.player.configurator.XmlConfigCreator;
-import ch.tweaklab.player.model.MediaFile;
-import ch.tweaklab.player.model.MediaUploadData;
-import ch.tweaklab.player.model.ModeType;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Controller of PushButton Configuration View
@@ -51,7 +51,8 @@ public class GpioTabController extends TabController {
   @FXML
   private void initialize() {
     reset();
-
+    retriggerEnabledCheckbox.selectedProperty().addListener((observable, oldValue, newValue) ->
+            retriggerDelayField.setDisable(!newValue));
   }
 
   @FXML
@@ -103,9 +104,6 @@ public class GpioTabController extends TabController {
       Label fileNameLabel = (Label) rootPane.lookup("#fileNameLabel" + buttonNumber);
 
       String fileNameToDisplay = choosenFile.getName();
-      if (fileNameToDisplay.length() > MAX_FILE_NAME_LENGTH_SHOW) {
-        fileNameToDisplay = fileNameToDisplay.substring(0, 22) + "...";
-      }
       fileNameLabel.setText(fileNameToDisplay);
     }
 
@@ -117,12 +115,12 @@ public class GpioTabController extends TabController {
     gpioFiles = new MediaFile[NUMBER_OF_BUTTONS];
     for (int i = 0; i < NUMBER_OF_BUTTONS; i++) {
       Label fileNameLabel = (Label) rootPane.lookup("#fileNameLabel" + i);
-      fileNameLabel.setText("None");
+      fileNameLabel.setText("no file selected");
     }
 
     // reset Loopfile
     this.loopFile = null;
-    this.loopfileNameLabel.setText("none");
+    this.loopfileNameLabel.setText("no file selected");
 
     retriggerDelayField.setText("2000");
     retriggerEnabledCheckbox.setSelected(true);
