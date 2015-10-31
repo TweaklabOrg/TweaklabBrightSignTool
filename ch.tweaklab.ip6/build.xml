@@ -31,7 +31,7 @@
 		<jar destfile="${dist.dir}/tl-player.jar" >
 			<fileset dir="${build.dir}/classes"/>
 			<fileset dir="${src.dir}" includes="**/*.fxml"/>
-			<fileset dir="${res.dir}" />
+			<fileset dir="${res.dir}"/>
 			<zipgroupfileset dir="${lib.dir}" includes="*.jar"/>
 			
 			 <manifest>
@@ -40,21 +40,6 @@
 		</jar>
 	</target>
 
-	<!--
-	<target name="zip" depends="jar" description="Creates inst zip">
-		<copy todir="${build.dir}/zip/">
-			<fileset dir="misc" />
-		</copy>
-		 <copy file="config.properties" todir="${build.dir}/zip/"/>
-		<copy todir="${build.dir}/zip/bs-scripts">
-			<fileset dir="bs-scripts"/>
-		</copy>
-		<zip destfile="${dist.dir}/player-client.zip">
-			<fileset dir="${build.dir}/zip">
-			</fileset>
-		</zip>
-	</target>
--->
 	<target name="clean" depends="jar" description="clean up">
 		<delete dir="${build.dir}"/>
 	</target>
