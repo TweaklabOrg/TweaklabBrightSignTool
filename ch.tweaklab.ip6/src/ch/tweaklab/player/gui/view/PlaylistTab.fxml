@@ -30,10 +30,10 @@
 		<Button layoutX="39.0" layoutY="53.0" mnemonicParsing="false" onAction="#moveItemUp" prefHeight="31.0" prefWidth="29.0" text="⇑" />
 		<Button layoutX="39.0" layoutY="95.0" mnemonicParsing="false" onAction="#moveItemDown" prefHeight="31.0" prefWidth="29.0" text="⇓" />
 		<Button layoutX="264.0" layoutY="633.0" mnemonicParsing="false" onAction="#handleRemove" prefHeight="38.0" prefWidth="152.0" text="Remove selected" />
-		<GridPane layoutX="456.0" layoutY="53.0" prefHeight="188.0" prefWidth="276.0">
+		<GridPane layoutX="456.0" layoutY="53.0" prefHeight="191.0" prefWidth="275.0">
 			<columnConstraints>
-				<ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-				<ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+				<ColumnConstraints hgrow="SOMETIMES" maxWidth="133.0" minWidth="10.0" prefWidth="87.0" />
+				<ColumnConstraints hgrow="SOMETIMES" maxWidth="230.0" minWidth="10.0" prefWidth="202.0" />
 			</columnConstraints>
 			<rowConstraints>
 				<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />

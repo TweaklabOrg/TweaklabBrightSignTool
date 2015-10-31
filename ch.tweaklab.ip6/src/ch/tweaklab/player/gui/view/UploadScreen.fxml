@@ -7,6 +7,8 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
 
+ <?import ch.tweaklab.player.gui.view.NumberTextField?>
+
 <AnchorPane prefHeight="730.0" prefWidth="320.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.tweaklab.player.gui.controller.UploadScreenController">
    <children>
       <Pane fx:id="generalSettingsPane" layoutX="15.0" layoutY="281.0" prefHeight="262.0" prefWidth="286.0">
@@ -18,26 +20,30 @@
               </columnConstraints>
               <rowConstraints>
                   <RowConstraints maxHeight="46.0" minHeight="10.0" prefHeight="46.0" vgrow="SOMETIMES" />
-                  <RowConstraints maxHeight="40.0" minHeight="10.0" prefHeight="24.0" vgrow="SOMETIMES" />
-                  <RowConstraints maxHeight="26.0" minHeight="10.0" prefHeight="16.0" vgrow="SOMETIMES" />
-                <RowConstraints maxHeight="45.0" minHeight="10.0" prefHeight="36.0" vgrow="SOMETIMES" />
-                <RowConstraints maxHeight="40.0" minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
-                <RowConstraints maxHeight="34.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="40.0" minHeight="10.0" prefHeight="36.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="39.0" minHeight="10.0" prefHeight="16.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="55.0" minHeight="10.0" prefHeight="36.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="40.0" minHeight="10.0" prefHeight="33.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="43.0" minHeight="10.0" prefHeight="36.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="37.0" minHeight="10.0" prefHeight="36.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <Label text="Hostname:" GridPane.rowIndex="3" />
+               <Label text="Hostname:" />
+                  <TextField fx:id="newHostnameField" prefHeight="25.0" prefWidth="121.0" GridPane.columnIndex="1" />
+               <Label text="Volume" GridPane.rowIndex="1" />
+                  <NumberTextField fx:id="volumeField" prefHeight="25.0" prefWidth="117.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+                  <Label text="DHCP" GridPane.rowIndex="3" />
+                  <CheckBox fx:id="dhcpCheckbox" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+
                   <Label fx:id="gatewayLabel" text="Gateway:" GridPane.rowIndex="5" />
                   <Label fx:id="subnetLabel" text="Subnet" GridPane.rowIndex="6" />
                   <Label fx:id="newIPlabel" prefHeight="21.0" prefWidth="29.0" text="IP" GridPane.rowIndex="4" />
-                  <TextField fx:id="newIPField" prefHeight="25.0" prefWidth="121.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                  <TextField fx:id="gatewayField" prefHeight="25.0" prefWidth="121.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                  <TextField fx:id="newHostnameField" prefHeight="25.0" prefWidth="121.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                  <TextField fx:id="subnetField" prefHeight="24.0" prefWidth="151.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-                  <Label text="Volume" />
-                  <TextField fx:id="volumeField" prefHeight="25.0" prefWidth="117.0" GridPane.columnIndex="1" />
-                  <Label text="DHCP" GridPane.rowIndex="1" />
-                  <CheckBox fx:id="dhcpCheckbox" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <NumberTextField fx:id="newIPField" prefHeight="25.0" prefWidth="121.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                  <NumberTextField fx:id="gatewayField" prefHeight="25.0" prefWidth="121.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+             
+                  <NumberTextField fx:id="subnetField" prefHeight="24.0" prefWidth="151.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+
                </children>
             </GridPane>
          </children>
@@ -59,11 +65,11 @@
               </rowConstraints>
                <children>
                   <Label text="Width" />
-                  <TextField fx:id="widthField" prefHeight="24.0" prefWidth="39.0" GridPane.columnIndex="1" />
+                  <NumberTextField fx:id="widthField" prefHeight="24.0" prefWidth="39.0" GridPane.columnIndex="1" />
                   <Label text="Height" GridPane.columnIndex="3" />
-                  <TextField fx:id="heightField" prefHeight="25.0" prefWidth="55.0" GridPane.columnIndex="4" />
+                  <NumberTextField fx:id="heightField" prefHeight="25.0" prefWidth="55.0" GridPane.columnIndex="4" />
                   <Label text="Freq" GridPane.rowIndex="1" />
-                  <TextField fx:id="frequencyField" prefHeight="25.0" prefWidth="48.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <NumberTextField fx:id="frequencyField" prefHeight="25.0" prefWidth="48.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                   <Label text="Interlaced" GridPane.columnIndex="3" GridPane.rowIndex="1" />
                   <CheckBox fx:id="interlacedCheckbox" mnemonicParsing="false" GridPane.columnIndex="4" GridPane.rowIndex="1" />
                </children>

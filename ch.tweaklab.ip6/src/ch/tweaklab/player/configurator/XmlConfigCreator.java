@@ -316,7 +316,7 @@ public class XmlConfigCreator {
     } finally {
 
     }
-    return new UploadFile(fileName,xmlStream);
+    return new UploadFile(fileName,xmlStream.toByteArray());
   }
 
 }

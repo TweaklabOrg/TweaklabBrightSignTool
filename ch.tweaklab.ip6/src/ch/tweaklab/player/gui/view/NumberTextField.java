@@ -28,6 +28,6 @@ public class NumberTextField extends TextField
 
     private boolean validate(String text)
     {
-        return ("".equals(text) || text.matches("[0-9]"));
+        return ("".equals(text) || text.matches("[0-9\\.]"));
     }
 }

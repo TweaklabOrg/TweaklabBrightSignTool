@@ -89,6 +89,7 @@ public class BrightSignWebConnector extends Connector {
 
         }
 
+        //skip mediata upload if null
         if (mediaUploadData != null) {
           // run script to delete whole media folder
           String answer = sendTCPCommand("resetFilestructure");
@@ -125,6 +126,8 @@ public class BrightSignWebConnector extends Connector {
             }
           }
         }
+        
+        
         String answer = sendTCPCommand("reboot");
         if (!answer.equals("OK")) {
           return false;

@@ -20,6 +20,7 @@ import java.util.List;
  * 
  * @author Alain
  *
+ *
  */
 public class BrightSignSdCardConnector extends Connector {
 
@@ -129,10 +130,7 @@ public class BrightSignSdCardConnector extends Connector {
           paths = File.listRoots();
           for (File path : paths) {
             String description = fsv.getSystemTypeDescription(path);
-            // TODO: enable after problem sovled with ant
-            // if (description.equals("Removable Disk") ||
-            // description.equals("Wechseldatentraeger")) {
-            if (description.equals("Removable Disk") || description.equals("Wechseldatentr‰ger")) {
+            if (description.equals("Removable Disk") || description.equals("Wechseldatentr√§ger")) {
               targetList.add(path.getAbsolutePath());
             }
           }

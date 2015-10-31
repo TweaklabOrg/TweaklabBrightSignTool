@@ -16,6 +16,7 @@ public class Keys {
   public static final String WORK_DIRECTORY = "work";
   public static final String SCRIPTS_DIRECTORY= "bs-scripts";
 
+  public static final String BS_SCRIPTS_PROPS_KEY = "scriptsToUpload";
   
   // PROPS KEY
   public static final String IMAGE_REGEX_PROPS_KEY = "image_regex";
