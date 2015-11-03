@@ -40,7 +40,6 @@ public class Keys {
   public static final String DEFAULT_SCRIPT_VERSION_PROPS_KEY = "default_script_version";
   public static final String DEFAULT_SSH_PASSWORD_PROPS_KEY = "default_ssh_password";
   public static final String DEFAULT_DHCP_PROPS_KEY = "default_dhcp";
-  public static final String DEFAULT_MODE_PROPS_KEY = "default_mode";
   public static final String DEFAULT_INITIALIZE_PROPS_KEY = "default_initialize";
 
   // DISPLAY PROPS KEY
