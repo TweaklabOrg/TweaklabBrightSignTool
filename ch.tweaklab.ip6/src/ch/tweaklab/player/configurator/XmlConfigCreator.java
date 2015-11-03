@@ -31,6 +31,7 @@ import ch.tweaklab.player.gui.controller.MainApp;
 import ch.tweaklab.player.model.Keys;
 import ch.tweaklab.player.model.MediaFile;
 import ch.tweaklab.player.model.MediaType;
+import ch.tweaklab.player.model.ModeType;
 
 public class XmlConfigCreator {
 
@@ -66,10 +67,6 @@ public class XmlConfigCreator {
       Element mediaFolderElement = doc.createElement("mediaFolder");
       mediaFolderElement.appendChild(doc.createTextNode(String.valueOf(generalSettings.getMediaFolder())));
       rootElement.appendChild(mediaFolderElement);
-
-      Element modeElement = doc.createElement("mode");
-      modeElement.appendChild(doc.createTextNode(generalSettings.getMode().toLowerCase()));
-      rootElement.appendChild(modeElement);
 
       Element ipElement = doc.createElement("ip");
       ipElement.appendChild(doc.createTextNode(generalSettings.getIp()));
@@ -128,6 +125,40 @@ public class XmlConfigCreator {
 
   }
 
+  /**
+   * Creates an Display Settings xml file and stores it in work folder
+   * 
+   * @param mediaFiles
+   * @return
+   */
+  public static UploadFile createModeXml(ModeType mode) {
+    UploadFile xmlFile = null;
+
+    try {
+      // xml factory
+      DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+      DocumentBuilder docBuilder = null;
+      docBuilder = docFactory.newDocumentBuilder();
+
+      // root elements
+      Document doc = docBuilder.newDocument();
+      Element modeElement = doc.createElement("mode");
+      modeElement.appendChild(doc.createTextNode(mode.toString()));
+      doc.appendChild(modeElement);
+
+      xmlFile = transformDocToXmlFile(doc, "mode.xml");
+
+    } catch (Exception e) {
+      MainApp.showExceptionMessage(e);
+      e.printStackTrace();
+    }
+
+    return xmlFile;
+
+  }
+  
+  
+  
   /**
    * Creates an Display Settings xml file and stores it in work folder
    * 

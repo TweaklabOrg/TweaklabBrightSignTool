@@ -154,11 +154,15 @@ public class UploadScreenController {
 
       // Create Upload Task and add Events
       Connector connector = ControllerMediator.getInstance().getConnector();
-      MediaUploadData uploadData = null;
+      MediaUploadData mediaUploadData = null;
       if (uploadMediaCheckbox.isSelected()) {
 
-        uploadData = ControllerMediator.getInstance().getRootController().getMediaUploadData();
-        if (uploadData.getUploadList().size() < 1) {
+        mediaUploadData = ControllerMediator.getInstance().getRootController().getMediaUploadData();
+
+        UploadFile modeXml = XmlConfigCreator.createModeXml(mediaUploadData.getMode());
+
+        systemFilesForUpload.add(modeXml);
+        if (mediaUploadData.getUploadList().size() < 1) {
           MainApp.showErrorMessage("no Files", "No media files for upload added!");
           return;
         }
@@ -169,7 +173,7 @@ public class UploadScreenController {
       waitScreen.setOnCancel(event -> uploadTask.cancel());
       waitScreen.setOnClose(event -> uploadTask.cancel());
 
-      uploadTask = connector.upload(uploadData, systemFilesForUpload);
+      uploadTask = connector.upload(mediaUploadData, systemFilesForUpload);
 
       uploadTask.setOnSucceeded(event -> uploadTaskSucceedFinish());
       uploadTask.setOnCancelled(event -> uploadTaskAbortFinish());
@@ -244,7 +248,6 @@ public class UploadScreenController {
     newSettings.setNetmask(this.subnetField.getText());
     newSettings.setGateway(this.gatewayField.getText());
     newSettings.setDhcp(this.dhcpCheckbox.isSelected());
-    newSettings.setMode(ControllerMediator.getInstance().getRootController().getMediaUploadData().getMode().toString());
     UploadFile xmlFile = XmlConfigCreator.createGeneralSettingsXml(newSettings);
     return xmlFile;
   }
@@ -338,15 +341,6 @@ public class UploadScreenController {
       }
     });
 
-    uploadGeneralSettingsheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
-      public void changed(ObservableValue ov, Boolean old_val, Boolean new_val) {
-        if (!new_val) {
-          MainApp
-              .showInfoMessage("Attention:\nIf you disable the upload of this settings, the playmodus (PLAYLIST | GPIO) will not be changed on player!");
-        }
-        generalSettingsPane.setDisable(!new_val);
-      }
-    });
 
     dhcpCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
       public void changed(ObservableValue ov, Boolean old_val, Boolean new_val) {
@@ -354,13 +348,6 @@ public class UploadScreenController {
       }
     });
 
-    uploadMediaCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
-      public void changed(ObservableValue ov, Boolean old_val, Boolean new_val) {
-        if (!new_val) {
-          MainApp.showInfoMessage("Attention:\nPlaymodus will be changed to PLAYLIST, if you don't upload any mediafiles.");
-        }
-      }
-    });
   }
 
 }

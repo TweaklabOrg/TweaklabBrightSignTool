@@ -15,8 +15,6 @@ public class PlayerGeneralSettings {
   private String sshPassword= "";
   private int tcpPort= 0;
   private Boolean debug;
-  private String mode= "";
-
   private int volume= 100;
   private Boolean initialize= true;
   private String scriptVersion= "";
@@ -38,8 +36,6 @@ public class PlayerGeneralSettings {
 
     settings.tcpPort = Integer.parseInt(Keys.loadProperty(Keys.DEFAULT_TCP_PORT_PROPS_KEY));
     settings.volume = Integer.parseInt(Keys.loadProperty(Keys.DEFAULT_VOLUME_PROPS_KEY));
-
-    settings.mode = Keys.loadProperty(Keys.DEFAULT_MODE_PROPS_KEY);
     settings.scriptVersion = Keys.loadProperty(Keys.DEFAULT_SCRIPT_VERSION_PROPS_KEY);
 
     settings.sshPassword = Keys.loadProperty(Keys.DEFAULT_SSH_PASSWORD_PROPS_KEY);
@@ -85,9 +81,6 @@ public class PlayerGeneralSettings {
     return debug;
   }
 
-  public String getMode() {
-    return mode;
-  }
 
   public int getVolume() {
     return volume;
@@ -137,9 +130,6 @@ public class PlayerGeneralSettings {
     this.debug = debug;
   }
 
-  public void setMode(String mode) {
-    this.mode = mode;
-  }
 
   public void setVolume(int volume) {
     this.volume = volume;
@@ -164,7 +154,6 @@ public class PlayerGeneralSettings {
     result = prime * result + ((initialize == null) ? 0 : initialize.hashCode());
     result = prime * result + ((ip == null) ? 0 : ip.hashCode());
     result = prime * result + ((mediaFolder == null) ? 0 : mediaFolder.hashCode());
-    result = prime * result + ((mode == null) ? 0 : mode.hashCode());
     result = prime * result + ((netmask == null) ? 0 : netmask.hashCode());
     result = prime * result + ((scriptVersion == null) ? 0 : scriptVersion.hashCode());
     result = prime * result + ((sshPassword == null) ? 0 : sshPassword.hashCode());
@@ -216,11 +205,6 @@ public class PlayerGeneralSettings {
       if (other.mediaFolder != null)
         return false;
     } else if (!mediaFolder.equals(other.mediaFolder))
-      return false;
-    if (mode == null) {
-      if (other.mode != null)
-        return false;
-    } else if (!mode.equals(other.mode))
       return false;
     if (netmask == null) {
       if (other.netmask != null)
