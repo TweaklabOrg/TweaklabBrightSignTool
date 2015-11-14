@@ -94,7 +94,7 @@
             <Font name="System Bold" size="15.0" />
          </font>
       </Label>
-      <CheckBox fx:id="uploadGeneralSettingsheckbox" layoutX="230.0" layoutY="261.0" mnemonicParsing="false" selected="true" text="Upload ">
+      <CheckBox fx:id="uploadGeneralSettingsCheckbox" layoutX="230.0" layoutY="261.0" mnemonicParsing="false" selected="true" text="Upload ">
          <font>
             <Font size="12.0" />
          </font></CheckBox>

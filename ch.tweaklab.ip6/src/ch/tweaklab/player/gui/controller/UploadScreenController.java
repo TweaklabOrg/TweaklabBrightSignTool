@@ -8,7 +8,6 @@ import ch.tweaklab.player.connector.BrightSignWebConnector;
 import ch.tweaklab.player.connector.Connector;
 import ch.tweaklab.player.gui.view.WaitScreen;
 import ch.tweaklab.player.model.Keys;
-import ch.tweaklab.player.model.MediaFile;
 import ch.tweaklab.player.model.MediaUploadData;
 import ch.tweaklab.player.util.NetworkUtils;
 import javafx.beans.value.ChangeListener;
@@ -19,18 +18,11 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
+import org.apache.commons.io.IOUtils;
 
-import java.io.File;
 import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.apache.commons.io.IOUtils;
 
 /**
  * /*
@@ -64,7 +56,7 @@ public class UploadScreenController {
   private Pane generalSettingsPane;
 
   @FXML
-  private CheckBox uploadGeneralSettingsheckbox;
+  private CheckBox uploadGeneralSettingsCheckbox;
   @FXML
   private TextField volumeField;
 
@@ -142,9 +134,14 @@ public class UploadScreenController {
       }
 
       // create and upload display.xml
-      if (this.uploadGeneralSettingsheckbox.isSelected()) {
-        UploadFile generalSettingsXml = createGeneralDisplaySettingsXML();
-
+      if (this.uploadGeneralSettingsCheckbox.isSelected()) {
+        UploadFile generalSettingsXml;
+        // if the player will be reset completelty, initialize
+        if (this.uploadDisplaySettingsCheckbox.isSelected() && this.uploadMediaCheckbox.isSelected()) {
+          generalSettingsXml = createInitialGeneralDisplaySettingsXML();
+        } else {
+          generalSettingsXml = createGeneralDisplaySettingsXML();
+        }
         systemFilesForUpload.add(generalSettingsXml);
       }
 
@@ -206,7 +203,7 @@ public class UploadScreenController {
   }
 
   private Boolean validateFields() {
-    if (uploadDisplaySettingsCheckbox.isSelected() == false && uploadGeneralSettingsheckbox.isSelected() == false
+    if (uploadDisplaySettingsCheckbox.isSelected() == false && uploadGeneralSettingsCheckbox.isSelected() == false
         && uploadMediaCheckbox.isSelected() == false) {
 
       MainApp.showInfoMessage("Only BrightSign scripts will be uploaded!");
@@ -239,6 +236,19 @@ public class UploadScreenController {
     return xmlFile;
   }
 
+  private UploadFile createInitialGeneralDisplaySettingsXML() {
+    PlayerGeneralSettings defaultSettings = PlayerGeneralSettings.getDefaulGeneralSettings();
+    PlayerGeneralSettings newSettings = defaultSettings;
+    newSettings.setHostname(this.newHostnameField.getText());
+    newSettings.setIp(this.newIPField.getText());
+    newSettings.setVolume(Integer.parseInt(this.volumeField.getText()));
+    newSettings.setNetmask(this.subnetField.getText());
+    newSettings.setGateway(this.gatewayField.getText());
+    newSettings.setDhcp(this.dhcpCheckbox.isSelected());
+    UploadFile xmlFile = XmlConfigCreator.createGeneralSettingsXml(newSettings);
+    return xmlFile;
+  }
+
   private UploadFile createGeneralDisplaySettingsXML() {
     PlayerGeneralSettings defaultSettings = PlayerGeneralSettings.getDefaulGeneralSettings();
     PlayerGeneralSettings newSettings = defaultSettings;
@@ -248,6 +258,7 @@ public class UploadScreenController {
     newSettings.setNetmask(this.subnetField.getText());
     newSettings.setGateway(this.gatewayField.getText());
     newSettings.setDhcp(this.dhcpCheckbox.isSelected());
+    newSettings.setInitialize(false);
     UploadFile xmlFile = XmlConfigCreator.createGeneralSettingsXml(newSettings);
     return xmlFile;
   }
