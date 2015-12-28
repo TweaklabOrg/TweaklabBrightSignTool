@@ -11,7 +11,7 @@ public class UploadFile {
 
   public UploadFile(String fileName, byte[] fileAsBytes) {
     this.fileName = fileName;
-    this.fileAsBytes = fileAsBytes;
+    this.fileAsBytes = fileAsBytes.clone();
   }
 
   public String getFileName() {
@@ -19,7 +19,7 @@ public class UploadFile {
   }
 
   public byte[] getFileAsBytes() {
-    return fileAsBytes;
+    return fileAsBytes.clone();
   }
 
 }

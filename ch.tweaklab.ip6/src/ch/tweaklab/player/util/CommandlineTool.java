@@ -3,6 +3,7 @@ package ch.tweaklab.player.util;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 
 /**
  * Created by Stephan on 17.10.15.
@@ -21,7 +22,18 @@ public class CommandlineTool {
       // TODO Stephan: handle exception -> error message?
       e.printStackTrace();
     }
-    BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+
+    BufferedReader reader = null;
+    try {
+      reader = new BufferedReader(new InputStreamReader(process.getInputStream(), "US-ASCII"));
+    } catch (UnsupportedEncodingException e){
+      e.printStackTrace();
+      return "";
+    } catch (NullPointerException e) {
+      e.printStackTrace();
+      return "";
+    }
+
     try {
       String line = reader.readLine();
       while (line != null) {
@@ -30,6 +42,12 @@ public class CommandlineTool {
       }
     } catch (IOException e) {
       // TODO Stephan: handle exception -> error message?
+      e.printStackTrace();
+    }
+
+    try {
+      reader.close();
+    } catch (IOException e) {
       e.printStackTrace();
     }
     return output.toString();
@@ -67,9 +85,10 @@ public class CommandlineTool {
 
     public void run() {
       searching = true;
+      BufferedReader reader = null;
       try {
         process = Runtime.getRuntime().exec(command);
-        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        reader = new BufferedReader(new InputStreamReader(process.getInputStream(), "US-ASCII"));
         while (searching) {
           if (reader.ready()) {
             String line = reader.readLine();
@@ -85,6 +104,12 @@ public class CommandlineTool {
       } catch (Exception e) {
         // TODO Stephan: handle exception -> error message?
         e.printStackTrace();
+      } finally {
+        try {
+          reader.close();
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
       }
     }
 

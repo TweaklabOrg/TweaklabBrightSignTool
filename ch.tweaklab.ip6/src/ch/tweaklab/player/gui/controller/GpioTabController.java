@@ -82,10 +82,10 @@ public class GpioTabController extends TabController {
     // check which button was clicked
     Object source = event.getSource();
     if (source instanceof Button && ((Button) source).getId().startsWith("chooseFileBtn")) {
-      buttonNumber = Integer.valueOf(((Button) source).getId().substring(13));
+      buttonNumber = Integer.parseInt(((Button) source).getId().substring(13));
     }
 
-    if (buttonNumber < 0 || NUMBER_OF_BUTTONS > NUMBER_OF_BUTTONS)
+    if (buttonNumber < 0 || buttonNumber > NUMBER_OF_BUTTONS)
       throw new RuntimeException("Invalid Button ID");
 
     // get file

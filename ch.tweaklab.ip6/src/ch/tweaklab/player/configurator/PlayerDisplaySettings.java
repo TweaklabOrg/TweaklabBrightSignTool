@@ -69,10 +69,10 @@ public class PlayerDisplaySettings {
     final int prime = 31;
     int result = 1;
     result = prime * result + ((auto == null) ? 0 : auto.hashCode());
-    result = prime * result + Integer.valueOf(freq);
-    result = prime * result + Integer.valueOf(height);
+    result = prime * result + Integer.parseInt(freq);
+    result = prime * result + Integer.parseInt(height);
     result = prime * result + ((interlaced == null) ? 0 : interlaced.hashCode());
-    result = prime * result + Integer.valueOf(width);
+    result = prime * result + Integer.parseInt(width);
     return result;
   }
 
@@ -91,16 +91,16 @@ public class PlayerDisplaySettings {
         return false;
     } else if (!auto.equals(other.auto))
       return false;
-    if (freq != other.freq)
+    if (!freq.equals(other.freq))
       return false;
-    if (height != other.height)
+    if (!height.equals(other.height))
       return false;
     if (interlaced == null) {
       if (other.interlaced != null)
         return false;
     } else if (!interlaced.equals(other.interlaced))
       return false;
-    if (width != other.width)
+    if (!width.equals(other.width))
       return false;
     return true;
   }

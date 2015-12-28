@@ -45,10 +45,10 @@ public class ControllerMediator {
 
   public void disconnectFromDevice() {
     isConnected = false;
-    connector.disconnect();
-    
+    if (!connector.disconnect()) {
+      MainApp.showInfoMessage("Device might not have been disconnected correctly.");
+    }
     rootController.disconnectFromDevice();
-    
   }
 
   public void connectToDevice(String target) {

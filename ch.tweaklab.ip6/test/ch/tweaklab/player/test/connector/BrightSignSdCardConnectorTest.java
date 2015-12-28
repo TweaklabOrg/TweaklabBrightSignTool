@@ -1,18 +1,5 @@
 package ch.tweaklab.player.test.connector;
 
-import static org.junit.Assert.assertTrue;
-
-import java.io.File;
-import java.util.List;
-
-import javafx.application.Application;
-import javafx.concurrent.Task;
-import javafx.stage.Stage;
-
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import ch.tweaklab.player.configurator.UploadFile;
 import ch.tweaklab.player.configurator.XmlConfigCreator;
 import ch.tweaklab.player.connector.BrightSignSdCardConnector;
@@ -22,13 +9,22 @@ import ch.tweaklab.player.model.MediaFile;
 import ch.tweaklab.player.model.MediaUploadData;
 import ch.tweaklab.player.model.ModeType;
 import ch.tweaklab.player.test.util.TestUtil;
+import javafx.application.Application;
+import javafx.concurrent.Task;
+import javafx.stage.Stage;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import java.util.List;
+
+import static org.junit.Assert.assertTrue;
 
 public class BrightSignSdCardConnectorTest {
 
   BrightSignSdCardConnector sdConnector;
   boolean success = true;
-  List<String> targetList;
-  
+
   public static class AsNonApp extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {

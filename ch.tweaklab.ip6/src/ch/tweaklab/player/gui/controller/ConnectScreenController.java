@@ -118,7 +118,6 @@ public class ConnectScreenController {
       MainApp.showErrorMessage("Target not valid!", "Please enter a valid target address.");
       return;
     }
-    ControllerMediator mediator = ControllerMediator.getInstance();
   ControllerMediator.getInstance().connectToDevice(target);
   }
 

@@ -77,7 +77,7 @@ public class NetworkUtils {
         // Get found IP's
         for (final Future<String> f : taskList) {
           String foundIp = f.get();
-          if (foundIp != "") {
+          if (!foundIp.equals("")) {
             foundIps.add(foundIp);
           }
         }

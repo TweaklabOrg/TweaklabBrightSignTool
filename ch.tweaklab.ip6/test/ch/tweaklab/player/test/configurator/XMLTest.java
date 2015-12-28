@@ -1,25 +1,22 @@
 package ch.tweaklab.player.test.configurator;
 
-import static org.junit.Assert.assertTrue;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-
-import org.apache.commons.io.FileUtils;
-import org.junit.Before;
-import org.junit.Test;
-
 import ch.tweaklab.player.configurator.PlayerDisplaySettings;
 import ch.tweaklab.player.configurator.PlayerGeneralSettings;
 import ch.tweaklab.player.configurator.UploadFile;
 import ch.tweaklab.player.configurator.XmlConfigCreator;
 import ch.tweaklab.player.model.MediaFile;
 import ch.tweaklab.player.test.util.TestUtil;
+import org.apache.commons.io.FileUtils;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+
+import static org.junit.Assert.assertTrue;
 
 public class XMLTest {
-
-  String workDirectory = "work";
 
   @Before
   public void setUp() throws Exception {

@@ -307,7 +307,7 @@ public class UploadScreenController {
     if (currentConnector instanceof BrightSignWebConnector) {
       this.newHostnameField.setText(currentConnector.getName());
       String ip = NetworkUtils.resolveHostName(this.newHostnameField.getText());
-      if (ip != "") {
+      if (!ip.equals("")) {
         this.newIPField.setText(ip);
       }
     } else {
@@ -315,12 +315,12 @@ public class UploadScreenController {
       this.newIPField.setText(settings.getIp());
     }
 
-    this.dhcpCheckbox.setSelected(Boolean.valueOf(settings.getDhcp()));
+    this.dhcpCheckbox.setSelected(settings.getDhcp());
     this.gatewayField.setText(settings.getGateway());
     this.subnetField.setText(settings.getNetmask());
     this.volumeField.setText(String.valueOf(settings.getVolume()));
 
-    disableIpField(Boolean.valueOf(settings.getDhcp()));
+    disableIpField(settings.getDhcp());
   }
 
   private void setDisplaySettingsDefaultValues() {

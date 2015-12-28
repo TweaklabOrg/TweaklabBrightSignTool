@@ -54,8 +54,6 @@ public class PlaylistTabController extends TabController {
   private void handleRemove() {
     int selectedIndex = listView.getSelectionModel().getSelectedIndex();
     listView.getItems().remove(selectedIndex);
-    if (listView.getItems().size() < 1) {
-    }
   }
 
   @FXML

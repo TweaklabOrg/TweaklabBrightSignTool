@@ -205,7 +205,7 @@ public class BrightSignWebConnector extends Connector {
     try {
       tcpSocket = new Socket(this.target, tcpPort);
       outToTcpServer = new DataOutputStream(tcpSocket.getOutputStream());
-      inFromTcpServer = new BufferedReader(new InputStreamReader(tcpSocket.getInputStream()));
+      inFromTcpServer = new BufferedReader(new InputStreamReader(tcpSocket.getInputStream(), "US-ASCII"));
       outToTcpServer.writeBytes(command + '\n');
       answer = inFromTcpServer.readLine();
       System.out.println(answer);
@@ -215,7 +215,11 @@ public class BrightSignWebConnector extends Connector {
       e.printStackTrace();
     }
     try {
-      tcpSocket.close();
+      try {
+        tcpSocket.close();
+      } catch (NullPointerException e) {
+        // if socket is null, it doesn't have to be closed.
+      }
     } catch (Exception e) {
       e.printStackTrace();
     }
