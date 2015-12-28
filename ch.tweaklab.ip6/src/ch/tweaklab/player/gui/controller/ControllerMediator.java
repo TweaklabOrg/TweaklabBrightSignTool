@@ -54,7 +54,7 @@ public class ControllerMediator {
   public void connectToDevice(String target) {
     isConnected = connector.connect(target);
     if (isConnected) {
-      rootController.connectToDevice();
+      rootController.connectToDevice(connector.getSettingsOnDevice());
     } else {
       MainApp.showErrorMessage("Connection failed!", "Please verify the target address.");
     }

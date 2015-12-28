@@ -64,13 +64,13 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <Label text="Width" />
+                  <Label fx:id="widthLabel" text="Width" />
                   <NumberTextField fx:id="widthField" prefHeight="24.0" prefWidth="39.0" GridPane.columnIndex="1" />
-                  <Label text="Height" GridPane.columnIndex="3" />
+                  <Label fx:id="heightLable" text="Height" GridPane.columnIndex="3" />
                   <NumberTextField fx:id="heightField" prefHeight="25.0" prefWidth="55.0" GridPane.columnIndex="4" />
-                  <Label text="Freq" GridPane.rowIndex="1" />
+                  <Label fx:id="freqLable" text="Freq" GridPane.rowIndex="1" />
                   <NumberTextField fx:id="frequencyField" prefHeight="25.0" prefWidth="48.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                  <Label text="Interlaced" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                  <Label fx:id="interlacedLable" text="Interlaced" GridPane.columnIndex="3" GridPane.rowIndex="1" />
                   <CheckBox fx:id="interlacedCheckbox" mnemonicParsing="false" GridPane.columnIndex="4" GridPane.rowIndex="1" />
                </children>
             </GridPane>

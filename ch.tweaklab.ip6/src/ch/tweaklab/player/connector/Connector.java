@@ -5,13 +5,13 @@ package ch.tweaklab.player.connector;
  * This methods are called in the GUI via reflection.
  * the current used connector class is stored in ApplicationData.java
  */
-import java.io.File;
-import java.util.List;
 
-import javafx.concurrent.Task;
 import ch.tweaklab.player.configurator.UploadFile;
-import ch.tweaklab.player.model.MediaFile;
 import ch.tweaklab.player.model.MediaUploadData;
+import javafx.concurrent.Task;
+
+import java.util.List;
+import java.util.Map;
 
 public abstract class Connector {
 
@@ -67,12 +67,7 @@ public abstract class Connector {
 	return name;
 }
 
-public abstract Task<List<String>> getPossibleTargets();
+  public abstract Task<List<String>> getPossibleTargets();
 
-
-
-
-  
-
-  
+  public abstract Map<String, String> getSettingsOnDevice();
 }

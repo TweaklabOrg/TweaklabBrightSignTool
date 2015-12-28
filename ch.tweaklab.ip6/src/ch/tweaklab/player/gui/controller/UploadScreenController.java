@@ -23,6 +23,7 @@ import org.apache.commons.io.IOUtils;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * /*
@@ -39,11 +40,19 @@ public class UploadScreenController {
   @FXML
   private CheckBox autoDisplaySolutionCheckbox;
   @FXML
+  public Label widthLabel;
+  @FXML
   private TextField widthField;
+  @FXML
+  public Label heightLable;
   @FXML
   private TextField heightField;
   @FXML
+  public Label freqLable;
+  @FXML
   private TextField frequencyField;
+  @FXML
+  public Label interlacedLable;
   @FXML
   private CheckBox interlacedCheckbox;
 
@@ -105,7 +114,45 @@ public class UploadScreenController {
     disableDisplayResolutionElements(this.autoDisplaySolutionCheckbox.isSelected());
 
     addListenerToCheckboxes();
+  }
 
+  public void initData(Map<String, String> data) {
+    if (data.containsKey("auto")) {
+      boolean value = Boolean.parseBoolean(data.get("auto"));
+      this.autoDisplaySolutionCheckbox.selectedProperty().setValue(value);
+    }
+    if (data.containsKey("width")) {
+      this.widthField.textProperty().setValue(data.get("width"));
+    }
+    if (data.containsKey("height")) {
+      this.heightField.textProperty().setValue(data.get("height"));
+    }
+    if (data.containsKey("freq")) {
+      this.frequencyField.textProperty().setValue(data.get("freq"));
+    }
+    if (data.containsKey("interlaced")) {
+      boolean value = Boolean.parseBoolean(data.get("interlaced"));
+      this.interlacedCheckbox.selectedProperty().setValue(value);
+    }
+    if (data.containsKey("volume")) {
+      this.volumeField.textProperty().setValue(data.get("volume"));
+    }
+    if (data.containsKey("name")) {
+      this.newHostnameField.textProperty().setValue(data.get("name"));
+    }
+    if (data.containsKey("ip")) {
+      this.newIPField.textProperty().setValue(data.get("ip"));
+    }
+    if (data.containsKey("gateway")) {
+      this.gatewayField.textProperty().setValue(data.get("gateway"));
+    }
+    if (data.containsKey("netmask")) {
+      this.subnetField.textProperty().setValue(data.get("netmask"));
+    }
+    if (data.containsKey("dhcp")) {
+      boolean value = Boolean.parseBoolean(data.get("dhcp"));
+      this.dhcpCheckbox.selectedProperty().setValue(value);
+    }
   }
 
   @FXML
@@ -294,9 +341,13 @@ public class UploadScreenController {
   }
 
   private void disableDisplayResolutionElements(boolean disable) {
+    this.widthLabel.setDisable(disable);
     this.widthField.setDisable(disable);
+    this.heightLable.setDisable(disable);
     this.heightField.setDisable(disable);
+    this.freqLable.setDisable(disable);
     this.frequencyField.setDisable(disable);
+    this.interlacedLable.setDisable(disable);
     this.interlacedCheckbox.setDisable(disable);
   }
 

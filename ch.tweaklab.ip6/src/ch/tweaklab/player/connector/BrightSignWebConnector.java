@@ -26,7 +26,9 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.Socket;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 public class BrightSignWebConnector extends Connector {
@@ -239,6 +241,11 @@ public class BrightSignWebConnector extends Connector {
       }
     };
     return getTargetTask;
+  }
+
+  @Override
+  public Map<String, String> getSettingsOnDevice() {
+    return new HashMap<>();
   }
 
 }

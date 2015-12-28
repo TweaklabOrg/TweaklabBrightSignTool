@@ -1,9 +1,7 @@
 package ch.tweaklab.player.gui.controller;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
+import ch.tweaklab.player.model.Keys;
+import ch.tweaklab.player.model.MediaUploadData;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -14,8 +12,11 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
-import ch.tweaklab.player.model.Keys;
-import ch.tweaklab.player.model.MediaUploadData;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Controller of RootPage.fxml Contains Connections Components and Tabview
@@ -52,11 +53,12 @@ public class RootPageController  {
     this.loadConnectItems();
   }
 
-  public void connectToDevice() {
-    this.loadUploadItems();
+  public void connectToDevice(Map<String, String> settingsOnDevice) {
+    this.loadUploadItems(settingsOnDevice);
+    // TODO load content of settingsOnDevice into gpio and playlist tab
   }
 
-  private void loadUploadItems() {
+  private void loadUploadItems(Map<String, String> settingsOnDevice) {
     try {
       if (splitPane.getItems().size() > 1) {
         splitPane.getItems().remove(1);
@@ -65,6 +67,9 @@ public class RootPageController  {
       FXMLLoader loader = new FXMLLoader();
       loader.setLocation(this.getClass().getResource(Keys.UPLOAD_SCREEN_FXML_PATH));
       AnchorPane connectLayout = (AnchorPane) loader.load();
+
+      UploadScreenController controller = loader.<UploadScreenController>getController();
+      controller.initData(settingsOnDevice);
 
       splitPane.getItems().add(connectLayout);
       splitPane.setDividerPosition(0, 0.7);

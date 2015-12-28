@@ -9,12 +9,24 @@ import ch.tweaklab.player.util.CommandlineTool;
 import ch.tweaklab.player.util.OSValidator;
 import javafx.concurrent.Task;
 import org.apache.commons.io.FileUtils;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
 
 import javax.swing.filechooser.FileSystemView;
-import java.io.*;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Connects to a SD Card of Bright Sign Device
@@ -156,6 +168,77 @@ public class BrightSignSdCardConnector extends Connector {
       }
     };
     return getTargetTask;
+  }
+
+  @Override
+  public Map<String, String> getSettingsOnDevice() {
+    HashMap<String, String> result = new HashMap<>();
+
+    // get a document builder
+    DocumentBuilder builder = null;
+    try {
+      builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+    } catch (ParserConfigurationException e) {
+      e.printStackTrace();
+    }
+
+    collectMode(result, builder);
+    collectEntries("settings.xml", result, builder);
+    collectEntries("display.xml", result, builder);
+    collectEntries("gpio.xml", result, builder);
+    collectPlaylist(result, builder);
+
+    return result;
+  }
+
+  private void collectEntries(String file, Map<String, String> result, DocumentBuilder builder) {
+    Document xml = getDocFromXML(file, builder);
+    if (xml != null) {
+      Element settings = xml.getDocumentElement();
+      Node entry = settings.getChildNodes().item(0);
+      while (entry != null) {
+        if (entry.getNodeType() == Node.ELEMENT_NODE) {
+          result.put(entry.getNodeName(), ((Element) entry).getTextContent());
+        }
+        entry = entry.getNextSibling();
+      }
+    }
+  }
+
+  private void collectMode(Map<String, String> result, DocumentBuilder builder) {
+    Document xml = getDocFromXML("mode.xml", builder);
+    if (xml != null) {
+      Element mode = xml.getDocumentElement();
+      result.put(mode.getTagName(), mode.getTextContent());
+    }
+  }
+
+  private void collectPlaylist(Map<String, String> result, DocumentBuilder builder) {
+    Document xml = getDocFromXML("playlist.xml", builder);
+    if (xml != null) {
+      Element root = xml.getDocumentElement();
+      Node entry = root.getChildNodes().item(0);
+      int i = 0;
+      while (entry != null) {
+        if (entry.getNodeType() == Node.ELEMENT_NODE) {
+          result.put(entry.getNodeName() + i, ((Element) entry).getTextContent());
+          i++;
+        }
+        entry = entry.getNextSibling();
+      }
+    }
+  }
+
+  private Document getDocFromXML(String file, DocumentBuilder builder) {
+    Document xml = null;
+    try {
+      xml = builder.parse(new File(this.target + "/" + file));
+    } catch (SAXException e) {
+      // nothing to do, as we don't absolutely need the data;
+    } catch (IOException e) {
+      // nothing to do, as we don't absolutely need the data;
+    }
+    return xml;
   }
 
   // TODO return success
