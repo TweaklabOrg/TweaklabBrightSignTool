@@ -143,7 +143,7 @@ public class BrightSignSdCardConnector extends Connector {
               if (f.getName().charAt(0) != '.') {
                 String volumeInfo = CommandlineTool.executeCommand("diskutil info " + f);
                 // [\\s\\S] matches all chars, even \n, ...
-                if (volumeInfo.matches("[\\s\\S]*Protocol:( *)Secure Digital[\\s\\S]*")) {
+                if (volumeInfo.matches("[\\s\\S]*Ejectable:( *)Yes[\\s\\S]*")) {
                   targetList.add(f.getAbsolutePath());
                 }
               }
