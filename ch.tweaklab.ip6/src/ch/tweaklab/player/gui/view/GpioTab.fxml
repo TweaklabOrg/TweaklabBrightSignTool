@@ -32,7 +32,7 @@
                               <Font name="System Bold" size="15.0" />
                            </font>
                         </Label>
-                        <Label id="fileNameLabel0" layoutX="100.0" layoutY="32.0" prefHeight="16.0" prefWidth="444.0" text="no file selected" />
+                        <Label fx:id="fileNameLabel0" layoutX="100.0" layoutY="32.0" prefHeight="16.0" prefWidth="444.0" text="no file selected" />
                      </children>
                   </Pane>
                </children>
@@ -47,7 +47,7 @@
                               <Font name="System Bold" size="15.0" />
                            </font>
                         </Label>
-                        <Label id="fileNameLabel1" layoutX="100.0" layoutY="32.0" prefHeight="16.0" prefWidth="444.0" text="no file selected" />
+                        <Label fx:id="fileNameLabel1" layoutX="100.0" layoutY="32.0" prefHeight="16.0" prefWidth="444.0" text="no file selected" />
                      </children>
                   </Pane>
                </children>
@@ -62,7 +62,7 @@
                               <Font name="System Bold" size="15.0" />
                            </font>
                         </Label>
-                        <Label id="fileNameLabel2" layoutX="100.0" layoutY="31.0" prefHeight="16.0" prefWidth="444.0" text="no file selected" />
+                        <Label fx:id="fileNameLabel2" layoutX="100.0" layoutY="31.0" prefHeight="16.0" prefWidth="444.0" text="no file selected" />
                      </children>
                   </Pane>
                </children>
@@ -77,7 +77,7 @@
                               <Font name="System Bold" size="15.0" />
                            </font>
                         </Label>
-                        <Label id="fileNameLabel3" layoutX="100.0" layoutY="32.0" prefHeight="16.0" prefWidth="444.0" text="no file selected" />
+                        <Label fx:id="fileNameLabel3" layoutX="100.0" layoutY="32.0" prefHeight="16.0" prefWidth="444.0" text="no file selected" />
                      </children>
                   </Pane>
                </children>
@@ -85,7 +85,6 @@
          </children>
       </GridPane>
       <Button layoutX="42.0" layoutY="615.0" mnemonicParsing="false" onAction="#reset" prefHeight="38.0" prefWidth="161.0" text="Reset" />
-      <!--TODO Stephan: We need a better name for retrigger...-->
       <Label layoutX="66.0" layoutY="550.0" text="Media interruptable" />
       <Label layoutX="251.0" layoutY="550.0" text="after" />
       <CheckBox fx:id="retriggerEnabledCheckbox" layoutX="207.0" layoutY="549.0" mnemonicParsing="false" />

@@ -17,6 +17,7 @@ import javafx.stage.FileChooser;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Map;
 
 /**
  * Controller of PushButton Configuration View
@@ -25,18 +26,29 @@ import java.util.Arrays;
  *
  */
 public class GpioTabController extends TabController {
-
   @FXML
   private AnchorPane rootPane;
+
+  @FXML
+  public Label fileNameLabel0;
+
+  @FXML
+  public Label fileNameLabel1;
+
+  @FXML
+  public Label fileNameLabel2;
+
+  @FXML
+  public Label fileNameLabel3;
+
+  @FXML
+  private Label loopfileNameLabel;
 
   @FXML
   private CheckBox retriggerEnabledCheckbox;
 
   @FXML
   private TextField retriggerDelayField;
-
-  @FXML
-  private Label loopfileNameLabel;
 
   MediaFile[] gpioFiles;
   private static int NUMBER_OF_BUTTONS = 4;
@@ -53,6 +65,33 @@ public class GpioTabController extends TabController {
     reset();
     retriggerEnabledCheckbox.selectedProperty().addListener((observable, oldValue, newValue) ->
             retriggerDelayField.setDisable(!newValue));
+  }
+
+  @Override
+  public void setContent(Map<String, String> content) {
+    // TODO: building filemanagement to make that possible. For ex. skip mediaupload of already existing files, but allow modifications on settings.
+//    if (content.containsKey("gpio0")) {
+//      fileNameLabel0.textProperty().setValue(content.get("gpio0"));
+//    }
+//    if (content.containsKey("gpio1")) {
+//      fileNameLabel1.textProperty().setValue(content.get("gpio1"));
+//    }
+//    if (content.containsKey("gpio2")) {
+//      fileNameLabel2.textProperty().setValue(content.get("gpio2"));
+//    }
+//    if (content.containsKey("gpio3")) {
+//      fileNameLabel3.textProperty().setValue(content.get("gpio3"));
+//    }
+//    if (content.containsKey("loop")) {
+//      loopfileNameLabel.textProperty().setValue(content.get("loop"));
+//    }
+//    if (content.containsKey("retriggerEnabled")) {
+//      boolean value = Boolean.parseBoolean(content.get("retriggerEnabled"));
+//      retriggerEnabledCheckbox.selectedProperty().setValue(value);
+//    }
+//    if (content.containsKey("retriggerDelay")) {
+//      retriggerDelayField.textProperty().setValue(content.get("retriggerDelay"));
+//    }
   }
 
   @FXML

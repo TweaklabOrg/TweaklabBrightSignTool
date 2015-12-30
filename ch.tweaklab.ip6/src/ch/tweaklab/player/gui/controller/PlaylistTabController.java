@@ -12,6 +12,7 @@ import javafx.stage.FileChooser;
 import java.io.File;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Controller Class for ContentManagerTab.fxml Manages Upload of a playlist to device
@@ -30,6 +31,20 @@ public class PlaylistTabController extends TabController {
    */
   @FXML
   private void initialize() {
+  }
+
+  @Override
+  public void setContent(Map<String, String> content) {
+    // TODO: building filemanagement to make that possible. For ex. skip mediaupload of already existing files, but allow modifications on settings.
+//    listView.getItems().clear();
+//    String searchString = "task0";
+//    int i = 0;
+//    while (content.containsKey(searchString)) {
+//      listView.getItems().add(new MediaFile(new File(content.get(searchString))));
+//      i++;
+//      searchString = "task" + i;
+//    }
+//    listView.getSelectionModel().selectLast();
   }
 
   @FXML

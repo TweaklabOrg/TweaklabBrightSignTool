@@ -3,6 +3,8 @@ package ch.tweaklab.player.gui.controller;
 import ch.tweaklab.player.model.Keys;
 import ch.tweaklab.player.model.MediaUploadData;
 
+import java.util.Map;
+
 /**
  * Abstract Class for all tab controllers 
  * Methods are called by RootPageController
@@ -12,8 +14,9 @@ import ch.tweaklab.player.model.MediaUploadData;
 public abstract class TabController {
 
  abstract public MediaUploadData getMediaUploadData();
- 
- 
+
+ abstract public void setContent(Map<String, String> content);
+
  protected Boolean validateFileFormat(String filename){
   String audioRegex = Keys.loadProperty(Keys.AUDIO_REGEX_PROPS_KEY);
   String videoRegex = Keys.loadProperty(Keys.VIDEO_REGEX_PROPS_KEY);

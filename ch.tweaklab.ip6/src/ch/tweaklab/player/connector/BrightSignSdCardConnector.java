@@ -185,8 +185,9 @@ public class BrightSignSdCardConnector extends Connector {
     collectMode(result, builder);
     collectEntries("settings.xml", result, builder);
     collectEntries("display.xml", result, builder);
-    collectEntries("gpio.xml", result, builder);
-    collectPlaylist(result, builder);
+    // TODO: building filemanagement to make that possible. For ex. skip mediaupload of already existing files, but allow modifications on settings.
+//    collectEntries("gpio.xml", result, builder);
+//    collectPlaylist(result, builder);
 
     return result;
   }
