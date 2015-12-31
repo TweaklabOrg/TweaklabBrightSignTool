@@ -17,6 +17,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
 import javafx.scene.layout.Pane;
 import org.apache.commons.io.IOUtils;
 
@@ -24,6 +25,9 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.UnaryOperator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * /*
@@ -78,11 +82,6 @@ public class UploadScreenController {
   private TextField newIPField;
 
   @FXML
-  private Label gatewayLabel;
-  @FXML
-  private TextField gatewayField;
-
-  @FXML
   private Label subnetLabel;
   @FXML
   private TextField subnetField;
@@ -104,6 +103,13 @@ public class UploadScreenController {
    */
   @FXML
   private void initialize() {
+    widthField.setTextFormatter(new TextFormatter<String>(new NumberFilter()));
+    heightField.setTextFormatter(new TextFormatter<String>(new NumberFilter()));
+    frequencyField.setTextFormatter(new TextFormatter<String>(new NumberFilter()));
+    volumeField.setTextFormatter(new TextFormatter<String>(new NumberFilter()));
+    newIPField.setTextFormatter(new TextFormatter<String>(new IpFilter()));
+    subnetField.setTextFormatter(new TextFormatter<String>(new IpFilter()));
+
     mediator = ControllerMediator.getInstance();
     mediator.setUploadController(this);
     this.targetAddressLabel.setText(mediator.getConnector().getName());
@@ -142,9 +148,6 @@ public class UploadScreenController {
     }
     if (data.containsKey("ip")) {
       this.newIPField.textProperty().setValue(data.get("ip"));
-    }
-    if (data.containsKey("gateway")) {
-      this.gatewayField.textProperty().setValue(data.get("gateway"));
     }
     if (data.containsKey("netmask")) {
       this.subnetField.textProperty().setValue(data.get("netmask"));
@@ -290,7 +293,7 @@ public class UploadScreenController {
     newSettings.setIp(this.newIPField.getText());
     newSettings.setVolume(Integer.parseInt(this.volumeField.getText()));
     newSettings.setNetmask(this.subnetField.getText());
-    newSettings.setGateway(this.gatewayField.getText());
+    newSettings.setGateway(this.newIPField.getText());
     newSettings.setDhcp(this.dhcpCheckbox.isSelected());
     UploadFile xmlFile = XmlConfigCreator.createGeneralSettingsXml(newSettings);
     return xmlFile;
@@ -303,7 +306,7 @@ public class UploadScreenController {
     newSettings.setIp(this.newIPField.getText());
     newSettings.setVolume(Integer.parseInt(this.volumeField.getText()));
     newSettings.setNetmask(this.subnetField.getText());
-    newSettings.setGateway(this.gatewayField.getText());
+    newSettings.setGateway(this.newIPField.getText());
     newSettings.setDhcp(this.dhcpCheckbox.isSelected());
     newSettings.setInitialize(false);
     UploadFile xmlFile = XmlConfigCreator.createGeneralSettingsXml(newSettings);
@@ -334,8 +337,6 @@ public class UploadScreenController {
   private void disableIpField(boolean b) {
     newIPField.setDisable(b);
     newIPlabel.setDisable(b);
-    gatewayField.setDisable(b);
-    gatewayLabel.setDisable(b);
     subnetField.setDisable(b);
     subnetLabel.setDisable(b);
   }
@@ -367,7 +368,6 @@ public class UploadScreenController {
     }
 
     this.dhcpCheckbox.setSelected(settings.getDhcp());
-    this.gatewayField.setText(settings.getGateway());
     this.subnetField.setText(settings.getNetmask());
     this.volumeField.setText(String.valueOf(settings.getVolume()));
 
@@ -416,6 +416,34 @@ public class UploadScreenController {
         generalSettingsPane.setDisable(!newValue);
       }
     });
+  }
+
+  private class IpFilter implements UnaryOperator<TextFormatter.Change> {
+
+    Pattern ipPattern = Pattern.compile("25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?(\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){0,3}]");
+
+    @Override
+    public TextFormatter.Change apply(TextFormatter.Change change) {
+      Matcher matcher = ipPattern.matcher(change.getControlNewText());
+      // if ether the pattern matches, or the matcher hit the end while matching
+      if (matcher.matches() || matcher.hitEnd()) {
+        return change;
+      } else {
+        return null;
+      }
+    }
+  }
+
+  private class NumberFilter implements UnaryOperator<TextFormatter.Change> {
+
+    @Override
+    public TextFormatter.Change apply(TextFormatter.Change change) {
+      if (change.getText().matches("[0-9]")) {
+        return change;
+      } else {
+        return null;
+      }
+    }
   }
 
 }
