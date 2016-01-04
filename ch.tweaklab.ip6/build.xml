@@ -1,46 +1,80 @@
-<project name="ch.tweaklab.player" default="clean" basedir=".">
+<project name="ch.tweaklab.player" default="build" basedir="." xmlns:fx="javafx:com.sun.javafx.tools.ant">
+    <property file="build.properties"/>
 
-	<presetdef name="javac">
+    <presetdef name="javac">
 		<javac includeantruntime="false" />
 	</presetdef>
-
-	<property name="src.dir" location="src"/>
-	<property name="build.dir" location="build"/>
-	<property name="dist.dir" location="dist"/>
-	<property name="lib.dir" location="lib"/>
-	<property name="res.dir" location="resources"/>
 
 	<path id="class.path">
 		<dirset dir="${build.dir}" />
 		<fileset dir="${lib.dir}"  />
 	</path>
 
-	<target name="init">
-		<mkdir dir="${build.dir}"/>
-		<mkdir dir="${build.dir}/classes"/>
-		<mkdir dir="${build.dir}/bs-scripts"/>
-	</target>
+    <taskdef resource="com/sun/javafx/tools/ant/antlib.xml"
+             uri="javafx:com.sun.javafx.tools.ant"
+             classpath=".:${javafx.sdk.path}/lib/ant-javafx.jar"/>
 
-	<target name="compile" depends="init"
-        description="compile the source">
-		<javac classpathref="class.path" srcdir="${src.dir}" destdir="${build.dir}/classes"/>
-	</target>
-
-	<target name="jar" depends="compile"
-        description="generate the distribution">
-		<jar destfile="${dist.dir}/tl-player.jar" >
-			<fileset dir="${build.dir}/classes"/>
-			<fileset dir="${src.dir}" includes="**/*.fxml"/>
-			<fileset dir="${res.dir}"/>
-			<zipgroupfileset dir="${lib.dir}" includes="*.jar"/>
-			
-			 <manifest>
-				<attribute name="Main-Class" value="ch.tweaklab.player.gui.controller.MainApp"/>
-			</manifest>
-		</jar>
-	</target>
-
-	<target name="clean" depends="jar" description="clean up">
+    <target name="clean">
 		<delete dir="${build.dir}"/>
+        <delete dir="${dist.dir}"/>
 	</target>
+
+	<target name="init"
+            depends="clean">
+		<mkdir dir="${build.dir}"/>
+		<mkdir dir="${build.dir.classes}"/>
+		<mkdir dir="${build.dir.scripts}"/>
+        <mkdir dir="${dist.dir}"/>
+	</target>
+
+	<target name="compile"
+            depends="init">
+		<javac classpathref="class.path"
+               srcdir="${src.dir}"
+               destdir="${build.dir.classes}"/>
+	</target>
+
+    <target name="jar"
+            depends="compile"
+            description="generate the jar">
+        <jar destfile="${dist.dir}/${app.name}_${version}.jar" >
+            <fileset dir="${build.dir}/classes"/>
+            <fileset dir="${src.dir}"
+                     includes="**/*.fxml"/>
+            <fileset dir="${res.dir}"/>
+            <zipgroupfileset dir="${lib.dir}"
+                             includes="*.jar"/>
+
+            <manifest>
+                <attribute name="Main-Class"
+                           value="${main.class}"/>
+                <attribute name="Implementation-Version"
+                           value="${version}"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="build"
+            depends="jar">
+
+        <fx:application id="${app.name}"
+                        name="${full.name}"
+                        mainClass="${main.class}"/>
+
+        <fx:deploy width="${width}"
+                   height="${height}"
+                   outdir="${dist.dir}"
+                   outfile="${app.name}_${version}"
+                   nativeBundles="all"
+                verbose="true">
+            <fx:info title="${full.name}"/>
+            <fx:application name="${full.name}_${version}"
+                            mainClass="${main.class}"/>
+            <fx:resources>
+                <fx:fileset dir="${dist.dir}"
+                            includes="${app.name}_${version}.jar"/>
+                <fx:fileset dir="${dist.dir}" includes="${res.dir}"/>
+            </fx:resources>
+        </fx:deploy>
+    </target>
 </project>

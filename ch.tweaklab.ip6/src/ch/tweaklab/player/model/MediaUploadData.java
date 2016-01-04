@@ -1,10 +1,8 @@
 package ch.tweaklab.player.model;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
 import ch.tweaklab.player.configurator.UploadFile;
+
+import java.util.List;
 
 /**
  * Contains the media Files and the associated XML config file
