@@ -13,9 +13,9 @@ public class PlayerGeneralSettings {
   private Boolean dhcp;
 
   private String sshPassword= "";
-  private int tcpPort= 0;
+  private String tcpPort;
   private Boolean debug;
-  private int volume= 100;
+  private String volume;
   private Boolean initialize= true;
   private String scriptVersion= "";
 
@@ -34,9 +34,9 @@ public class PlayerGeneralSettings {
     }
     settings.netmask = Keys.loadProperty(Keys.DEFAULT_NETWORK_PROPS_KEY);
 
-    settings.tcpPort = Integer.parseInt(Keys.loadProperty(Keys.DEFAULT_TCP_PORT_PROPS_KEY));
-    settings.volume = Integer.parseInt(Keys.loadProperty(Keys.DEFAULT_VOLUME_PROPS_KEY));
-    settings.scriptVersion = Keys.loadProperty(Keys.DEFAULT_SCRIPT_VERSION_PROPS_KEY);
+    settings.tcpPort = Keys.loadProperty(Keys.DEFAULT_TCP_PORT_PROPS_KEY);
+    settings.volume = Keys.loadProperty(Keys.DEFAULT_VOLUME_PROPS_KEY);
+    settings.scriptVersion = Keys.loadProperty(Keys.SCRIPT_VERSION_PROPS_KEY);
 
     settings.sshPassword = Keys.loadProperty(Keys.DEFAULT_SSH_PASSWORD_PROPS_KEY);
     settings.debug = Boolean.parseBoolean((Keys.loadProperty(Keys.DEFAULT_DEBUG_PROPS_KEY)));
@@ -73,7 +73,7 @@ public class PlayerGeneralSettings {
     return sshPassword;
   }
 
-  public int getTcpPort() {
+  public String getTcpPort() {
     return tcpPort;
   }
 
@@ -82,7 +82,7 @@ public class PlayerGeneralSettings {
   }
 
 
-  public int getVolume() {
+  public String getVolume() {
     return volume;
   }
 
@@ -123,7 +123,7 @@ public class PlayerGeneralSettings {
   }
 
   public void setTcpPort(int tcpPort) {
-    this.tcpPort = tcpPort;
+    this.tcpPort = String.valueOf(tcpPort);
   }
 
   public void setDebug(Boolean debug) {
@@ -132,7 +132,11 @@ public class PlayerGeneralSettings {
 
 
   public void setVolume(int volume) {
-    this.volume = volume;
+    if (volume > 100) {
+      this.volume = "100";
+    } else {
+      this.volume = String.valueOf(volume);
+    }
   }
 
   public void setInitialize(Boolean initialize) {
@@ -157,8 +161,8 @@ public class PlayerGeneralSettings {
     result = prime * result + ((netmask == null) ? 0 : netmask.hashCode());
     result = prime * result + ((scriptVersion == null) ? 0 : scriptVersion.hashCode());
     result = prime * result + ((sshPassword == null) ? 0 : sshPassword.hashCode());
-    result = prime * result + tcpPort;
-    result = prime * result + volume;
+    result = prime * result + ((tcpPort == null) ? 0 : tcpPort.hashCode());
+    result = prime * result + ((volume == null) ? 0 : volume.hashCode());
     return result;
   }
 
@@ -221,13 +225,10 @@ public class PlayerGeneralSettings {
         return false;
     } else if (!sshPassword.equals(other.sshPassword))
       return false;
-    if (tcpPort != other.tcpPort)
+    if (tcpPort.equals(other.tcpPort))
       return false;
-    if (volume != other.volume)
+    if (volume.equals(other.volume))
       return false;
     return true;
   }
-
-  
-  
 }

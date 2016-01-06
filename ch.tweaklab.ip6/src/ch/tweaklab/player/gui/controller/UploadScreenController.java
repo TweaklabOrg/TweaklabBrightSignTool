@@ -199,6 +199,13 @@ public class UploadScreenController {
       List<UploadFile> scripts = getScripts();
       systemFilesForUpload.addAll(scripts);
 
+      // upload jar
+      String jarName = Keys.loadProperty(Keys.APP_NAME_PROPS_KEY) + "_" + Keys.loadProperty(Keys.ClIENT_VERSION_PROPS_KEY) + ".jar";
+      InputStream jarAsStream = this.getClass().getResourceAsStream(
+              "/" + Keys.loadProperty(Keys.INCLUDED_JAR_RELATIVE_PATH) + "/" + jarName);
+      byte[] scriptAsBytes = IOUtils.toByteArray(jarAsStream);
+      systemFilesForUpload.add(new UploadFile(jarName, scriptAsBytes));
+
       // Create Upload Task and add Events
       Connector connector = ControllerMediator.getInstance().getConnector();
       MediaUploadData mediaUploadData = null;
@@ -323,7 +330,6 @@ public class UploadScreenController {
         byte[] scriptAsBytes = IOUtils.toByteArray(scriptInputStream);
         UploadFile configFile = new UploadFile(scriptName, scriptAsBytes);
         scriptFiles.add(configFile);
-
       } catch (Exception e) {
         MainApp.showErrorMessage("File not found!", "BrightSign Script " + scriptName + " not found!");
         e.printStackTrace();
@@ -369,7 +375,7 @@ public class UploadScreenController {
 
     this.dhcpCheckbox.setSelected(settings.getDhcp());
     this.subnetField.setText(settings.getNetmask());
-    this.volumeField.setText(String.valueOf(settings.getVolume()));
+    this.volumeField.setText(settings.getVolume());
 
     disableIpField(settings.getDhcp());
   }
@@ -438,7 +444,7 @@ public class UploadScreenController {
 
     @Override
     public TextFormatter.Change apply(TextFormatter.Change change) {
-      if (change.getText().matches("[0-9]")) {
+      if (change.getText().matches("[0-9]*")) {
         return change;
       } else {
         return null;

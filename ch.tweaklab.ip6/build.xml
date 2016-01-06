@@ -1,5 +1,6 @@
 <project name="ch.tweaklab.player" default="build" basedir="." xmlns:fx="javafx:com.sun.javafx.tools.ant">
     <property file="build.properties"/>
+    <property file="${res.dir}/config.properties"/>
 
     <presetdef name="javac">
 		<javac includeantruntime="false" />
@@ -37,8 +38,9 @@
     <target name="jar"
             depends="compile"
             description="generate the jar">
-        <jar destfile="${dist.dir}/${app.name}_${version}.jar" >
-            <fileset dir="${build.dir}/classes"/>
+        <!--jar two times, as the actual jar must include itself to distribute the program in all configuration storages.-->
+        <jar destfile="${build.dir}/${app_name}_${client_version}.jar" >
+            <fileset dir="${build.dir.classes}"/>
             <fileset dir="${src.dir}"
                      includes="**/*.fxml"/>
             <fileset dir="${res.dir}"/>
@@ -49,7 +51,29 @@
                 <attribute name="Main-Class"
                            value="${main.class}"/>
                 <attribute name="Implementation-Version"
-                           value="${version}"/>
+                           value="${client_version}"/>
+            </manifest>
+        </jar>
+
+        <!--copy the jar that will be included into a resource folder defined by config.properties, so it will be included into the final jar.-->
+        <mkdir dir="${res.dir}/${included_jar_relative_path}"/>
+        <copyfile src="${build.dir}/${app_name}_${client_version}.jar"
+                  dest="${res.dir}/${included_jar_relative_path}/${app_name}_${client_version}.jar"/>
+
+        <!--now we can build the final jar, including the jar in resouces-->
+        <jar destfile="${dist.dir}/${app_name}_${client_version}.jar" >
+            <fileset dir="${build.dir.classes}"/>
+            <fileset dir="${src.dir}"
+                     includes="**/*.fxml"/>
+            <fileset dir="${res.dir}"/>
+            <zipgroupfileset dir="${lib.dir}"
+                             includes="*.jar"/>
+
+            <manifest>
+                <attribute name="Main-Class"
+                           value="${main.class}"/>
+                <attribute name="Implementation-Version"
+                           value="${client_version}"/>
             </manifest>
         </jar>
     </target>
@@ -57,22 +81,21 @@
     <target name="build"
             depends="jar">
 
-        <fx:application id="${app.name}"
-                        name="${full.name}"
+        <fx:application id="${app_name}"
+                        name="${app_nice_name}"
                         mainClass="${main.class}"/>
 
         <fx:deploy width="${width}"
                    height="${height}"
                    outdir="${dist.dir}"
-                   outfile="${app.name}_${version}"
-                   nativeBundles="all"
-                verbose="true">
-            <fx:info title="${full.name}"/>
-            <fx:application name="${full.name}_${version}"
+                   outfile="${app_name}_${client_version}"
+                   nativeBundles="image">
+            <fx:info title="${app_nice_name}"/>
+            <fx:application name="${app_nice_name}_${client_version}"
                             mainClass="${main.class}"/>
             <fx:resources>
                 <fx:fileset dir="${dist.dir}"
-                            includes="${app.name}_${version}.jar"/>
+                            includes="${app_name}_${client_version}.jar"/>
                 <fx:fileset dir="${dist.dir}" includes="${res.dir}"/>
             </fx:resources>
         </fx:deploy>

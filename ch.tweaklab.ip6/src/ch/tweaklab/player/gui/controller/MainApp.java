@@ -29,7 +29,7 @@ public class MainApp extends Application {
   @Override
   public void start(Stage primaryStage) {
     MainApp.primaryStage = primaryStage;
-    MainApp.primaryStage.setTitle(Keys.APPLICATION_TITLE + " " + Keys.APPLICATION_VERSION);
+    MainApp.primaryStage.setTitle(Keys.APP_NICE_NAME_PROPS_KEY + " " + Keys.ClIENT_VERSION_PROPS_KEY);
     MainApp.primaryStage.setResizable(false);
 
     initRootLayout();

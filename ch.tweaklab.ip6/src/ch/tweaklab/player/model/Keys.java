@@ -10,14 +10,17 @@ public class Keys {
   private static String CONFIG_FILE_NAME = "config.properties";
 
   // Application Keys
-  public static final String APPLICATION_TITLE = "Tweaklab Media Player";
-  public static final String APPLICATION_VERSION = "1.0";
+  public static final String SCRIPT_VERSION_PROPS_KEY = "script_version";
+  public static final String ClIENT_VERSION_PROPS_KEY = "client_version";
+  public static final String APP_NAME_PROPS_KEY = "app_name";
+  public static final String APP_NICE_NAME_PROPS_KEY = "app_nice_name";
 
   public static final String WORK_DIRECTORY = "work";
   public static final String SCRIPTS_DIRECTORY= "bs-scripts";
+  public static final String INCLUDED_JAR_RELATIVE_PATH = "included_jar_relative_path";
 
   public static final String BS_SCRIPTS_PROPS_KEY = "scriptsToUpload";
-  
+
   // PROPS KEY
   public static final String IMAGE_REGEX_PROPS_KEY = "image_regex";
   public static final String VIDEO_REGEX_PROPS_KEY = "video_regex";
@@ -37,7 +40,6 @@ public class Keys {
   public static final String DEFAULT_NETWORK_PROPS_KEY = "default_netmask";
   public static final String DEFAULT_VOLUME_PROPS_KEY = "default_volume";
 
-  public static final String DEFAULT_SCRIPT_VERSION_PROPS_KEY = "default_script_version";
   public static final String DEFAULT_SSH_PASSWORD_PROPS_KEY = "default_ssh_password";
   public static final String DEFAULT_DHCP_PROPS_KEY = "default_dhcp";
   public static final String DEFAULT_INITIALIZE_PROPS_KEY = "default_initialize";
@@ -57,6 +59,7 @@ public class Keys {
   public static final String ROOT_PAGE_FXML_PATH =      "/ch/tweaklab/player/gui/view/RootPage.fxml";
   public static final String UPLOAD_SCREEN_FXML_PATH =  "/ch/tweaklab/player/gui/view/UploadScreen.fxml";
   public static final String WAIT_SCREEN_FXML_PATH =    "/ch/tweaklab/player/gui/view/WaitScreen.fxml";
+
 
   public static String loadProperty(String key) {
     Properties configFile = new Properties();
