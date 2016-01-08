@@ -7,3 +7,6 @@ bin/
 
 org.tweaklab.brightsigntool/build
 org.tweaklab.brightsigntool/dist
+org.tweaklab.brightsigntool/idea
+.idea/
+
