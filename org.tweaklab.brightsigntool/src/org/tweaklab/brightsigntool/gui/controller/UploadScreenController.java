@@ -426,7 +426,7 @@ public class UploadScreenController {
 
   private class IpFilter implements UnaryOperator<TextFormatter.Change> {
 
-    Pattern ipPattern = Pattern.compile("25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?(\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){0,3}]");
+    Pattern ipPattern = Pattern.compile("(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9])?(\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){0,3}]");
 
     @Override
     public TextFormatter.Change apply(TextFormatter.Change change) {
