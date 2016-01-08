@@ -2,9 +2,8 @@
 .DS_Store
 RemoteSystemsTempFiles
 bin/
-ch.tweaklab.ip6/.idea
-ch.tweaklab.ip6/dist
-ch.tweaklab.ip6/build
 .recommenders
 *.iml
 
+org.tweaklab.brightsigntool/build
+org.tweaklab.brightsigntool/dist

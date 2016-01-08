@@ -1,0 +1,23 @@
+<component name="ArtifactManager">
+  <artifact type="javafx" name="ch.tweaklab.player">
+    <output-path>$PROJECT_DIR$/classes/artifacts/ch_tweaklab_player</output-path>
+    <properties id="javafx-properties">
+      <options>
+        <option name="appClass" value="ch.tweaklab.player.gui.controller.MainApp" />
+        <option name="description" value="" />
+        <option name="height" value="755" />
+        <option name="htmlParamFile" value="" />
+        <option name="nativeBundle" value="image" />
+        <option name="paramFile" value="" />
+        <option name="title" value="Tweaklab BrightSign Tool" />
+        <option name="vendor" value="tweaklab" />
+        <option name="width" value="1047" />
+      </options>
+    </properties>
+    <root id="root">
+      <element id="archive" name="ch_tweaklab_player.jar">
+        <element id="module-output" name="ch.tweaklab.player" />
+      </element>
+    </root>
+  </artifact>
+</component>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<!--<?import ch.tweaklab.player.gui.view.NumberTextField?>-->
+
+<AnchorPane prefHeight="700.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.tweaklab.brightsigntool.gui.controller.PlaylistTabController">
+	<children>
+		<ListView fx:id="listView" layoutX="79.0" layoutY="53.0" prefHeight="569.0" prefWidth="572.0">
+			<contextMenu>
+				<ContextMenu>
+					<items>
+						<MenuItem mnemonicParsing="false" onAction="#handleRemove" text="Delete" />
+					</items>
+				</ContextMenu>
+			</contextMenu>
+		</ListView>
+		<Label layoutX="79.0" layoutY="26.0" text="Playlist">
+			<font>
+				<Font name="System Bold" size="15.0" />
+			</font>
+		</Label>
+		<Button layoutX="79.0" layoutY="633.0" mnemonicParsing="false" onAction="#handleAddFileToListView" prefHeight="38.0" prefWidth="161.0" text="Add File..." />
+		<Button layoutX="39.0" layoutY="53.0" mnemonicParsing="false" onAction="#moveItemUp" prefHeight="31.0" prefWidth="29.0" text="⇑" />
+		<Button layoutX="39.0" layoutY="95.0" mnemonicParsing="false" onAction="#moveItemDown" prefHeight="31.0" prefWidth="29.0" text="⇓" />
+		<Button layoutX="264.0" layoutY="633.0" mnemonicParsing="false" onAction="#handleRemove" prefHeight="38.0" prefWidth="152.0" text="Remove selected" />
+	</children>
+</AnchorPane>
