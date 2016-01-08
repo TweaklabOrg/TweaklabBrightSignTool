@@ -4,8 +4,6 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<!--<?import ch.tweaklab.player.gui.view.NumberTextField?>-->
-
 <AnchorPane prefHeight="700.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.tweaklab.brightsigntool.gui.controller.PlaylistTabController">
 	<children>
 		<ListView fx:id="listView" layoutX="79.0" layoutY="53.0" prefHeight="569.0" prefWidth="572.0">

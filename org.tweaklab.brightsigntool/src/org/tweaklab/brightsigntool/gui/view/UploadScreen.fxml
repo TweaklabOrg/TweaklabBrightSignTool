@@ -6,8 +6,6 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<!--<?import ch.tweaklab.player.gui.view.NumberTextField?>-->
-
 <AnchorPane prefHeight="730.0" prefWidth="320.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.tweaklab.brightsigntool.gui.controller.UploadScreenController">
    <children>
       <Pane fx:id="generalSettingsPane" layoutX="15.0" layoutY="281.0" prefHeight="223.0" prefWidth="286.0">

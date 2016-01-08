@@ -1,4 +1,4 @@
-<project name="ch.tweaklab.player" default="build" basedir="." xmlns:fx="javafx:com.sun.javafx.tools.ant">
+<project name="org.tweaklab.brightsigntool" default="build" basedir="." xmlns:fx="javafx:com.sun.javafx.tools.ant">
     <property file="build.properties"/>
     <property file="${res.dir}/config.properties"/>
 
