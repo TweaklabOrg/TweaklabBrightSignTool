@@ -23,10 +23,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Connects to a SD Card of Bright Sign Device
@@ -153,9 +150,16 @@ public class BrightSignSdCardConnector extends Connector {
           if (files != null) {
             for (File f : files) {
               if (f.getName().charAt(0) != '.') {
-                String volumeInfo = CommandlineTool.executeCommand("diskutil info " + f);
+                // TODO maybe not the same format on PCs?
+                String path = f.getCanonicalPath();//.replace(" ", "\\ ");
+                List<String> command = new LinkedList<>();
+                command.add("diskutil");
+                command.add("info");
+                command.add(path);
+                String volumeInfo = CommandlineTool.executeCommand(command);
                 // [\\s\\S] matches all chars, even \n, ...
-                if (volumeInfo.matches("[\\s\\S]*Ejectable:( *)Yes[\\s\\S]*")) {
+                if (volumeInfo.matches("[\\s\\S]*Ejectable:( *)Yes[\\s\\S]*")
+                        || volumeInfo.matches("[\\s\\S]*Removable Media:( *)Yes[\\s\\S]*")) {
                   targetList.add(f.getAbsolutePath());
                 }
               }

@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.util.List;
 
 /**
  * Created by Stephan on 17.10.15.
@@ -13,11 +14,12 @@ public class CommandlineTool {
   /*
    * This method should only be used with self-terminating commands where no timeout is needed.
    */
-  public static String executeCommand(String command) {
+  public static String executeCommand(List<String> command) {
     StringBuffer output = new StringBuffer();
     Process process = null;
+    ProcessBuilder p = new ProcessBuilder(command);
     try {
-      process = Runtime.getRuntime().exec(command);
+      process = p.start();
     } catch (IOException e) {
       // TODO Stephan: handle exception -> error message?
       e.printStackTrace();
