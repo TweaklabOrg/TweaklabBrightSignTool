@@ -19,6 +19,7 @@ sub gpioMain(settings as Object, server as Object, connections as Object)
     m.READY = 10
     
     videoPlayer = CreateObject("roVideoPlayer")
+    videoPlayer.SetViewMode(1)
     playerState = m.READY
     
     gpio = CreateObject("roControlPort", "BrightSign")

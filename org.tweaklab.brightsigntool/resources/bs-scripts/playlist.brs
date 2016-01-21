@@ -15,6 +15,7 @@ Sub playlistMain(settings as Object, server as Object, connections as Object)
     MEDIA_ENDED = 8
 
     videoPlayer = CreateObject("roVideoPlayer")
+    videoPlayer.SetViewMode(1)
 
    ' The messageport receives interrupts from linked objects and will be used to launch eventhandlers in the main loop below.
     port = CreateObject("roMessagePort")
