@@ -91,25 +91,16 @@ sub tweaklabPlayer()
         info("setting player back to initial settings.")
         ScreenMessage("setting player back to initial settings.", 3000) ' from tools_messaging.brs
 
-        ' TODO: from BrightScript Version 6, the following function will be supported. 
-        ' CreateObject("roDeviceCustomization").FactoryReset("confirm")
+        info("rebooting...")
+        ' store the next message in a variable, to make it visible until the player reboots.
+        temp = ScreenMessage("rebooting...", 3000)
 
-        ' Clear Registry, this is almost as good as a factory reset, but doesn't affect BOOT:, RTC and FLASH:
-        ClearRegistry()
+        ' set device back to factory configuration
+        deviceCust = CreateObject("roDeviceCustomization")
+        deviceCust.FactoryReset("confirm")
 
-        reboot = true
-    end if
-
-    ' if registry is Empty, create and update necessary sections
-    if createObject("roRegistry").GetSectionList().Count() = 0 then
-        ' enable web-server and diagnostic web-server
-        networkRegistry = createObject("roRegistrySection", "networking")
-        networkRegistry.write("http_server", "80")
-
-        ' enable ssh
-        networkRegistry.write("ssh","22")
-        
-        SetAllLoggingEnabled() ' method from tools_setup.brs'
+        ' write default content to registry
+        WriteDefaultRegistry()
 
         reboot = true
     end if

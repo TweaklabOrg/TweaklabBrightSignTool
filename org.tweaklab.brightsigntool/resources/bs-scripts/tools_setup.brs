@@ -50,7 +50,7 @@ Sub UpdateNetworkSettings(settings As Object)
     netConf.apply()
 End Sub
 
-Sub SetAllLoggingEnabled()
+Sub WriteDefaultRegistry()
     section = CreateObject("roRegistrySection", "networking")
     section.Write("ple", "yes") 'playbackLoggingEnabled'
     section.Write("ele", "yes") 'eventLoggingEnabled'
@@ -59,6 +59,16 @@ Sub SetAllLoggingEnabled()
     section.Write("uab", "no")  'uploadLogFilesAtBoot'
     section.Write("uat", "no")  'uploadLogFilesAtSpecificTime'
     section.Write("ut", "0")    'uploadLogFilesTime'
+
+    ' enable diagnostic web server
+    section = createObject("roRegistrySection", "networking")
+    section.write("http_server", "80")
+
+    ' enable ssh
+    section.write("ssh","22")
+
+    ' write changes
+    section.flush()
 End Sub
 
 ' @param tweaklabRegistry The tweaklab Registry.
