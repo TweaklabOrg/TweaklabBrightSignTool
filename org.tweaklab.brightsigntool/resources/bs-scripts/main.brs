@@ -99,11 +99,14 @@ sub tweaklabPlayer()
         deviceCust = CreateObject("roDeviceCustomization")
         deviceCust.FactoryReset("confirm")
 
-        ' write default content to registry
-        WriteDefaultRegistry()
-
         reboot = true
     end if
+
+    ' write default content to registry if registry is empty
+    if createObject("roRegistry").GetSectionList().Count() = 0 then    
+        WriteDefaultRegistry()
+    end if
+
 
     ' If display.xml changed and Player can play video, update settings. needs a reboot
     if deviceInfo.HasFeature("hdmi") or deviceInfo.HasFeature("vga") or deviceInfo.HasFeature("component video") then
