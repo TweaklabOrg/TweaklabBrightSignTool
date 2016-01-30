@@ -18,6 +18,7 @@
     <target name="clean">
 		<delete dir="${build.dir}"/>
         <delete dir="${dist.dir}"/>
+        <delete dir="${res.dir}/${included_jar_relative_path}"/>
 	</target>
 
 	<target name="init"
