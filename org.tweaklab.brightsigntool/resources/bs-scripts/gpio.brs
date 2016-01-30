@@ -92,21 +92,25 @@ sub gpioMain(settings as Object, server as Object, connections as Object)
         ' roControlDown signals, that a gpio pin was pulled down. Ignore event if player is not READY or if retriggerTimer didn't count up to retriggerDelay yet
         if type(msg) = "roControlDown" and ((not retriggerEnabled and playerState =  m.READY) or (retriggerEnabled and retriggerTimer.totalMilliseconds() > retriggerDelay)) then
             if msg.getInt() = 0 and gpioSettings.gpio0.count() > 0 then
+                videoPlayer.SetLoopMode(false)
                 if playGPIOFile(mediafolder + "/" + gpioSettings.gpio0.getText(), videoPlayer, gpio) = true then
                     playerState = m.PLAYING
                     retriggerTimer.Mark()
                 end if
             else if msg.getInt() = 1 and gpioSettings.gpio1.count() > 0 then 
+                videoPlayer.SetLoopMode(false)
                 if playGPIOFile(mediafolder + "/" + gpioSettings.gpio1.getText(), videoPlayer, gpio) = true then
                     playerState = m.PLAYING
                     retriggerTimer.Mark()
                 end if
             else if msg.getInt() = 2 and gpioSettings.gpio2.count() > 0 then 
+                videoPlayer.SetLoopMode(false)
                 if playGPIOFile(mediafolder + "/" + gpioSettings.gpio2.getText(), videoPlayer, gpio) = true then
                     playerState = m.PLAYING
                     retriggerTimer.Mark()
                 end if
             else if msg.getInt() = 3 and gpioSettings.gpio3.count() > 0 then 
+                videoPlayer.SetLoopMode(false)
                 if playGPIOFile(mediafolder + "/" + gpioSettings.gpio3.getText(), videoPlayer, gpio) = true then
                     playerState = m.PLAYING
                     retriggerTimer.Mark()
@@ -115,6 +119,7 @@ sub gpioMain(settings as Object, server as Object, connections as Object)
         ' roVieoEvent can signal various events that a videoPlayer triggers. Handle the MEDIA_ENDED event here.
         else if type(msg) = "roVideoEvent" and msg.GetInt() = m.MEDIA_ENDED then
             if gpioSettings.loop.count() > 0 then 
+                videoPlayer.SetLoopMode(true)
                 playLoopFile(mediafolder + "/" + gpioSettings.loop.getText(), videoPlayer)
             else
                 videoPlayer.StopClear()
@@ -157,6 +162,11 @@ Function playGPIOFile(file as String, videoPlayer as Object, gpio as Object) as 
     else
         info("not able to play " + file)
         ScreenMessage("not able to play " + file, 3000)
+        ' play loop if defined
+        if gpioSettings.loop.count() > 0 then 
+            videoPlayer.SetLoopMode(true)
+            playLoopFile(mediafolder + "/" + gpioSettings.loop.getText(), videoPlayer)
+        end if
         return false
     end if
 end Function
@@ -168,7 +178,9 @@ sub playLoopFile(file as String, videoPlayer as Object)
     playableAsVideo = (playable.video = "playable")
     playableAsAudio = (playable.audio = "playable")
     if playableAsAudio OR playableAsVideo
-        videoPlayer.StopClear() ' screen must be cleared, as next file could be an audio file only
+        if not playableAsVideo then
+            videoPlayer.StopClear() ' screen must be cleared, as next file will be an audio file only
+        end if
         videoPlayer.playFile(file)
         info("playing the loop file " + file)
     else

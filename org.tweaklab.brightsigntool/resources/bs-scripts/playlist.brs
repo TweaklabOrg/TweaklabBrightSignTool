@@ -13,6 +13,7 @@
 Sub playlistMain(settings as Object, server as Object, connections as Object) 
     ' state used by roVideoEvent that will be triggered by roVideoPlayer
     MEDIA_ENDED = 8
+    LoopMode = false
 
     videoPlayer = CreateObject("roVideoPlayer")
     videoPlayer.SetViewMode(1)
@@ -40,6 +41,13 @@ Sub playlistMain(settings as Object, server as Object, connections as Object)
         end while
     end if
 
+    ' evaluate if we are in loop mode
+    if files.count() = 1 then
+        LoopMode = 1
+        videoPlayer.SetLoopMode(true)
+        info("launching player in loop mode")
+    end if
+
     ' Where the player will look for media files
     mediaFolder = settings.mediaFolder.getText()
 
@@ -61,10 +69,12 @@ Sub playlistMain(settings as Object, server as Object, connections as Object)
         msg = wait(0, port)
         ' roVieoEvent can signal various events that a videoPlayer triggers. Handle the MEDIA_ENDED event here.
         if type(msg) = "roVideoEvent" and msg.GetInt() = MEDIA_ENDED then 
-            videoPlayer.StopClear() ' clear screen, as next file could be a audio file only, or a message must be displayed
-            nextFile = getNextPlayable(videoPlayer, files, mediafolder)
-            videoPlayer.playFile(nextFile)
-            info("playing " + nextFile)
+            if not LoopMode ' in loop mode the file loops automatically (and hopefully seamlessly)
+                videoPlayer.StopClear() ' clear screen, as next file could be a audio file only, or a message must be displayed
+                nextFile = getNextPlayable(videoPlayer, files, mediafolder)
+                videoPlayer.playFile(nextFile)
+                info("playing " + nextFile)
+            end if
         ' roTCPConnectEvent signals, that a TCP connection request arrived at server object
         else if type(msg) = "roTCPConnectEvent" then
             handleTCPConnectEvent(msg, port, connections)
