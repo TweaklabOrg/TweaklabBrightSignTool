@@ -4,14 +4,7 @@ package org.tweaklab.brightsigntool.connector;
  * Implementation of Connector.
  * Connects to a BrightSign Device via HTTP and SSH
  */
-import org.tweaklab.brightsigntool.configurator.UploadFile;
-import org.tweaklab.brightsigntool.gui.controller.MainApp;
-import org.tweaklab.brightsigntool.model.Keys;
-import org.tweaklab.brightsigntool.model.MediaFile;
-import org.tweaklab.brightsigntool.model.MediaUploadData;
-import org.tweaklab.brightsigntool.util.DiscoverServices;
 import javafx.concurrent.Task;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
@@ -21,22 +14,28 @@ import org.apache.http.entity.mime.content.ByteArrayBody;
 import org.apache.http.entity.mime.content.ContentBody;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.tweaklab.brightsigntool.configurator.UploadFile;
+import org.tweaklab.brightsigntool.gui.controller.MainApp;
+import org.tweaklab.brightsigntool.model.Keys;
+import org.tweaklab.brightsigntool.model.MediaFile;
+import org.tweaklab.brightsigntool.model.MediaUploadData;
+import org.tweaklab.brightsigntool.util.DiscoverServices;
 
 import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.Socket;
-import java.net.URL;
+import java.net.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class BrightSignWebConnector extends Connector {
+
+  private static final Logger LOGGER = Logger.getLogger(BrightSignSdCardConnector.class.getName());
 
   public static final String CLASS_DISPLAY_NAME = "BS Web Connector";
 
   private String uploadRootUrl;
-  Properties configFile;
   private String mediaFolder;
 
   private int tcpPort;
@@ -47,30 +46,32 @@ public class BrightSignWebConnector extends Connector {
   }
 
   public boolean connect(String host) {
-
+    isConnected = false;
     try {
       this.target = host + ".local";
       this.name = host;
       Socket tcpSocket = new Socket(this.target, tcpPort);
       tcpSocket.close();
       uploadRootUrl = "http://" + this.target + "/upload.html?rp=sd";
-
       this.isConnected = sendGetRequest("http://" + this.target);
-    } catch (Exception e) {
-      e.printStackTrace();
-      MainApp.showExceptionMessage(e);
-      this.isConnected = false;
+    } catch (IOException e) {
+      LOGGER.log(Level.WARNING, "There was an issue connection to " + host, e);
     }
+
     return this.isConnected;
   }
 
   @Override
   public boolean disconnect() {
-    return true;
+    this.target = "";
+    this.name = "";
+    uploadRootUrl = "";
+    isConnected = false;
+    return !isConnected;
   }
 
   @Override
-  public Task<Boolean> upload(MediaUploadData mediaUploadData, List<UploadFile> systemFiles) throws Exception {
+  public Task<Boolean> upload(MediaUploadData mediaUploadData, List<UploadFile> systemFiles) {
     Task<Boolean> uploadTask = new Task<Boolean>() {
       @Override
       public Boolean call() throws Exception {
@@ -140,7 +141,7 @@ public class BrightSignWebConnector extends Connector {
     return uploadTask;
   }
 
-  private Boolean uploadFile(String destinationFolder, File file) throws Exception {
+  private Boolean uploadFile(String destinationFolder, File file) {
 
     MultipartEntityBuilder multiPartBuilder = MultipartEntityBuilder.create();
     multiPartBuilder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -149,16 +150,22 @@ public class BrightSignWebConnector extends Connector {
     HttpPost request = new HttpPost(uploadRootUrl + destinationFolder);
     request.setEntity(multiPartBuilder.build());
     HttpClient client = HttpClientBuilder.create().build();
-    HttpResponse response = client.execute(request);
+    HttpResponse response = null;
+    try {
+      response = client.execute(request);
+    } catch (IOException e) {
+      LOGGER.log(Level.WARNING, "There's a problem with the connection.", e);
+    }
     if (!response.getStatusLine().toString().contains("200")) {
+      LOGGER.warning("Upload Error: Error while upload. Status was:" + response.getStatusLine().toString());
       MainApp.showErrorMessage("Upload Error", "Error while upload. Status was:" + response.getStatusLine().toString());
       return false;
     }
+    LOGGER.info("File successfully uploaded: " + file);
     return true;
   }
 
-  private Boolean uploadFile(String destinationFolder, UploadFile uploadFile) throws Exception {
-
+  private Boolean uploadFile(String destinationFolder, UploadFile uploadFile) {
     MultipartEntityBuilder multiPartBuilder = MultipartEntityBuilder.create();
     multiPartBuilder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
 
@@ -169,33 +176,45 @@ public class BrightSignWebConnector extends Connector {
 
     request.setEntity(multiPartBuilder.build());
     HttpClient client = HttpClientBuilder.create().build();
-    HttpResponse response = client.execute(request);
+    HttpResponse response = null;
+    try {
+      response = client.execute(request);
+    } catch (IOException e) {
+      LOGGER.log(Level.WARNING, "There's a problem with the connection.", e);
+    }
     if (!response.getStatusLine().toString().contains("200")) {
-      MainApp.showErrorMessage("Upload Error", "Error while upload. Status was:" + response.getStatusLine().toString());
+      LOGGER.warning("Upload Error: Error while upload. Status was: " + response.getStatusLine().toString());
+      MainApp.showErrorMessage("Upload Error", "Error while upload. Status was: " + response.getStatusLine().toString());
       return false;
     }
+    LOGGER.info("File successfully uploaded: " + uploadFile.getFileName());
     return true;
   }
 
-  private Boolean deleteFile(String destinationFolder, String fileName) throws Exception {
+  private Boolean deleteFile(String destinationFolder, String fileName) {
     String urlFileName = fileName.replace(" ", "+");
     String urlFilePath = destinationFolder.replace("/", "%2F") + "%2F" + urlFileName;
     String deleteUrl = "http://" + target + "/delete?filename=sd" + urlFilePath + "&delete=Delete";
     return sendGetRequest(deleteUrl);
   }
 
-  private Boolean sendGetRequest(String url) throws Exception {
-    URL u = new URL(url);
-    HttpURLConnection huc = (HttpURLConnection) u.openConnection();
-    huc.setRequestMethod("GET");
-    huc.setConnectTimeout(15 * 100);
-    huc.connect();
-    int returnCode = huc.getResponseCode();
-    if (returnCode != 200) {
-      MainApp.showErrorMessage("URL Error", "Wrong return code for url " + url + ". Code was:" + returnCode);
-      return false;
-
+  private Boolean sendGetRequest(String url) {
+    try {
+      URL u = new URL(url);
+      HttpURLConnection huc = (HttpURLConnection) u.openConnection();
+      huc.setRequestMethod("GET");
+      huc.setConnectTimeout(15 * 100);
+      huc.connect();
+      int returnCode = huc.getResponseCode();
+      if (returnCode != 200) {
+        LOGGER.warning("URL Error: Wrong return code for url " + url + ". Code was:" + returnCode);
+        MainApp.showErrorMessage("URL Error", "Wrong return code for url " + url + ". Code was:" + returnCode);
+        return false;
+      }
+    } catch (IOException e) {
+      LOGGER.log(Level.WARNING, "Couldn't send GET request to " + url, e);
     }
+    LOGGER.info("Successfully sent GET request to BS: " + url);
     return true;
   }
 
@@ -209,24 +228,21 @@ public class BrightSignWebConnector extends Connector {
       outToTcpServer = new DataOutputStream(tcpSocket.getOutputStream());
       inFromTcpServer = new BufferedReader(new InputStreamReader(tcpSocket.getInputStream(), "US-ASCII"));
       outToTcpServer.writeBytes(command + '\n');
+      LOGGER.info("Sent to BS: " + command);
       answer = inFromTcpServer.readLine();
-      System.out.println(answer);
-
-    } catch (Exception e) {
-      MainApp.showExceptionMessage(e);
-      e.printStackTrace();
+      LOGGER.info("Received from BS: " + answer);
+    } catch (IOException e) {
+      LOGGER.log(Level.WARNING, "Couldn't send command: " + command, e);
     }
+
     try {
-      try {
+      if (tcpSocket != null) {
         tcpSocket.close();
-      } catch (NullPointerException e) {
-        // if socket is null, it doesn't have to be closed.
       }
-    } catch (Exception e) {
-      e.printStackTrace();
+    } catch (IOException e) {
+      LOGGER.log(Level.WARNING, "Couldn't close Socket.", e);
     }
     return answer;
-
   }
 
   @Override
@@ -234,9 +250,11 @@ public class BrightSignWebConnector extends Connector {
     // TODO: Stephan: reaction if no target found.
     // TODO: Stephan: Somehow the app reacts strange after first scan. Divices are not selectable.
     Task<List<String>> getTargetTask = new Task<List<String>>() {
+      private final Logger LOGGER = Logger.getLogger(getClass().getName());
       @Override
-      public List<String> call() throws Exception {
+      public List<String> call() throws Exception{
         List<String> result = DiscoverServices.searchServices("_tl");
+        LOGGER.info("Done collecting Targets. " + result.size() + " found");
         return result;
       }
     };

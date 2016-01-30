@@ -24,7 +24,6 @@ public abstract class Connector {
 
  /**
   * connect to a device
-  * @param host
   * @return
   * @throws Exception
   */
@@ -43,7 +42,7 @@ public abstract class Connector {
   * @return
   * @throws Exception
   */
-  public abstract Task<Boolean> upload(MediaUploadData uploadData, List<UploadFile> systemFiles) throws Exception;
+  public abstract Task<Boolean> upload(MediaUploadData uploadData, List<UploadFile> systemFiles);
 
 
   /**

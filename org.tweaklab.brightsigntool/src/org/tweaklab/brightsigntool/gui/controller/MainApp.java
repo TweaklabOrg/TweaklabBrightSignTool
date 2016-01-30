@@ -1,10 +1,5 @@
 package org.tweaklab.brightsigntool.gui.controller;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-
-import org.tweaklab.brightsigntool.model.Keys;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -16,6 +11,14 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.stage.Stage;
+import org.tweaklab.brightsigntool.model.Keys;
+import org.tweaklab.brightsigntool.util.LoggerSetup;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Starts the GUI
@@ -24,11 +27,15 @@ import javafx.stage.Stage;
  */
 public class MainApp extends Application {
 
+  private static final Logger LOGGER = Logger.getLogger(MainApp.class.getName());
   public static Stage primaryStage;
   private BorderPane rootLayout;
 
   @Override
   public void start(Stage primaryStage) {
+    // start logging environment
+    LoggerSetup.setup();
+
     MainApp.primaryStage = primaryStage;
     MainApp.primaryStage.setTitle(Keys.APP_NICE_NAME_PROPS_KEY + " " + Keys.ClIENT_VERSION_PROPS_KEY);
     MainApp.primaryStage.setResizable(false);
@@ -99,7 +106,6 @@ public class MainApp extends Application {
 
   /**
    * shows an error dialog
-   * @param errorMessage
    */
   public static void showErrorMessage(String header, String content) {
     Alert alert = new Alert(AlertType.WARNING);
@@ -124,6 +130,10 @@ public class MainApp extends Application {
   }
 
   public static void main(String[] args) {
-    launch(args);
+    try {
+      launch(args);
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Unexpected Exception!", e);
+    }
   }
 }

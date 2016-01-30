@@ -1,15 +1,14 @@
 package org.tweaklab.brightsigntool.test.util;
 
+import org.junit.Test;
 import org.tweaklab.brightsigntool.configurator.PlayerDisplaySettings;
 import org.tweaklab.brightsigntool.configurator.PlayerGeneralSettings;
 import org.tweaklab.brightsigntool.configurator.UploadFile;
 import org.tweaklab.brightsigntool.configurator.XmlConfigCreator;
 import org.tweaklab.brightsigntool.model.MediaFile;
 import org.tweaklab.brightsigntool.util.DiscoverServices;
-import org.junit.Test;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,12 +50,7 @@ public class TestUtil {
    
     String servicename = "_tl._tcp.local";
     DiscoverServices discoverer = new DiscoverServices();
-    try {
-      discoverer.searchServices(servicename);
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
+    discoverer.searchServices(servicename);
   }
   
 }

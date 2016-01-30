@@ -1,64 +1,24 @@
 package org.tweaklab.brightsigntool.util;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * Created by Stephan on 17.10.15.
  */
 public class CommandlineTool {
+  private static final Logger LOGGER = Logger.getLogger(CommandlineTool.class.getName());
 
   /*
-   * This method should only be used with self-terminating commands where no timeout is needed.
-   */
-  public static String executeCommand(List<String> command) {
-    StringBuffer output = new StringBuffer();
-    Process process = null;
-    ProcessBuilder p = new ProcessBuilder(command);
-    try {
-      process = p.start();
-    } catch (IOException e) {
-      // TODO Stephan: handle exception -> error message?
-      e.printStackTrace();
-    }
-
-    BufferedReader reader = null;
-    try {
-      reader = new BufferedReader(new InputStreamReader(process.getInputStream(), "US-ASCII"));
-    } catch (UnsupportedEncodingException e){
-      e.printStackTrace();
-      return "";
-    } catch (NullPointerException e) {
-      e.printStackTrace();
-      return "";
-    }
-
-    try {
-      String line = reader.readLine();
-      while (line != null) {
-        output.append(line + "\n");
-        line = reader.readLine();
-      }
-    } catch (IOException e) {
-      // TODO Stephan: handle exception -> error message?
-      e.printStackTrace();
-    }
-
-    try {
-      reader.close();
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    return output.toString();
-  }
-
-  /*
-   * This method can also be used by non-self-termination commands. Specify an appropriate timeout.
-   */
-  public static String executeCommand(String command, int timeoutInMillis) {
+  * This method can be used by non-self-termination commands. Specify an appropriate timeout.
+  * It's ugly code as InputStreams of executing processes are blocking read() and readline()
+  * calls when no data is available AND the process is still alive. I'm not even completely
+  * sure if the process is always killd, or if we actually create zombies. Anyway, it's the
+  * only solution I found for now.
+  */
+  public static String executeCommand(List<String> command, int timeoutInMillis) {
     StringBuffer output = new StringBuffer();
 
     Searcher searcher = new Searcher(command, output);
@@ -66,20 +26,21 @@ public class CommandlineTool {
     try {
       Thread.sleep(timeoutInMillis);
     } catch (InterruptedException e) {
-      // nothing to handle. If Thread intterupts, it might not have found any results, and test might be repeated.
     }
+
     searcher.stopSearching();
 
     return output.toString();
   }
 
+
   private static class Searcher extends Thread {
     boolean searching;
-    String command;
+    List<String> command;
     StringBuffer output;
     Process process = null;
 
-    public Searcher(String command, StringBuffer output) {
+    public Searcher(List<String> command, StringBuffer output) {
       searching = true;
       this.command = command;
       this.output = output;
@@ -88,8 +49,9 @@ public class CommandlineTool {
     public void run() {
       searching = true;
       BufferedReader reader = null;
+      ProcessBuilder p = new ProcessBuilder(command);
       try {
-        process = Runtime.getRuntime().exec(command);
+        process = p.start();
         reader = new BufferedReader(new InputStreamReader(process.getInputStream(), "US-ASCII"));
         while (searching) {
           if (reader.ready()) {
@@ -103,6 +65,7 @@ public class CommandlineTool {
             Thread.sleep(100); // if buffer is empty, poll 10 times a second.
           }
         }
+        process.destroyForcibly();
       } catch (Exception e) {
         // TODO Stephan: handle exception -> error message?
         e.printStackTrace();
@@ -124,3 +87,4 @@ public class CommandlineTool {
     }
   }
 }
+

@@ -104,6 +104,4 @@ public class PlayerDisplaySettings {
       return false;
     return true;
   }
-
-  
 }

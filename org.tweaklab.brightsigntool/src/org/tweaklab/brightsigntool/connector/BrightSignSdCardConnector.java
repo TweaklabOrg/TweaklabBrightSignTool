@@ -1,5 +1,7 @@
 package org.tweaklab.brightsigntool.connector;
 
+import javafx.concurrent.Task;
+import org.apache.commons.io.FileUtils;
 import org.tweaklab.brightsigntool.configurator.UploadFile;
 import org.tweaklab.brightsigntool.gui.controller.MainApp;
 import org.tweaklab.brightsigntool.model.Keys;
@@ -7,8 +9,6 @@ import org.tweaklab.brightsigntool.model.MediaFile;
 import org.tweaklab.brightsigntool.model.MediaUploadData;
 import org.tweaklab.brightsigntool.util.CommandlineTool;
 import org.tweaklab.brightsigntool.util.OSValidator;
-import javafx.concurrent.Task;
-import org.apache.commons.io.FileUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -18,12 +18,11 @@ import javax.swing.filechooser.FileSystemView;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.channels.FileChannel;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Connects to a SD Card of Bright Sign Device
@@ -33,15 +32,16 @@ import java.util.*;
  *
  */
 public class BrightSignSdCardConnector extends Connector {
+  private static final Logger LOGGER = Logger.getLogger(BrightSignSdCardConnector.class.getName());
 
   public static final String CLASS_DISPLAY_NAME = "BS SD-Card Connector";
+  private static final int TIMEOUT_DISKUTIL_IN_MILLIS = 1000;
+
 
   private String mediaFolderPath;
 
   public BrightSignSdCardConnector() {
-
     mediaFolderPath = Keys.loadProperty("default_mediaFolder");
-
   }
 
   @Override
@@ -53,6 +53,8 @@ public class BrightSignSdCardConnector extends Connector {
     } else {
       this.isConnected = false;
     }
+
+    LOGGER.info("SD Card " + path + " was connected.");
 
     return isConnected;
   }
@@ -67,57 +69,71 @@ public class BrightSignSdCardConnector extends Connector {
 
   @Override
   public boolean disconnect() {
-    // TODO Auto-generated method stub
-    return false;
+    this.name = "";
+    String target = this.target;
+    this.target = "";
+    this.isConnected = false;
+
+    LOGGER.info("SD Card " + target + " was disconnected.");
+
+    return !this.isConnected;
   }
 
   @Override
-  public Task<Boolean> upload(MediaUploadData uploadData, List<UploadFile> systemFiles) throws Exception {
+  public Task<Boolean> upload(MediaUploadData uploadData, List<UploadFile> systemFiles) {
     Task<Boolean> uploadTask = new Task<Boolean>() {
-      Boolean success;
+      private final Logger LOGGER = Logger.getLogger(getClass().getName());
 
       @Override
-      public Boolean call() throws Exception {
-        success = true;
+      public Boolean call() throws Exception{
 
         // writeSystemFiles
         for (UploadFile systemFile : systemFiles) {
           if (systemFile != null) {
             File targetFile = new File(target + "/" + systemFile.getFileName());
             // write file to root folder
-            FileUtils.writeByteArrayToFile(targetFile, systemFile.getFileAsBytes());
-          }
-
-        }
-
-        if (uploadData != null) {
-          // reset media folder on sd card
-          if ((target.endsWith("/") || target.endsWith("\\")) == false) {
-            target = target + "/";
-          }
-          File mediaFolder = new File(target + "/" + mediaFolderPath);
-          if (mediaFolder.exists()) {
-            FileUtils.deleteDirectory(mediaFolder);
-          }
-          if (!mediaFolder.mkdir()) {
-            MainApp.showInfoMessage("Wasn't able to create media folder.");
-            success = false;
-          }
-
-          // copy xml config file
-          copyOrReplaceFile(uploadData.getConfigFile(), target);
-
-          // copy each mediafile
-          for (MediaFile mediaFile : uploadData.getUploadList()) {
-            if (this.isCancelled()) {
+            try {
+              FileUtils.writeByteArrayToFile(targetFile, systemFile.getFileAsBytes());
+            } catch (IOException e) {
+              LOGGER.log(Level.WARNING, "Couldn't write to target!", e);
               return false;
             }
-            if (mediaFile != null) {
-              copyOrReplaceFile(mediaFile.getFile(), mediaFolder.getPath());
-            }
           }
         }
-        return success;
+
+        // reset media folder on sd card
+        if ((target.endsWith("/") || target.endsWith("\\")) == false) {
+          target = target + "/";
+        }
+        File mediaFolder = new File(target + "/" + mediaFolderPath);
+        if (mediaFolder.exists()) {
+          try {
+            FileUtils.deleteDirectory(mediaFolder);
+          } catch (IOException e) {
+            LOGGER.log(Level.WARNING, "Couldn't delete mediaFolder!", e);
+            return false;
+          }
+        }
+        if (!mediaFolder.mkdir()) {
+          LOGGER.warning("Wasn't able to create media folder.");
+          MainApp.showInfoMessage("Wasn't able to create media folder.");
+          return false;
+        }
+
+        // copy xml config file
+        copyOrReplaceFile(uploadData.getConfigFile(), target);
+
+        // copy each mediafile
+        for (MediaFile mediaFile : uploadData.getUploadList()) {
+          if (this.isCancelled()) {
+            return false;
+          }
+          if (mediaFile != null) {
+            copyOrReplaceFile(mediaFile.getFile(), mediaFolder.getPath());
+          }
+        }
+        LOGGER.info("Done uploading to SD.");
+        return true;
       }
 
     };
@@ -129,7 +145,7 @@ public class BrightSignSdCardConnector extends Connector {
 
     Task<List<String>> getTargetTask = new Task<List<String>>() {
       @Override
-      public List<String> call() throws Exception {
+      public List<String> call() throws Exception{
         List<String> targetList = new ArrayList<>();
 
         if (OSValidator.isWindows()) {
@@ -151,12 +167,17 @@ public class BrightSignSdCardConnector extends Connector {
             for (File f : files) {
               if (f.getName().charAt(0) != '.') {
                 // TODO maybe not the same format on PCs?
-                String path = f.getCanonicalPath();//.replace(" ", "\\ ");
+                String path = null;//.replace(" ", "\\ ");
+                try {
+                  path = f.getCanonicalPath();
+                } catch (IOException e) {
+                  LOGGER.log(Level.WARNING, "Couldn't get path of " + f.getName(), e);
+                }
                 List<String> command = new LinkedList<>();
                 command.add("diskutil");
                 command.add("info");
                 command.add(path);
-                String volumeInfo = CommandlineTool.executeCommand(command);
+                String volumeInfo = CommandlineTool.executeCommand(command, TIMEOUT_DISKUTIL_IN_MILLIS);
                 // [\\s\\S] matches all chars, even \n, ...
                 if (volumeInfo.matches("[\\s\\S]*Ejectable:( *)Yes[\\s\\S]*")
                         || volumeInfo.matches("[\\s\\S]*Removable Media:( *)Yes[\\s\\S]*")) {
@@ -165,9 +186,13 @@ public class BrightSignSdCardConnector extends Connector {
               }
             }
           } else {
-            MainApp.showInfoMessage("Folder /Volumes not found or I/O error occured.");
+            LOGGER.info("Folder /Volumes not found.");
+            MainApp.showInfoMessage("Folder /Volumes not found.");
           }
         }
+
+        LOGGER.info("Done searching for targets with " + targetList.size() + " results.");
+
         return targetList;
       }
     };
@@ -183,7 +208,7 @@ public class BrightSignSdCardConnector extends Connector {
     try {
       builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
     } catch (ParserConfigurationException e) {
-      e.printStackTrace();
+      LOGGER.log(Level.SEVERE, "Not able to get DocumentBuilder?", e);
     }
 
     collectMode(result, builder);
@@ -192,6 +217,8 @@ public class BrightSignSdCardConnector extends Connector {
     // TODO: building filemanagement to make that possible. For ex. skip mediaupload of already existing files, but allow modifications on settings.
 //    collectEntries("gpio.xml", result, builder);
 //    collectPlaylist(result, builder);
+
+    LOGGER.info("Collectable settings loaded from SD.");
 
     return result;
   }
@@ -239,54 +266,88 @@ public class BrightSignSdCardConnector extends Connector {
     try {
       xml = builder.parse(new File(this.target + "/" + file));
     } catch (SAXException e) {
-      // nothing to do, as we don't absolutely need the data;
+      LOGGER.log(Level.WARNING, "Couldn't parse " + file, e);
     } catch (IOException e) {
-      // nothing to do, as we don't absolutely need the data;
+      LOGGER.log(Level.WARNING, "Couldn't find " + file + " on SD.", e);
     }
     return xml;
   }
 
   // TODO return success
-  private void copyOrReplaceFile(File sourceFile, String destPath) throws Exception {
-	    if (!destPath.endsWith("/")) {
-	      destPath = destPath + "/";
-	    }
-	    File destFile = new File(destPath + sourceFile.getName());
-	    if (destFile.exists()) {
-	      if (!destFile.delete()) {
-          MainApp.showInfoMessage("" + destPath + " could not be deleted.");
-        }
-	    }
-	    if (!destFile.createNewFile()) {
-        MainApp.showInfoMessage("" + destPath + " could bot be created.");
+  private void copyOrReplaceFile(File sourceFile, String destPath) {
+    if (!destPath.endsWith("/")) {
+      destPath = destPath + "/";
+    }
+
+    File destFile = new File(destPath + sourceFile.getName());
+    if (destFile.exists()) {
+      if (!destFile.delete()) {
+        LOGGER.warning("" + destPath + " could not be deleted.");
+        MainApp.showInfoMessage("" + destPath + " could not be deleted.");
       }
+    }
 
-	    FileChannel source = null;
-	    FileChannel destination = null;
+    try {
+      destFile.createNewFile();
+    } catch (IOException e) {
+      LOGGER.log(Level.WARNING, "Couldn't create " + destFile.getName(), e);
+      MainApp.showInfoMessage("" + destPath + " could bot be created.");
+      return;
+    }
 
-	    source = new FileInputStream(sourceFile).getChannel();
-	    destination = new FileOutputStream(destFile).getChannel();
-	    destination.transferFrom(source, 0, source.size());
+    FileChannel source = null;
+    FileChannel destination = null;
 
-	    if (source != null) {
-	      source.close();
-	    }
-	    if (destination != null) {
-	      destination.close();
-	    }
+    try {
+      source = new FileInputStream(sourceFile).getChannel();
+    } catch (FileNotFoundException e) {
+      LOGGER.log(Level.WARNING, "Couldn't find " + sourceFile.getName(), e);
+      return;
+    }
+    try {
+      destination = new FileOutputStream(destFile).getChannel();
+    } catch (FileNotFoundException e) {
+      LOGGER.log(Level.WARNING, "Couldn't find "+ destFile.getName(), e);
+      return;
+    }
+    try {
+      destination.transferFrom(source, 0, source.size());
+    } catch (IOException e) {
+      LOGGER.log(Level.WARNING, "Couldn't write data to " + destFile.getName(), e);
+      return;
+    }
+
+    if (source != null) {
+      try {
+        source.close();
+      } catch (IOException e) {
+        LOGGER.log(Level.WARNING, "Couldn't close " + sourceFile.getName(), e);
+      }
+    }
+    if (destination != null) {
+      try {
+        destination.close();
+      } catch (IOException e) {
+        LOGGER.log(Level.WARNING, "Couldn't close " + destFile.getName(), e);
+      }
+    }
   }
   
-  private void copyOrReplaceFile(UploadFile sourceFile, String destPath) throws Exception {
-	    if (!destPath.endsWith("/")) {
-	      destPath = destPath + "/";
-	    }
-	    File destFile = new File(destPath + sourceFile.getFileName());
-	    if (destFile.exists()) {
-	      if (!destFile.delete()) {
-          MainApp.showInfoMessage("" + destPath + " could not be deleted.");
-        }
-	    }
-	    FileUtils.writeByteArrayToFile(destFile, sourceFile.getFileAsBytes());
-	  
-	  }
+  private void copyOrReplaceFile(UploadFile sourceFile, String destPath){
+    if (!destPath.endsWith("/")) {
+      destPath = destPath + "/";
+    }
+    File destFile = new File(destPath + sourceFile.getFileName());
+    if (destFile.exists()) {
+      if (!destFile.delete()) {
+        LOGGER.warning("" + destPath + " could not be deleted.");
+        MainApp.showInfoMessage("" + destPath + " could not be deleted.");
+      }
+    }
+    try {
+      FileUtils.writeByteArrayToFile(destFile, sourceFile.getFileAsBytes());
+    } catch (IOException e) {
+      LOGGER.log(Level.WARNING, "Couldn't write to " + destFile.getName(), e);
+    }
+  }
 }
