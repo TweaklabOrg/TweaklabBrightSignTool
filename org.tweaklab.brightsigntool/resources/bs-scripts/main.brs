@@ -93,7 +93,7 @@ sub tweaklabPlayer()
 
         info("rebooting...")
         ' store the next message in a variable, to make it visible until the player reboots.
-        temp = ScreenMessage("rebooting...", 3000)
+        temp = ScreenMessage("rebooting...", 1000)
 
         ' set device back to factory configuration
         deviceCust = CreateObject("roDeviceCustomization")
@@ -130,7 +130,7 @@ sub tweaklabPlayer()
     if (reboot) then
         info("rebooting...")
         ' store the next message in a variable, to make it visible until the player reboots.
-        temp = ScreenMessage("rebooting...", 3000)
+        temp = ScreenMessage("rebooting...", 1000)
         rebootSystem()
     end if
 

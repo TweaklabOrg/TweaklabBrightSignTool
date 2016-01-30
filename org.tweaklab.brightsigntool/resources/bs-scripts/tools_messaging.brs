@@ -2,7 +2,7 @@
 ' roTextWidget to make the message persist on screen as long as the roTextWidget is refereced. 
 ' 
 ' @param message The message that will be shown. 
-' @param duration The duration the message will be shown. 
+' @param duration The duration in milliseconds the message will be shown. 
 function ScreenMessage(message as String, duration as Integer) as Object
     ' A videoMode object holds basic informations about the video settings.
     videoMode = CreateObject("roVideoMode")
@@ -132,6 +132,13 @@ function DeviceInfos() as Object
     ' Copy network configurations to content
     net = CreateObject("roNetworkConfiguration", 0)
     conf = net.GetCurrentConfig()
+    netDiacnostics = net.TestInterface()
+
+    ' if a ethernet cable is connected, wait for otaining an ip.
+    if netDiacnostics.diagnosis <> "Ethernet interface has no link" then
+        waitForIP(net)
+    end if
+
     app("Name: " + conf.hostname, content)
     if conf.dhcp then
         app("DHCP: enabled", content)
@@ -178,4 +185,20 @@ end function
 ' small helper to simplify appending stings to the content including the line feed and length.
 sub app(line as String, container as String)
     container.AppendString(line + chr(10), line.len() + 1)
+end sub
+
+sub waitForIP(net as Object)
+    timer = CreateObject("roTimespan")
+    timer.Mark()
+    conf = net.GetCurrentConfig()
+    while conf.ip4_address.Len() = 0 AND timer.totalMilliseconds() < 10000
+        conf = net.GetCurrentConfig()
+    end while
+
+    if conf.ip4_address.Len() = 0 then
+        info("Couldn't obtain IP address form DHCP for now...")
+        ScreenMessage("Couldn't obtain IP address form DHCP for now...", 2000)
+    else
+
+    end if
 end sub
