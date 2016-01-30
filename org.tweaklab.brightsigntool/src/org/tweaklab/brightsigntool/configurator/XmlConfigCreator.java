@@ -281,7 +281,7 @@ public class XmlConfigCreator {
     retriggerEnabledElement.appendChild(doc.createTextNode(retriggerEnabled.toString()));
     rootElement.appendChild(retriggerEnabledElement);
 
-    Element retriggerDelayElement = doc.createElement("retriggerEnabled");
+    Element retriggerDelayElement = doc.createElement("retriggerDelay");
     retriggerDelayElement.appendChild(doc.createTextNode(retriggerDelay));
     rootElement.appendChild(retriggerDelayElement);
 

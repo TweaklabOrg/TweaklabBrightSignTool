@@ -118,6 +118,7 @@ sub gpioMain(settings as Object, server as Object, connections as Object)
                 playLoopFile(mediafolder + "/" + gpioSettings.loop.getText(), videoPlayer)
             else
                 videoPlayer.StopClear()
+                info("file ended, no loop file defined")
                 print "file ended, no loop file defined"
             end if
             ' Reset all LED gpio pins
@@ -152,9 +153,11 @@ Function playGPIOFile(file as String, videoPlayer as Object, gpio as Object) as 
         videoPlayer.playFile(file)
         gpio.SetOutputState(4, 1)
         info("playing " + file)
+        return true
     else
         info("not able to play " + file)
         ScreenMessage("not able to play " + file, 3000)
+        return false
     end if
 end Function
 
