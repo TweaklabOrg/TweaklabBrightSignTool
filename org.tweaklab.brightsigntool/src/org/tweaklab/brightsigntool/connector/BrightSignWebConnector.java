@@ -157,8 +157,8 @@ public class BrightSignWebConnector extends Connector {
       LOGGER.log(Level.WARNING, "There's a problem with the connection.", e);
     }
     if (!response.getStatusLine().toString().contains("200")) {
-      LOGGER.warning("Upload Error: Error while upload. Status was:" + response.getStatusLine().toString());
-      MainApp.showErrorMessage("Upload Error", "Error while upload. Status was:" + response.getStatusLine().toString());
+      LOGGER.warning("Upload Error: Error while uploading " + file.getName() + ". Status was:" + response.getStatusLine().toString());
+      MainApp.showErrorMessage("Upload Error", "Error while uploading " + file.getName() + ". Status was:" + response.getStatusLine().toString());
       return false;
     }
     LOGGER.info("File successfully uploaded: " + file);
@@ -183,8 +183,8 @@ public class BrightSignWebConnector extends Connector {
       LOGGER.log(Level.WARNING, "There's a problem with the connection.", e);
     }
     if (!response.getStatusLine().toString().contains("200")) {
-      LOGGER.warning("Upload Error: Error while upload. Status was: " + response.getStatusLine().toString());
-      MainApp.showErrorMessage("Upload Error", "Error while upload. Status was: " + response.getStatusLine().toString());
+      LOGGER.warning("Upload Error: Error while uploading " + uploadFile.getFileName() + ". Status was: " + response.getStatusLine().toString());
+      MainApp.showErrorMessage("Upload Error", "Error while uploading " + uploadFile.getFileName() + ". Status was: " + response.getStatusLine().toString());
       return false;
     }
     LOGGER.info("File successfully uploaded: " + uploadFile.getFileName());
