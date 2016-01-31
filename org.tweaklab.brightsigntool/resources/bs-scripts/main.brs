@@ -62,7 +62,7 @@ sub tweaklabPlayer()
     info("")
 
     ' test firmware compatibility
-    miniumFirmwareVersionAsNumber = 5*65536 + 1*256 + 54
+    miniumFirmwareVersionAsNumber = 6*65536 + 0*256 + 25
     if deviceInfo.GetVersionNumber() < miniumFirmwareVersionAsNumber then
         info("FIRMWAREVERSION NOT SUPPORTED. ISSUES MAY OCCURE.")
         info("")
