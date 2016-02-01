@@ -77,7 +77,7 @@ sub tweaklabPlayer()
 
     ' Version 6.0.51 changed the server communication and is - for now - not supporting uploading via our the Tweaklab BrightSign Tool
     unsupportedFirmwareVersion = 6*65536 + 0*256 + 51
-    if deviceInfo.GetVersionNumber() < unsupportedFirmwareVersion then
+    if deviceInfo.GetVersionNumber() = unsupportedFirmwareVersion then
         info("You will not be able to use the Tweaklab BrightSign Tool with that firmware version!")
         info("")
         ScreenMessage("You will not be able to use the Tweaklab BrightSign Tool with that firmware version!", 3000) ' from tools_messaging.brs
