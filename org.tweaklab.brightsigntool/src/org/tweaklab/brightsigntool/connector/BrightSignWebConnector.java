@@ -72,6 +72,9 @@ public class BrightSignWebConnector extends Connector {
 
   @Override
   public Task<Boolean> upload(MediaUploadData mediaUploadData, List<UploadFile> systemFiles) {
+    // stop player and signal that data is comming
+    sendTCPCommand("receiveData");
+
     Task<Boolean> uploadTask = new Task<Boolean>() {
       @Override
       public Boolean call() throws Exception {

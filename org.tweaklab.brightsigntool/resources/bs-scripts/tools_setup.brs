@@ -36,7 +36,6 @@ Sub UpdateNetworkSettings(settings As Object)
         end if
         if current.ip4_gateway <> settings.gateway.getText() then
             info("changing gateway from " + current.ip4_gateway + " to " + settings.gateway.getText())
-            ScreenMessage("changing gateway from " + current.ip4_gateway + " to " + settings.gateway.getText(), 3000)
             netConf.setIP4Gateway(settings.gateway.getText())
         end if
     end if
