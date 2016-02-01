@@ -75,6 +75,14 @@ sub tweaklabPlayer()
         ScreenMessage("BOOT-FIRMWAREVERSION NOT SUPPORTED. ISSUES MAY OCCURE.", 3000) ' from tools_messaging.brs
     end if
 
+    ' Version 6.0.51 changed the server communication and is - for now - not supporting uploading via our the Tweaklab BrightSign Tool
+    unsupportedFirmwareVersion = 6*65536 + 0*256 + 51
+    if deviceInfo.GetVersionNumber() < unsupportedFirmwareVersion then
+        info("You will not be able to use the Tweaklab BrightSign Tool with that firmware version!")
+        info("")
+        ScreenMessage("You will not be able to use the Tweaklab BrightSign Tool with that firmware version!", 3000) ' from tools_messaging.brs
+    end if
+
     ' a reboot might be necessary depending on changes. In this case this variable can be set to true and the reboot 
     ' will be executed when all settings are up to date.
     reboot = false
