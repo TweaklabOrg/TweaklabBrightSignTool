@@ -3,34 +3,33 @@
 ' @param msg The occured roStreamLineEvent.
 sub handleStreamLineEvent(msg as Object)
     if msg.GetString() = "reboot" then
-        ' TODO stephan: info and log
         connection = msg.GetUserData()
         connection.stream.SendLine("OK")
         connection.stream.Flush()
+        info("Received reboot command from client.")
         rebootSystem()
     else if msg.GetString() = "resetFilestructure" then
-        ' TODO stephan: info and log
         resetFilestructure() ' from tools_setup.brs
         connection = msg.GetUserData()
         connection.stream.SendLine("OK")
         connection.stream.Flush()
+        info("Received resetFilestrucure command from client.")
     else if msg.GetString() = "clearSD" then
-        ' TODO stephan: info and log
         clearSD() ' from tool_setup.brs
         connection = msg.GetUserData()
         connection.stream.SendLine("OK")
         connection.stream.Flush()
-    ' TODO: make resolution request parsable too. For ex. with "check reolution: "
+        info("Received clearSD command from client.")
     else 
         videoMode = createObject("roVideoMode")
         connection = msg.GetUserData()
         current = videoMode.GetMode()
         if videoMode.SetModeForNextBoot(msg.GetString()) then
             connection.stream.SendLine("supported")
-            info("requested video format supported")
+            info("requested video format supported: " + msg.GetString())
         else
-            connection.stream.SendLine("unsupported")
-            info("requested video format not supported")
+            connection.stream.SendLine("not supported")
+            info("requested video format not supported: " + msg.GetString())
         end if
         videoMode.SetModeForNextBoot(current)
         connection.stream.Flush()

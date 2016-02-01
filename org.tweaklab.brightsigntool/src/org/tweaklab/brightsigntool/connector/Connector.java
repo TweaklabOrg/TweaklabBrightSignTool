@@ -69,4 +69,6 @@ public abstract class Connector {
   public abstract Task<List<String>> getPossibleTargets();
 
   public abstract Map<String, String> getSettingsOnDevice();
+
+  public abstract boolean isResolutionSupported(String brightSignResolutionString);
 }

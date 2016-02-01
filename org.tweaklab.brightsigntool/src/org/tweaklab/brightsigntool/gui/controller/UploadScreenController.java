@@ -179,8 +179,16 @@ public class UploadScreenController {
 
       // create and upload settings.xml
       if (this.uploadDisplaySettingsCheckbox.isSelected()) {
-        UploadFile displaySettingsXML = createDisplaySettingsXML();
-        systemFilesForUpload.add(displaySettingsXML);
+        String interlaced = interlacedCheckbox.isSelected() ? "i" : "p";
+        String brightSignResolutionString = widthField.getText() + "x" + heightField.getText()
+                + "x" + frequencyField.getText() + interlaced;
+        if (mediator.getConnector().isResolutionSupported(brightSignResolutionString)) {
+          UploadFile displaySettingsXML = createDisplaySettingsXML();
+          systemFilesForUpload.add(displaySettingsXML);
+        } else {
+          MainApp.showInfoMessage("Video format not supported by connected player. Try another one or use autoformat");
+          return;
+        }
       }
 
       // create and upload display.xml

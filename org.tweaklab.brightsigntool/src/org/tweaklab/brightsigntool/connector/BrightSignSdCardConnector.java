@@ -223,6 +223,12 @@ public class BrightSignSdCardConnector extends Connector {
     return result;
   }
 
+  @Override
+  public boolean isResolutionSupported(String brightSignResolutionString) {
+    // not able to verify
+    return true;
+  }
+
   private void collectEntries(String file, Map<String, String> result, DocumentBuilder builder) {
     Document xml = getDocFromXML(file, builder);
     if (xml != null) {

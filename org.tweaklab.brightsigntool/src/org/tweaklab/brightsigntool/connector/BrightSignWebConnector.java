@@ -218,7 +218,7 @@ public class BrightSignWebConnector extends Connector {
     return true;
   }
 
-  public String sendTCPCommand(String command) {
+  private String sendTCPCommand(String command) {
     String answer = "";
     Socket tcpSocket = null;
     DataOutputStream outToTcpServer = null;
@@ -264,6 +264,11 @@ public class BrightSignWebConnector extends Connector {
   @Override
   public Map<String, String> getSettingsOnDevice() {
     return new HashMap<>();
+  }
+
+  @Override
+  public boolean isResolutionSupported(String brightSignResolutionString) {
+    return sendTCPCommand(brightSignResolutionString).equals("supported");
   }
 
 }
