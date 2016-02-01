@@ -80,7 +80,7 @@ Sub playlistMain(settings as Object, server as Object, connections as Object)
             handleTCPConnectEvent(msg, port, connections)
         ' roStremLineEvent signals, that a open connection recieved a sting, terminated with a LF (0x0A)
         else if type(msg) = "roStreamLineEvent" then 
-            handleStreamLineEvent(msg)
+            handleStreamLineEvent(msg, port, videoPlayer)
         ' roStreamEndEvent signals, that a connection has been closed by a client.
         else if type(msg) = "roStreamEndEvent" then
             handleStreamEndEvent(msg)

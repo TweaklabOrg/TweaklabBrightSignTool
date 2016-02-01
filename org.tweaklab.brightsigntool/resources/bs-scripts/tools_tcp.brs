@@ -1,25 +1,46 @@
 ' Handles commands sent from the client. Can be easyly extended by adding other else ifs
 ' 
 ' @param msg The occured roStreamLineEvent.
-sub handleStreamLineEvent(msg as Object)
+sub handleStreamLineEvent(msg as Object, port as Object, videoplayer as Object)
+    MEDIA_ENDED = 8
+
+    ' reboot player
     if msg.GetString() = "reboot" then
         connection = msg.GetUserData()
         connection.stream.SendLine("OK")
         connection.stream.Flush()
         info("Received reboot command from client.")
         rebootSystem()
+    ' delete mediafolder
     else if msg.GetString() = "resetFilestructure" then
         resetFilestructure() ' from tools_setup.brs
         connection = msg.GetUserData()
         connection.stream.SendLine("OK")
         connection.stream.Flush()
         info("Received resetFilestrucure command from client.")
+    ' clear SD card
     else if msg.GetString() = "clearSD" then
         clearSD() ' from tool_setup.brs
         connection = msg.GetUserData()
         connection.stream.SendLine("OK")
         connection.stream.Flush()
         info("Received clearSD command from client.")
+    ' play a video file
+    else if msg.GetString().Left(6) = "play: " then
+        info("Received play command from client.")
+        file = msg.GetString().Mid(6)
+        videoPlayer.StopClear()
+        if videoPlayer.playFile(file) then
+            info("playing " + file)
+        else
+            ' act as if video has ended
+            endMessage = CreateObject("roVideoEvent")
+            endMessage.SetInt(MEDIA_ENDED)
+            port.PostMessage(endMessage)
+            info("not able to play " + file)
+            ScreenMessage("not able to play " + file, 3000)
+        end if
+    ' validate requested video format
     else 
         videoMode = createObject("roVideoMode")
         connection = msg.GetUserData()
