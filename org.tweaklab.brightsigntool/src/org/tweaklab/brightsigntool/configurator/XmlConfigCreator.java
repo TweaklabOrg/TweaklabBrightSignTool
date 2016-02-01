@@ -77,12 +77,16 @@ public class XmlConfigCreator {
     rootElement.appendChild(dhcpElement);
 
     Element sshPasswordElement = doc.createElement("ssh_password");
-    sshPasswordElement.appendChild(doc.createTextNode(generalSettings.getSshPassword()));
-    rootElement.appendChild(sshPasswordElement);
-    comment = doc.createComment(" We made the ssh password visible as we use the devices in closed networks only.");
-    sshPasswordElement.getParentNode().insertBefore(comment, sshPasswordElement);
-    comment = doc.createComment("Like that you can always find out the password by reading the SD.");
-    sshPasswordElement.getParentNode().insertBefore(comment, sshPasswordElement);
+    // only show insert password when it's actually needed -> debug mode
+    if (generalSettings.getDebug()) {
+      sshPasswordElement.appendChild(doc.createTextNode(generalSettings.getSshPassword()));
+      rootElement.appendChild(sshPasswordElement);
+      comment = doc.createComment(" We made the ssh password visible as we use the devices in closed networks only.");
+      sshPasswordElement.getParentNode().insertBefore(comment, sshPasswordElement);
+    } else {
+      sshPasswordElement.appendChild(doc.createTextNode(""));
+      rootElement.appendChild(sshPasswordElement);
+    }
 
     Element volumeElement = doc.createElement("volume");
     volumeElement.appendChild(doc.createTextNode(String.valueOf(generalSettings.getVolume())));

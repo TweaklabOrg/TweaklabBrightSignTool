@@ -177,12 +177,12 @@ public class UploadScreenController {
       }
       List<UploadFile> systemFilesForUpload = new ArrayList<UploadFile>();
 
-      // create and upload settings.xml
+      // create and upload display.xml
       if (this.uploadDisplaySettingsCheckbox.isSelected()) {
         String interlaced = interlacedCheckbox.isSelected() ? "i" : "p";
         String brightSignResolutionString = widthField.getText() + "x" + heightField.getText()
                 + "x" + frequencyField.getText() + interlaced;
-        if (mediator.getConnector().isResolutionSupported(brightSignResolutionString)) {
+        if (autoDisplaySolutionCheckbox.isSelected() || mediator.getConnector().isResolutionSupported(brightSignResolutionString)) {
           UploadFile displaySettingsXML = createDisplaySettingsXML();
           systemFilesForUpload.add(displaySettingsXML);
         } else {
@@ -191,7 +191,7 @@ public class UploadScreenController {
         }
       }
 
-      // create and upload display.xml
+      // create and upload settings.xml
       if (this.uploadGeneralSettingsCheckbox.isSelected()) {
         UploadFile generalSettingsXml;
         // if the player will be reset completelty, initialize

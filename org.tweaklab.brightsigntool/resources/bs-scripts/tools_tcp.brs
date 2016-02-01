@@ -10,6 +10,7 @@ sub handleStreamLineEvent(msg as Object, port as Object, videoplayer as Object)
         connection.stream.SendLine("OK")
         connection.stream.Flush()
         info("Received reboot command from client.")
+        ScreenMessage("rebooting...", 3000)
         rebootSystem()
     ' delete mediafolder
     else if msg.GetString() = "resetFilestructure" then

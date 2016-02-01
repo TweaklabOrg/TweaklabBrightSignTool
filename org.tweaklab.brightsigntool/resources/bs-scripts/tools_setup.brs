@@ -44,9 +44,7 @@ Sub UpdateNetworkSettings(settings As Object)
         ScreenMessage("changing name from " + netConf.getHostName() + " to " + settings.name.getText(), 3000)
         netConf.setHostName(settings.name.getText())
     end if
-    ' Password must be set every time, as it can't be read a compared.
-    netConf.SetLoginPassword(settings.ssh_password.getText())
-    netConf.apply()
+
 End Sub
 
 Sub WriteDefaultRegistry()
@@ -62,10 +60,7 @@ Sub WriteDefaultRegistry()
     ' enable diagnostic web server
     section = createObject("roRegistrySection", "networking")
     section.write("http_server", "80")
-
-    ' enable ssh
-    section.write("ssh","22")
-
+    
     ' write changes
     section.flush()
 End Sub
@@ -186,11 +181,28 @@ function updateDebugSettings(settings as Object) as Object
         info("Disabling debug mode.")
         ScreenMessage("Disabling debug mode.", 3000)
         brightscriptRegistry.Delete("debug")
+
+        ' disable ssh
+        section = CreateObject("roRegistrySection", "networking")
+        section.Delete("ssh")
+        section.flush()
+
         changed = true
     else if settings.debug.getText() = "true" and brightscriptRegistry.read("debug") <> "1" then
         info("Enabling debug mode.")
         ScreenMessage("Enabling debug mode.", 3000)
         brightscriptRegistry.write("debug", "1")
+
+        ' enable ssh
+        section = CreateObject("roRegistrySection", "networking")
+        section.write("ssh","22")
+        section.flush()
+
+        ' set ssh password
+        netConf = CreateObject("roNetworkConfiguration", 0)
+        netConf.SetLoginPassword(settings.ssh_password.getText())
+        netConf.apply()
+
         changed = true
     end if
     return changed
