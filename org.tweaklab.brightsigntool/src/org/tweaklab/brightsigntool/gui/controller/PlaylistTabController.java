@@ -11,6 +11,7 @@ import javafx.stage.FileChooser;
 
 import java.io.File;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -51,7 +52,8 @@ public class PlaylistTabController extends TabController {
   private void handleAddFileToListView() {
     final FileChooser fileChooser = new FileChooser();
     List<File> choosenFiles = fileChooser.showOpenMultipleDialog(MainApp.primaryStage);
-    // TODO Stephan: handle no files where chosen
+    choosenFiles = (choosenFiles == null ? new LinkedList<>() : choosenFiles);
+    // choosenFiles Stephan: handle no files where chosen
     for (File choosenFile : choosenFiles) {
       if (choosenFile != null) {
         if (this.validateFileFormat(choosenFile.getName()) == false) {
