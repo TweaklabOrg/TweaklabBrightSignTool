@@ -4,16 +4,24 @@ package org.tweaklab.brightsigntool.connector;
  * Implementation of Connector.
  * Connects to a BrightSign Device via HTTP and SSH
  */
+
 import javafx.concurrent.Task;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.ByteArrayBody;
 import org.apache.http.entity.mime.content.ContentBody;
 import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.tweaklab.brightsigntool.configurator.UploadFile;
 import org.tweaklab.brightsigntool.gui.controller.MainApp;
 import org.tweaklab.brightsigntool.model.Keys;
@@ -21,8 +29,13 @@ import org.tweaklab.brightsigntool.model.MediaFile;
 import org.tweaklab.brightsigntool.model.MediaUploadData;
 import org.tweaklab.brightsigntool.util.DiscoverServices;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
-import java.net.*;
+import java.net.HttpURLConnection;
+import java.net.Socket;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -221,6 +234,40 @@ public class BrightSignWebConnector extends Connector {
     return true;
   }
 
+  private String getResponseFromGetRequest(String url) {
+    CloseableHttpClient httpclient = HttpClients.createDefault();
+    HttpGet httpGet = new HttpGet(url);
+
+    ResponseHandler<String> handler = new ResponseHandler<String>() {
+      @Override
+      public String handleResponse(HttpResponse httpResponse) throws ClientProtocolException, IOException {
+        int status = httpResponse.getStatusLine().getStatusCode();
+        if (status >= 200 && status < 300) {
+          HttpEntity entity = httpResponse.getEntity();
+          return entity != null ? EntityUtils.toString(entity) : null;
+        } else {
+          LOGGER.log(Level.WARNING, "BS returned a error: " + status);
+        }
+        return "";
+      }
+    };
+
+    String respond = "";
+    try {
+      respond = httpclient.execute(httpGet, handler);
+      LOGGER.log(Level.WARNING, "GET request sent: " + httpGet.toString());
+    } catch (IOException e) {
+      LOGGER.log(Level.WARNING, "Couldn't send GET request: " + httpGet.toString(), e);
+    }
+
+    try {
+      httpclient.close();
+    } catch (IOException e) {
+      LOGGER.log(Level.WARNING, "Couldn't close tcp connection: " + httpclient.toString(), e);
+    }
+    return respond;
+  }
+
   private String sendTCPCommand(String command) {
     String answer = "";
     Socket tcpSocket = null;
@@ -266,7 +313,33 @@ public class BrightSignWebConnector extends Connector {
 
   @Override
   public Map<String, String> getSettingsOnDevice() {
-    return new HashMap<>();
+    Map<String, String> result = new HashMap<>();
+
+    String settingsXMLAsString = getResponseFromGetRequest("http://" + this.target + "/view?rp=sd/settings.xml");
+    String modeXMLAsString = getResponseFromGetRequest("http://" + this.target + "/view?rp=sd/mode.xml");
+    String displayXMLAsString = getResponseFromGetRequest("http://" + this.target + "/view?rp=sd/display.xml");
+
+    InputStream settingsXMLAsFile = new ByteArrayInputStream(settingsXMLAsString.getBytes());
+    InputStream modeXMLAsFile = new ByteArrayInputStream(modeXMLAsString.getBytes());
+    InputStream displayXMLAsFile = new ByteArrayInputStream(displayXMLAsString.getBytes());
+
+    DocumentBuilder builder = null;
+    try {
+      builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+    } catch (ParserConfigurationException e) {
+      LOGGER.log(Level.SEVERE, "Not able to get DocumentBuilder?", e);
+    }
+
+    collectEntries(settingsXMLAsFile, result, builder);
+    collectMode(modeXMLAsFile,result, builder);
+    collectEntries(displayXMLAsFile, result, builder);
+    // TODO: building filemanagement to make that possible. For ex. skip mediaupload of already existing files, but allow modifications on settings.
+//    collectEntries("gpio.xml", result, builder);
+//    collectPlaylist(result, builder);
+
+    LOGGER.info("Collectable settings loaded from BS.");
+
+    return result;
   }
 
   @Override

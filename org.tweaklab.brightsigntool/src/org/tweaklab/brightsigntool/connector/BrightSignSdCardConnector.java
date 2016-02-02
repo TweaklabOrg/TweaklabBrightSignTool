@@ -9,10 +9,6 @@ import org.tweaklab.brightsigntool.model.MediaFile;
 import org.tweaklab.brightsigntool.model.MediaUploadData;
 import org.tweaklab.brightsigntool.util.CommandlineTool;
 import org.tweaklab.brightsigntool.util.OSValidator;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.xml.sax.SAXException;
 
 import javax.swing.filechooser.FileSystemView;
 import javax.xml.parsers.DocumentBuilder;
@@ -211,9 +207,20 @@ public class BrightSignSdCardConnector extends Connector {
       LOGGER.log(Level.SEVERE, "Not able to get DocumentBuilder?", e);
     }
 
-    collectMode(result, builder);
-    collectEntries("settings.xml", result, builder);
-    collectEntries("display.xml", result, builder);
+    InputStream modeFile = null;
+    InputStream settingsFile = null;
+    InputStream displayFile = null;
+    try {
+      modeFile = new FileInputStream(new File(this.target + "/mode.xml"));
+      settingsFile = new FileInputStream(new File(this.target + "/settings.xml"));
+      displayFile = new FileInputStream(new File(this.target + "/display.xml"));
+    } catch (IOException e) {
+      LOGGER.log(Level.WARNING, "Couldn't fine one of the files.", e);
+    }
+
+    collectMode(modeFile, result, builder);
+    collectEntries(settingsFile, result, builder);
+    collectEntries(displayFile, result, builder);
     // TODO: building filemanagement to make that possible. For ex. skip mediaupload of already existing files, but allow modifications on settings.
 //    collectEntries("gpio.xml", result, builder);
 //    collectPlaylist(result, builder);
@@ -227,56 +234,6 @@ public class BrightSignSdCardConnector extends Connector {
   public boolean isResolutionSupported(String brightSignResolutionString) {
     // not able to verify
     return true;
-  }
-
-  private void collectEntries(String file, Map<String, String> result, DocumentBuilder builder) {
-    Document xml = getDocFromXML(file, builder);
-    if (xml != null) {
-      Element settings = xml.getDocumentElement();
-      Node entry = settings.getChildNodes().item(0);
-      while (entry != null) {
-        if (entry.getNodeType() == Node.ELEMENT_NODE) {
-          result.put(entry.getNodeName(), ((Element) entry).getTextContent());
-        }
-        entry = entry.getNextSibling();
-      }
-    }
-  }
-
-  private void collectMode(Map<String, String> result, DocumentBuilder builder) {
-    Document xml = getDocFromXML("mode.xml", builder);
-    if (xml != null) {
-      Element mode = xml.getDocumentElement();
-      result.put(mode.getTagName(), mode.getTextContent());
-    }
-  }
-
-  private void collectPlaylist(Map<String, String> result, DocumentBuilder builder) {
-    Document xml = getDocFromXML("playlist.xml", builder);
-    if (xml != null) {
-      Element root = xml.getDocumentElement();
-      Node entry = root.getChildNodes().item(0);
-      int i = 0;
-      while (entry != null) {
-        if (entry.getNodeType() == Node.ELEMENT_NODE) {
-          result.put(entry.getNodeName() + i, ((Element) entry).getTextContent());
-          i++;
-        }
-        entry = entry.getNextSibling();
-      }
-    }
-  }
-
-  private Document getDocFromXML(String file, DocumentBuilder builder) {
-    Document xml = null;
-    try {
-      xml = builder.parse(new File(this.target + "/" + file));
-    } catch (SAXException e) {
-      LOGGER.log(Level.WARNING, "Couldn't parse " + file, e);
-    } catch (IOException e) {
-      LOGGER.log(Level.WARNING, "Couldn't find " + file + " on SD.", e);
-    }
-    return xml;
   }
 
   // TODO return success
