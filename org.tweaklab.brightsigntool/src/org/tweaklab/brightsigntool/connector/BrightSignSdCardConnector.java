@@ -70,6 +70,14 @@ public class BrightSignSdCardConnector extends Connector {
     this.target = "";
     this.isConnected = false;
 
+    String respond = "";
+    if (OSValidator.isMac()) {
+      List<String> command = new LinkedList<>();
+      command.add("diskutil");
+      command.add("unmount");
+      command.add(target);
+    }
+
     LOGGER.info("SD Card " + target + " was disconnected.");
 
     return !this.isConnected;

@@ -12,10 +12,10 @@ public class CommandlineTool {
   private static final Logger LOGGER = Logger.getLogger(CommandlineTool.class.getName());
 
   /*
-  * This method can be used by non-self-termination commands. Specify an appropriate timeout.
+  * This method can also be used by non-self-termination commands. Specify an appropriate timeout.
   * It's ugly code as InputStreams of executing processes are blocking read() and readline()
   * calls when no data is available AND the process is still alive. I'm not even completely
-  * sure if the process is always killd, or if we actually create zombies. Anyway, it's the
+  * sure if the process is allways killed, or if we actually create zombies. Anyway, it's the
   * only solution I found for now.
   */
   public static String executeCommand(List<String> command, int timeoutInMillis) {
