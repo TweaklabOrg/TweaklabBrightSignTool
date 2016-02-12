@@ -270,24 +270,36 @@ public class UploadScreenController {
   private Boolean validateFields() {
     if (uploadDisplaySettingsCheckbox.isSelected() == false && uploadGeneralSettingsCheckbox.isSelected() == false
         && uploadMediaCheckbox.isSelected() == false) {
-
       MainApp.showInfoMessage("Only BrightSign scripts will be uploaded!");
     }
 
-    if (ControllerMediator.getInstance().getRootController().getMediaUploadData() == null) {
+    boolean result = true;
+
+    if (uploadDisplaySettingsCheckbox.isSelected()) {
+      if (this.autoDisplaySolutionCheckbox.isSelected() == false
+              && (this.widthField.getText().equals("") || this.frequencyField.getText().equals("") || this.heightField.getText().equals(""))) {
+        MainApp.showErrorMessage("Empty field in display settings", "Please select Auto Resolution or set height, width and frequency.");
+        result = false;
+      }
+    }
+
+    if (uploadGeneralSettingsCheckbox.isSelected()) {
+      if (newHostnameField.getText().equals("") || volumeField.getText().equals("")) {
+        MainApp.showErrorMessage("Empty field in system settings", "Please choose a hostname and a Volume.");
+        result = false;
+      }
+      if (dhcpCheckbox.isSelected() == false && (newIPField.getText().equals("") || subnetField.getText().equals(""))) {
+        MainApp.showErrorMessage("Empty field", "Please select DHCP or set IP and subnet.");
+        result = false;
+      }
+    }
+
+    if (uploadMediaCheckbox.isSelected() && ControllerMediator.getInstance().getRootController().getMediaUploadData() == null) {
       MainApp.showErrorMessage("No Media Data", "Please add a media config to upload!");
-      return false;
+      result = false;
     }
 
-    if (this.autoDisplaySolutionCheckbox.isSelected() == false
-        && (this.widthField.getText().equals("") || this.frequencyField.getText().equals("") || this.heightField.getText().equals("")
-            || this.newHostnameField.getText().equals("") || this.volumeField.getText().equals(""))) {
-      MainApp.showErrorMessage("Empty Field", "Please select Auto Resolution or set some values!");
-      return false;
-    }
-
-    return true;
-
+    return result;
   }
 
   private UploadFile createDisplaySettingsXML() {

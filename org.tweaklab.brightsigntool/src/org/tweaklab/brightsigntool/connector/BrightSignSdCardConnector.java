@@ -90,7 +90,6 @@ public class BrightSignSdCardConnector extends Connector {
 
       @Override
       public Boolean call() throws Exception{
-
         // writeSystemFiles
         for (UploadFile systemFile : systemFiles) {
           if (systemFile != null) {
@@ -124,18 +123,22 @@ public class BrightSignSdCardConnector extends Connector {
           return false;
         }
 
-        // copy xml config file
-        copyOrReplaceFile(uploadData.getConfigFile(), target);
+        if (uploadData != null) {
+          // TODO Some strange behaviour here. If for ex. display changes are made, the xml is handled via systemFiles. Ist that part really needed?
+          // copy xml config file
+          copyOrReplaceFile(uploadData.getConfigFile(), target);
 
-        // copy each mediafile
-        for (MediaFile mediaFile : uploadData.getUploadList()) {
-          if (this.isCancelled()) {
-            return false;
-          }
-          if (mediaFile != null) {
-            copyOrReplaceFile(mediaFile.getFile(), mediaFolder.getPath());
+          // copy each mediafile
+          for (MediaFile mediaFile : uploadData.getUploadList()) {
+            if (this.isCancelled()) {
+              return false;
+            }
+            if (mediaFile != null) {
+              copyOrReplaceFile(mediaFile.getFile(), mediaFolder.getPath());
+            }
           }
         }
+
         LOGGER.info("Done uploading to SD.");
         return true;
       }
@@ -215,25 +218,34 @@ public class BrightSignSdCardConnector extends Connector {
       LOGGER.log(Level.SEVERE, "Not able to get DocumentBuilder?", e);
     }
 
-    InputStream modeFile = null;
     InputStream settingsFile = null;
     InputStream displayFile = null;
     try {
-      modeFile = new FileInputStream(new File(this.target + "/mode.xml"));
       settingsFile = new FileInputStream(new File(this.target + "/settings.xml"));
+    } catch (IOException e) {
+      LOGGER.log(Level.INFO, "No settings.xml on SD.");
+    }
+    try {
       displayFile = new FileInputStream(new File(this.target + "/display.xml"));
     } catch (IOException e) {
-      LOGGER.log(Level.WARNING, "Couldn't fine one of the files.", e);
+      LOGGER.log(Level.INFO, "No display.xml on SD.");
     }
 
-    collectMode(modeFile, result, builder);
-    collectEntries(settingsFile, result, builder);
-    collectEntries(displayFile, result, builder);
+//    collectMode(modeFile, result, builder);
+    if (settingsFile != null) {
+      collectEntries(settingsFile, result, builder);
+    }
+    if (displayFile != null) {
+      collectEntries(displayFile, result, builder);
+    }
     // TODO: building filemanagement to make that possible. For ex. skip mediaupload of already existing files, but allow modifications on settings.
 //    collectEntries("gpio.xml", result, builder);
 //    collectPlaylist(result, builder);
-
-    LOGGER.info("Collectable settings loaded from SD.");
+    if (settingsFile != null || displayFile != null) {
+      LOGGER.info("Collectable settings loaded from SD.");
+    } else {
+      LOGGER.info("No collectabel settings found on SD.");
+    }
 
     return result;
   }
