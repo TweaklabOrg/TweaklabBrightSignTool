@@ -37,7 +37,7 @@ public class MainApp extends Application {
     LoggerSetup.setup();
 
     MainApp.primaryStage = primaryStage;
-    MainApp.primaryStage.setTitle(Keys.APP_NICE_NAME_PROPS_KEY + " " + Keys.ClIENT_VERSION_PROPS_KEY);
+    MainApp.primaryStage.setTitle(Keys.loadProperty(Keys.APP_NICE_NAME_PROPS_KEY) + " " + Keys.loadProperty(Keys.ClIENT_VERSION_PROPS_KEY));
     MainApp.primaryStage.setResizable(false);
 
     initRootLayout();

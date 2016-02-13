@@ -1,5 +1,6 @@
 <project name="org.tweaklab.brightsigntool" default="build" basedir="." xmlns:fx="javafx:com.sun.javafx.tools.ant">
     <property file="build.properties"/>
+    <property file="build.number.properties"/>
     <property file="${res.dir}/config.properties"/>
 
     <presetdef name="javac">
@@ -27,6 +28,7 @@
 		<mkdir dir="${build.dir.classes}"/>
 		<mkdir dir="${build.dir.scripts}"/>
         <mkdir dir="${dist.dir}"/>
+        <buildnumber file="build.number.properties"/>
 	</target>
 
 	<target name="compile"
@@ -40,7 +42,7 @@
             depends="compile"
             description="generate the jar">
         <!--jar two times, as the actual jar must include itself to distribute the program in all configuration storages.-->
-        <jar destfile="${build.dir}/${app_name}_${client_version}.jar" >
+        <jar destfile="${build.dir}/${app_name}_${client_version}.${build.number}.jar" >
             <fileset dir="${build.dir.classes}"/>
             <fileset dir="${src.dir}"
                      includes="**/*.fxml"/>
@@ -52,17 +54,17 @@
                 <attribute name="Main-Class"
                            value="${main.class}"/>
                 <attribute name="Implementation-Version"
-                           value="${client_version}"/>
+                           value="${client_version}.${build.number}"/>
             </manifest>
         </jar>
 
         <!--copy the jar that will be included into a resource folder defined by config.properties, so it will be included into the final jar.-->
         <mkdir dir="${res.dir}/${included_jar_relative_path}"/>
-        <copyfile src="${build.dir}/${app_name}_${client_version}.jar"
-                  dest="${res.dir}/${included_jar_relative_path}/${app_name}_${client_version}.jar"/>
+        <copyfile src="${build.dir}/${app_name}_${client_version}.${build.number}.jar"
+                  dest="${res.dir}/${included_jar_relative_path}/${app_name}_${client_version}.${build.number}.jar"/>
 
         <!--now we can build the final jar, including the jar in resouces-->
-        <jar destfile="${dist.dir}/${app_name}_${client_version}.jar" >
+        <jar destfile="${dist.dir}/${app_name}_${client_version}.${build.number}.jar" >
             <fileset dir="${build.dir.classes}"/>
             <fileset dir="${src.dir}"
                      includes="**/*.fxml"/>
@@ -74,29 +76,27 @@
                 <attribute name="Main-Class"
                            value="${main.class}"/>
                 <attribute name="Implementation-Version"
-                           value="${client_version}"/>
+                           value="${client_version}.${build.number}"/>
             </manifest>
         </jar>
     </target>
 
     <target name="build"
             depends="jar">
-
-        <fx:application id="${app_name}"
-                        name="${app_nice_name}"
-                        mainClass="${main.class}"/>
-
         <fx:deploy width="${width}"
                    height="${height}"
                    outdir="${dist.dir}"
-                   outfile="${app_name}_${client_version}"
                    nativeBundles="image">
-            <fx:info title="${app_nice_name}"/>
-            <fx:application name="${app_nice_name}_${client_version}"
-                            mainClass="${main.class}"/>
+            <fx:info title="${app_nice_name}"
+                        vendor="tweaklab.org"
+                        license="Apache License Version 2.0"
+                        description="A tool to make simple setups of BrightSign players."/>
+            <fx:application name="${app_nice_name}"
+                            mainClass="${main.class}"
+                            version="${client_version}.${build.number}"/>
             <fx:resources>
                 <fx:fileset dir="${dist.dir}"
-                            includes="${app_name}_${client_version}.jar"/>
+                            includes="${app_name}_${client_version}.${build.number}.jar"/>
                 <fx:fileset dir="${dist.dir}" includes="${res.dir}"/>
             </fx:resources>
         </fx:deploy>
