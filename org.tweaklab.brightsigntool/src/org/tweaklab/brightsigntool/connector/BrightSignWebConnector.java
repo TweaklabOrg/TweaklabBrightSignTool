@@ -59,19 +59,17 @@ public class BrightSignWebConnector extends Connector {
   }
 
   public boolean connect(String host) {
-    isConnected = false;
     try {
       this.target = host + ".local";
       this.name = host;
       Socket tcpSocket = new Socket(this.target, tcpPort);
       tcpSocket.close();
       uploadRootUrl = "http://" + this.target + "/upload.html?rp=sd";
-      this.isConnected = sendGetRequest("http://" + this.target);
     } catch (IOException e) {
       LOGGER.log(Level.WARNING, "There was an issue connection to " + host, e);
     }
 
-    return this.isConnected;
+    return isConnected();
   }
 
   @Override
@@ -79,8 +77,7 @@ public class BrightSignWebConnector extends Connector {
     this.target = "";
     this.name = "";
     uploadRootUrl = "";
-    isConnected = false;
-    return !isConnected;
+    return !isConnected();
   }
 
   @Override
@@ -157,6 +154,11 @@ public class BrightSignWebConnector extends Connector {
     return uploadTask;
   }
 
+  @Override
+  public Boolean isConnected() {
+    return sendGetRequest("http://" + this.target);
+  }
+
   private Boolean uploadFile(String destinationFolder, File file) {
 
     MultipartEntityBuilder multiPartBuilder = MultipartEntityBuilder.create();
@@ -229,6 +231,7 @@ public class BrightSignWebConnector extends Connector {
       }
     } catch (IOException e) {
       LOGGER.log(Level.WARNING, "Couldn't send GET request to " + url, e);
+      return false;
     }
     LOGGER.info("Successfully sent GET request to BS: " + url);
     return true;
@@ -255,7 +258,7 @@ public class BrightSignWebConnector extends Connector {
     String respond = "";
     try {
       respond = httpclient.execute(httpGet, handler);
-      LOGGER.log(Level.WARNING, "GET request sent: " + httpGet.toString());
+      LOGGER.log(Level.INFO, "GET request sent: " + httpGet.toString());
     } catch (IOException e) {
       LOGGER.log(Level.WARNING, "Couldn't send GET request: " + httpGet.toString(), e);
     }

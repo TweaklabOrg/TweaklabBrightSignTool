@@ -156,6 +156,20 @@ public class UploadScreenController {
       boolean value = Boolean.parseBoolean(data.get("dhcp"));
       this.dhcpCheckbox.selectedProperty().setValue(value);
     }
+
+    // Unset upload checkboxes if field already programmed on connected target.
+    if (data.containsKey("auto") || (data.containsKey("width") && data.containsKey("height")
+            && data.containsKey("freq") && data.containsKey("interlaced"))) {
+      uploadDisplaySettingsCheckbox.setSelected(false);
+      uploadMediaCheckbox.setSelected(false);
+    }
+    if (data.containsKey("volume") && data.containsKey("name")
+            && ((data.containsKey("ip") && data.containsKey("netmask")) || data.containsKey("dhcp"))) {
+      uploadGeneralSettingsCheckbox.setSelected(false);
+      uploadMediaCheckbox.setSelected(false);
+    }
+
+
   }
 
   @FXML
@@ -169,6 +183,9 @@ public class UploadScreenController {
    */
   @FXML
   private void handleUpload() {
+    if(!mediator.getConnector().isConnected()) {
+      MainApp.showInfoMessage("Device is not connected anymore...");
+    }
 
     try {
 
@@ -208,7 +225,7 @@ public class UploadScreenController {
       systemFilesForUpload.addAll(scripts);
 
       // upload jar
-      String jarName = Keys.loadProperty(Keys.APP_NAME_PROPS_KEY) + "_" + Keys.loadProperty(Keys.ClIENT_VERSION_PROPS_KEY) + ".jar";
+      String jarName = Keys.loadProperty(Keys.APP_NAME_PROPS_KEY) + "_" + Keys.loadProperty(Keys.ClIENT_VERSION_PROPS_KEY) +  + ".jar";
       InputStream jarAsStream = this.getClass().getResourceAsStream(
               "/" + Keys.loadProperty(Keys.INCLUDED_JAR_RELATIVE_PATH) + "/" + jarName);
       byte[] scriptAsBytes = IOUtils.toByteArray(jarAsStream);

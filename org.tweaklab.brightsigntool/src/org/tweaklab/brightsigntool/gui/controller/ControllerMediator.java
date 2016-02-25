@@ -2,6 +2,9 @@ package org.tweaklab.brightsigntool.gui.controller;
 
 import org.tweaklab.brightsigntool.connector.Connector;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  * singelton class which contains data to communicate over the applications
  * 
@@ -9,6 +12,7 @@ import org.tweaklab.brightsigntool.connector.Connector;
  *
  */
 public class ControllerMediator {
+  private static final Logger LOGGER = Logger.getLogger(ControllerMediator.class.getName());
 
   private RootPageController rootController;
   private UploadScreenController uploadController;
@@ -47,6 +51,7 @@ public class ControllerMediator {
     isConnected = false;
     if (!connector.disconnect()) {
       MainApp.showInfoMessage("Device might not have been disconnected correctly.");
+      LOGGER.log(Level.INFO, "Tried to disconnect " + connector.getTarget() + ", but still seems to be connected.");
     }
     rootController.disconnectFromDevice();
   }
@@ -57,6 +62,7 @@ public class ControllerMediator {
       rootController.connectToDevice(connector.getSettingsOnDevice());
     } else {
       MainApp.showErrorMessage("Connection failed!", "Please verify the target address.");
+      LOGGER.log(Level.WARNING, "An error occurred while connecting to device " + target);
     }
   }
 
@@ -74,5 +80,4 @@ public class ControllerMediator {
   private static class MediatorHolder {
     private static final ControllerMediator INSTANCE = new ControllerMediator();
   }
-
 }

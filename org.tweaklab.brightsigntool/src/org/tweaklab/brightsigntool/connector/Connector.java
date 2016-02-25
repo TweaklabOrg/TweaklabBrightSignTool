@@ -26,7 +26,6 @@ public abstract class Connector {
 
   public static final Logger LOGGER = Logger.getLogger(Connector.class.getName());
   public static final String CLASS_DISPLAY_NAME = "Abstract Connector (Field not overwritten)";
-  protected Boolean isConnected = false;
   protected String target = "";
   protected String name = "";
  
@@ -59,9 +58,7 @@ public abstract class Connector {
    * Check if Device is currently connected
    * @return
    */
-  public Boolean isConnected() {
-    return isConnected;
-  }
+  abstract public Boolean isConnected();
 
   /**
    * get the current host

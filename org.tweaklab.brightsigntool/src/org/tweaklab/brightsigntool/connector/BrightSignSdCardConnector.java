@@ -45,14 +45,12 @@ public class BrightSignSdCardConnector extends Connector {
     if (isPathValid(path)) {
     	this.name = path;
       this.target = path;
-      this.isConnected = true;
     } else {
-      this.isConnected = false;
     }
 
     LOGGER.info("SD Card " + path + " was connected.");
 
-    return isConnected;
+    return isConnected();
   }
 
   private Boolean isPathValid(String path) {
@@ -68,7 +66,6 @@ public class BrightSignSdCardConnector extends Connector {
     this.name = "";
     String target = this.target;
     this.target = "";
-    this.isConnected = false;
 
     String respond = "";
     if (OSValidator.isMac()) {
@@ -80,7 +77,7 @@ public class BrightSignSdCardConnector extends Connector {
 
     LOGGER.info("SD Card " + target + " was disconnected.");
 
-    return !this.isConnected;
+    return !isConnected();
   }
 
   @Override
@@ -145,6 +142,12 @@ public class BrightSignSdCardConnector extends Connector {
 
     };
     return uploadTask;
+  }
+
+  @Override
+  public Boolean isConnected() {
+    File target = new File(this.target);
+    return target.exists();
   }
 
   @Override

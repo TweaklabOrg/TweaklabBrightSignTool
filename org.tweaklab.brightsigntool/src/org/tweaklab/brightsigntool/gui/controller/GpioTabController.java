@@ -1,10 +1,5 @@
 package org.tweaklab.brightsigntool.gui.controller;
 
-import org.tweaklab.brightsigntool.configurator.UploadFile;
-import org.tweaklab.brightsigntool.configurator.XmlConfigCreator;
-import org.tweaklab.brightsigntool.model.MediaFile;
-import org.tweaklab.brightsigntool.model.MediaUploadData;
-import org.tweaklab.brightsigntool.model.ModeType;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -13,48 +8,46 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
+import org.tweaklab.brightsigntool.configurator.UploadFile;
+import org.tweaklab.brightsigntool.configurator.XmlConfigCreator;
+import org.tweaklab.brightsigntool.model.MediaFile;
+import org.tweaklab.brightsigntool.model.MediaUploadData;
+import org.tweaklab.brightsigntool.model.ModeType;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Controller of PushButton Configuration View
- * 
- * @author Alain
  *
+ * @author Alain
  */
 public class GpioTabController extends TabController {
-  @FXML
-  private AnchorPane rootPane;
-
+  private static final Logger LOGGER = Logger.getLogger(GpioTabController.class.getName());
+  private static int NUMBER_OF_BUTTONS = 4;
+  private static int MAX_FILE_NAME_LENGTH_SHOW = 25;
   @FXML
   public Label fileNameLabel0;
-
   @FXML
   public Label fileNameLabel1;
-
   @FXML
   public Label fileNameLabel2;
-
   @FXML
   public Label fileNameLabel3;
-
+  MediaFile[] gpioFiles;
+  MediaFile loopFile;
+  @FXML
+  private AnchorPane rootPane;
   @FXML
   private Label loopfileNameLabel;
-
   @FXML
   private CheckBox retriggerEnabledCheckbox;
-
   @FXML
   private TextField retriggerDelayField;
-
-  MediaFile[] gpioFiles;
-  private static int NUMBER_OF_BUTTONS = 4;
-  MediaFile loopFile;
-
-  private static int MAX_FILE_NAME_LENGTH_SHOW = 25;
 
   /**
    * Initializes the controller class. This method is automatically called after the fxml file has
@@ -97,15 +90,17 @@ public class GpioTabController extends TabController {
   @FXML
   private void handleChooseLoopFile() {
     final FileChooser fileChooser = new FileChooser();
-    File choosenFile = fileChooser.showOpenDialog(MainApp.primaryStage);
-    if (choosenFile != null) {
-      loopFile = new MediaFile(choosenFile);
-      if (this.validateFileFormat(choosenFile.getName()) == false){
+    File chosenFile = fileChooser.showOpenDialog(MainApp.primaryStage);
+    if (chosenFile != null) {
+      loopFile = new MediaFile(chosenFile);
+      if (this.validateFileFormat(chosenFile.getName()) == false) {
         MainApp.showErrorMessage("Wrong File", "This filetype is not supported. Add this type in the property file if you need it.");
+        LOGGER.log(Level.INFO, "Format of chosen file is not mentioned in properties: " + chosenFile.getName());
         return;
       }
-      String fileNameToDisplay = choosenFile.getName();
+      String fileNameToDisplay = chosenFile.getName();
       if (fileNameToDisplay.length() > MAX_FILE_NAME_LENGTH_SHOW) {
+        // TODO: move file name fold length to properties
         fileNameToDisplay = fileNameToDisplay.substring(0, 22) + "...";
       }
       loopfileNameLabel.setText(fileNameToDisplay);
@@ -115,7 +110,6 @@ public class GpioTabController extends TabController {
 
   @FXML
   private void handleChooseGpioFile(ActionEvent event) {
-
     int buttonNumber = -1;
 
     // check which button was clicked
@@ -124,28 +118,30 @@ public class GpioTabController extends TabController {
       buttonNumber = Integer.parseInt(((Button) source).getId().substring(13));
     }
 
+
     if (buttonNumber < 0 || buttonNumber > NUMBER_OF_BUTTONS)
       throw new RuntimeException("Invalid Button ID");
 
     // get file
     final FileChooser fileChooser = new FileChooser();
-    File choosenFile = fileChooser.showOpenDialog(MainApp.primaryStage);
+    File chosenFile = fileChooser.showOpenDialog(MainApp.primaryStage);
 
-    if (choosenFile != null) {
-      if (this.validateFileFormat(choosenFile.getName()) == false){
+    if (chosenFile != null) {
+      if (this.validateFileFormat(chosenFile.getName()) == false) {
         MainApp.showErrorMessage("Wrong File", "This filetype is not supported.");
+        LOGGER.log(Level.INFO, "Format of chosen file is not mentioned in properties: " + chosenFile.getName());
         return;
       }
-      MediaFile mediaFile = new MediaFile(choosenFile);
+      MediaFile mediaFile = new MediaFile(chosenFile);
       gpioFiles[buttonNumber] = mediaFile;
 
       // get label with same id-number as clicked button
       Label fileNameLabel = (Label) rootPane.lookup("#fileNameLabel" + buttonNumber);
 
-      String fileNameToDisplay = choosenFile.getName();
+      String fileNameToDisplay = chosenFile.getName();
       fileNameLabel.setText(fileNameToDisplay);
+      LOGGER.log(Level.INFO, "File " + chosenFile.getName() + " was set for gpio " + buttonNumber);
     }
-
   }
 
   @FXML

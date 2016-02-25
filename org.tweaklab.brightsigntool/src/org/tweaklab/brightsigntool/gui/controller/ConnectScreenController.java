@@ -14,6 +14,8 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Controller of ConnectScreen.fxml
@@ -22,19 +24,13 @@ import java.util.List;
  *
  */
 public class ConnectScreenController {
-
-  
-
- 
+  private static final Logger LOGGER = Logger.getLogger(ConnectScreenController.class.getName());
 
   @FXML
   private Label targetDescriptionLabel;
   
-  
   @FXML
   private ComboBox<KeyValueData> connectorComboBox;
-
-
 
   @FXML
   private Button getTargetButton;
@@ -42,20 +38,17 @@ public class ConnectScreenController {
   @FXML
   private ComboBox<String> targetComboBox;
 
-
   /**
    * Initializes the controller class. This method is automatically called after the fxml file has
    * been loaded.
    */
   @FXML
   private void initialize() {
-
     KeyValueData sdConnector = new KeyValueData(BrightSignSdCardConnector.CLASS_DISPLAY_NAME, BrightSignSdCardConnector.class.getName());
     KeyValueData webConnector = new KeyValueData(BrightSignWebConnector.CLASS_DISPLAY_NAME, BrightSignWebConnector.class.getName());
     connectorComboBox.setItems(FXCollections.observableArrayList(webConnector, sdConnector));
     connectorComboBox.getSelectionModel().selectFirst();
     handleChangeConnector();
-
   }
 
   @FXML
@@ -68,14 +61,13 @@ public class ConnectScreenController {
   }
 
   private void ScanTargetFinished(Task<List<String>> possibleTargetsTask) {
-    // TODO Stephan: somehow the curser disappears, at least on my system.
     try {
       targetComboBox.getItems().setAll(possibleTargetsTask.get());
-      targetComboBox.getSelectionModel().selectFirst();
-      MainApp.primaryStage.getScene().setCursor(Cursor.DEFAULT);
     } catch (Exception e) {
-      MainApp.showExceptionMessage(e);
+      LOGGER.log(Level.WARNING, "Not able to collect results.", e);
     }
+    targetComboBox.getSelectionModel().selectFirst();
+    MainApp.primaryStage.getScene().setCursor(Cursor.DEFAULT);
   }
 
   @FXML
@@ -85,25 +77,24 @@ public class ConnectScreenController {
 
     String className = keyValuedata.value;
     Class<?> clazz;
+    Connector connector = null;
     try {
       clazz = Class.forName(className);
-      Connector connector = (Connector) clazz.newInstance();
-      ControllerMediator.getInstance().setConnector(connector);
-      if(connector instanceof BrightSignWebConnector){
-        this.targetDescriptionLabel.setText("Name:");
-        targetComboBox.getItems().add(Keys.loadProperty(Keys.DEFAULT_HOSTNAME_PROPS_KEY));
-        targetComboBox.getSelectionModel().selectLast();
-        targetComboBox.setEditable(true);
-      }
-      else if(connector instanceof BrightSignSdCardConnector){
-        this.targetDescriptionLabel.setText("Path to SD-Card:");
-        targetComboBox.setEditable(false);
-      }
-        
+      connector = (Connector) clazz.newInstance();
     } catch (Exception e) {
-      MainApp.showExceptionMessage(e);
+      LOGGER.log(Level.SEVERE, "The " + className + "connector class couldn't be constructed.", e);
     }
-
+    ControllerMediator.getInstance().setConnector(connector);
+    if(connector instanceof BrightSignWebConnector){
+      this.targetDescriptionLabel.setText("Name:");
+      targetComboBox.getItems().add(Keys.loadProperty(Keys.DEFAULT_HOSTNAME_PROPS_KEY));
+      targetComboBox.getSelectionModel().selectLast();
+      targetComboBox.setEditable(true);
+    }
+    else if(connector instanceof BrightSignSdCardConnector){
+      this.targetDescriptionLabel.setText("Path to SD-Card:");
+      targetComboBox.setEditable(false);
+    }
   }
 
   /**
@@ -111,16 +102,13 @@ public class ConnectScreenController {
    */
   @FXML
   private void handleConnect() {
-
     String target = targetComboBox.getSelectionModel().getSelectedItem();
 
     if (target == null || target.length() < 1) {
       MainApp.showErrorMessage("Target not valid!", "Please enter a valid target address.");
+      LOGGER.log(Level.INFO, target + " not valid!");
       return;
     }
     ControllerMediator.getInstance().connectToDevice(target);
   }
-
-
-
 }
