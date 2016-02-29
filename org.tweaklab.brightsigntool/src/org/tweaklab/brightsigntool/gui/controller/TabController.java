@@ -8,7 +8,7 @@ import java.util.Map;
 /**
  * Abstract Class for all tab controllers 
  * Methods are called by RootPageController
- * @author Alain
+ * @author Alain + Stephan
  *
  */
 public abstract class TabController {

@@ -2,8 +2,8 @@ package org.tweaklab.brightsigntool.configurator;
 
 /**
  * Contains a file to be uploaded to the bright sign player
- * @author Alain
  *
+ * @author Alain + Stephan
  */
 public class UploadFile {
   private final String fileName;

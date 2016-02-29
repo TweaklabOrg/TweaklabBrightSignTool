@@ -24,19 +24,16 @@ public class XmlConfigCreator {
 
   /**
    * Creates an Display Settings xml file and stores it in work folder
-   *
-   * @return
    */
   public static UploadFile createGeneralSettingsXml(PlayerGeneralSettings generalSettings) {
-    UploadFile xmlFile = null;
-
     // xml factory
     DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-    DocumentBuilder docBuilder = null;
+    DocumentBuilder docBuilder;
     try {
       docBuilder = docFactory.newDocumentBuilder();
     } catch (ParserConfigurationException e) {
       LOGGER.log(Level.SEVERE, "Couldn't get a DocumentBuilder out of DocumentBuilderFactory", e);
+      throw new IllegalStateException();
     }
 
     // root elements
@@ -106,26 +103,24 @@ public class XmlConfigCreator {
     debugElement.appendChild(doc.createTextNode(generalSettings.getDebug().toString()));
     rootElement.appendChild(debugElement);
 
-    xmlFile = transformDocToXmlFile(doc, "settings.xml");
-    LOGGER.info("settings.xml created.");
+    UploadFile xmlFile = transformDocToXmlFile(doc, "settings.xml");
+    LOGGER.info("settings.xml created:\n" + new String(xmlFile.getFileAsBytes()));
     return xmlFile;
   }
 
   /**
    * Creates an Display Settings xml file and stores it in work folder
-   * 
-   * @return
    */
   public static UploadFile createModeXml(ModeType mode) {
-    UploadFile xmlFile = null;
 
     // xml factory
     DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-    DocumentBuilder docBuilder = null;
+    DocumentBuilder docBuilder;
     try {
       docBuilder = docFactory.newDocumentBuilder();
     } catch (ParserConfigurationException e) {
       LOGGER.log(Level.SEVERE, "Couldn't get a DocumentBuilder out of DocumentBuilderFactory", e);
+      throw new IllegalStateException();
     }
 
     // root elements
@@ -134,29 +129,25 @@ public class XmlConfigCreator {
     modeElement.appendChild(doc.createTextNode(mode.toString()));
     doc.appendChild(modeElement);
 
-    xmlFile = transformDocToXmlFile(doc, "mode.xml");
+    UploadFile xmlFile = transformDocToXmlFile(doc, "mode.xml");
 
-    LOGGER.info("mode.xml created.");
+    LOGGER.info("mode.xml created:\n" + new String(xmlFile.getFileAsBytes()));
     return xmlFile;
   }
-  
-  
-  
+
+
   /**
    * Creates an Display Settings xml file and stores it in work folder
-   * 
-   * @return
    */
   public static UploadFile createDisplaySettingsXml(PlayerDisplaySettings displaySettings) {
-	  UploadFile xmlFile = null;
-
     // xml factory
     DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-    DocumentBuilder docBuilder = null;
+    DocumentBuilder docBuilder;
     try {
       docBuilder = docFactory.newDocumentBuilder();
     } catch (ParserConfigurationException e) {
       LOGGER.log(Level.SEVERE, "Couldn't get a DocumentBuilder out of DocumentBuilderFactory", e);
+      throw new IllegalStateException();
     }
 
     // root elements
@@ -184,28 +175,24 @@ public class XmlConfigCreator {
     interlacedElement.appendChild(doc.createTextNode(displaySettings.getInterlaced().toString()));
     rootElement.appendChild(interlacedElement);
 
-    xmlFile = transformDocToXmlFile(doc, "display.xml");
+    UploadFile xmlFile = transformDocToXmlFile(doc, "display.xml");
 
-    LOGGER.info("display.xml created.");
+    LOGGER.info("display.xml created:\n" + new String(xmlFile.getFileAsBytes()));
     return xmlFile;
   }
 
   /**
    * Creates an playlist xml config file and stores it in work foldr
-   * 
-   * @param mediaFiles
-   * @return
    */
   public static UploadFile createPlayListXML(List<MediaFile> mediaFiles) {
-	  UploadFile xmlFile = null;
-
     // xml factory
     DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-    DocumentBuilder docBuilder = null;
+    DocumentBuilder docBuilder;
     try {
       docBuilder = docFactory.newDocumentBuilder();
     } catch (ParserConfigurationException e) {
       LOGGER.log(Level.SEVERE, "Couldn't get a DocumentBuilder out of DocumentBuilderFactory", e);
+      throw new IllegalStateException();
     }
 
     // root elements
@@ -226,30 +213,25 @@ public class XmlConfigCreator {
       rootElement.appendChild(file);
     }
 
-    xmlFile = transformDocToXmlFile(doc, "playlist.xml");
+    UploadFile xmlFile = transformDocToXmlFile(doc, "playlist.xml");
 
-    LOGGER.info("playlist.xml created.");
+    LOGGER.info("playlist.xml created:\n" + new String(xmlFile.getFileAsBytes()));
     return xmlFile;
   }
 
   /**
-   * 
-   * @param loopFile --> file to play if no gpio is selected
+   * @param loopFile  --> file to play if no gpio is selected
    * @param gpioFiles --> files per gpio
-   * @param retriggerEnabled
-   * @param retriggerDelay
-   * @return
    */
   public static UploadFile createGpioXML(MediaFile loopFile, MediaFile[] gpioFiles, Boolean retriggerEnabled, String retriggerDelay) {
-	  UploadFile xmlFile = null;
-
     // xml factory
     DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-    DocumentBuilder docBuilder = null;
+    DocumentBuilder docBuilder;
     try {
       docBuilder = docFactory.newDocumentBuilder();
     } catch (ParserConfigurationException e) {
-      LOGGER.log(Level.SEVERE, "Couldn't get a DocumentBuilder out of DocumentBuilderFactory", e);
+      LOGGER.log(Level.SEVERE, "Couldn't get a DocumentBuilder out of DocumentBuilderFactory.", e);
+      throw new IllegalStateException();
     }
 
     // root elements
@@ -289,26 +271,26 @@ public class XmlConfigCreator {
     retriggerDelayElement.appendChild(doc.createTextNode(retriggerDelay));
     rootElement.appendChild(retriggerDelayElement);
 
-    xmlFile = transformDocToXmlFile(doc, "gpio.xml");
+    UploadFile xmlFile = transformDocToXmlFile(doc, "gpio.xml");
 
-    LOGGER.info("gpio.xml created.");
+    LOGGER.info("gpio.xml created:\n" + new String(xmlFile.getFileAsBytes()));
 
     return xmlFile;
   }
 
   private static UploadFile transformDocToXmlFile(Document doc, String fileName) {
 
-    ByteArrayOutputStream xmlStream=new ByteArrayOutputStream();
-    Transformer transformer = null;
-    TransformerFactory transformerFactory = null;
+    ByteArrayOutputStream xmlStream = new ByteArrayOutputStream();
+    Transformer transformer;
 
     // write the content to the stream
-    transformerFactory = TransformerFactory.newInstance();
+    TransformerFactory transformerFactory = TransformerFactory.newInstance();
 
     try {
       transformer = transformerFactory.newTransformer();
     } catch (TransformerConfigurationException e) {
       LOGGER.log(Level.SEVERE, "Couldn't get a Transformer out of TransformerFactory.", e);
+      throw new IllegalStateException();
     }
 
     transformer.setOutputProperty(OutputKeys.INDENT, "yes");
@@ -324,7 +306,7 @@ public class XmlConfigCreator {
       LOGGER.log(Level.SEVERE, "Error occured while transforming " + doc.getLocalName(), e);
     }
 
-    return new UploadFile(fileName,xmlStream.toByteArray());
+    return new UploadFile(fileName, xmlStream.toByteArray());
   }
 
 }

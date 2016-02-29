@@ -6,7 +6,7 @@ import java.util.List;
 
 /**
  * Contains the media Files and the associated XML config file
- * @author Alain
+ * @author Alain + Stephan
  *
  */
 public class MediaUploadData {

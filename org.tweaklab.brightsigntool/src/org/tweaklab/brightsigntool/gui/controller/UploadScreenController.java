@@ -1,5 +1,10 @@
 package org.tweaklab.brightsigntool.gui.controller;
 
+import javafx.concurrent.Task;
+import javafx.fxml.FXML;
+import javafx.scene.control.*;
+import javafx.scene.layout.Pane;
+import org.apache.commons.io.IOUtils;
 import org.tweaklab.brightsigntool.configurator.PlayerDisplaySettings;
 import org.tweaklab.brightsigntool.configurator.PlayerGeneralSettings;
 import org.tweaklab.brightsigntool.configurator.UploadFile;
@@ -10,33 +15,36 @@ import org.tweaklab.brightsigntool.gui.view.WaitScreen;
 import org.tweaklab.brightsigntool.model.Keys;
 import org.tweaklab.brightsigntool.model.MediaUploadData;
 import org.tweaklab.brightsigntool.util.NetworkUtils;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.concurrent.Task;
-import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TextFormatter;
-import javafx.scene.layout.Pane;
-import org.apache.commons.io.IOUtils;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.UnaryOperator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
  * /*
- * 
- * @author Alain
  *
+ * @author Alain + Stephan
  */
 public class UploadScreenController {
-
+  private static final Logger LOGGER = Logger.getLogger(UploadScreenController.class.getName());
+  @FXML
+  public Label widthLabel;
+  @FXML
+  public Label heightLable;
+  @FXML
+  public Label freqLable;
+  @FXML
+  public Label interlacedLable;
+  WaitScreen waitScreen;
+  Task<Boolean> uploadTask;
+  ControllerMediator mediator;
   @FXML
   private Label targetAddressLabel;
   @FXML
@@ -44,58 +52,38 @@ public class UploadScreenController {
   @FXML
   private CheckBox autoDisplaySolutionCheckbox;
   @FXML
-  public Label widthLabel;
-  @FXML
   private TextField widthField;
-  @FXML
-  public Label heightLable;
   @FXML
   private TextField heightField;
   @FXML
-  public Label freqLable;
-  @FXML
   private TextField frequencyField;
   @FXML
-  public Label interlacedLable;
-  @FXML
   private CheckBox interlacedCheckbox;
-
   @FXML
   private CheckBox uploadMediaCheckbox;
-
   @FXML
   private Pane displaySettingsPane;
   @FXML
   private Pane generalSettingsPane;
-
   @FXML
   private CheckBox uploadGeneralSettingsCheckbox;
   @FXML
   private TextField volumeField;
-
   @FXML
   private TextField newHostnameField;
-
   @FXML
   private Label newIPlabel;
   @FXML
   private TextField newIPField;
-
   @FXML
   private Label subnetLabel;
   @FXML
   private TextField subnetField;
   @FXML
   private CheckBox dhcpCheckbox;
-
-  WaitScreen waitScreen;
-  Task<Boolean> uploadTask;
   private Thread uploadThread;
-
   @FXML
   private Label currentUploadSetLabel;
-
-  ControllerMediator mediator;
 
   /**
    * Initializes the controller class. This method is automatically called after the fxml file has
@@ -111,7 +99,6 @@ public class UploadScreenController {
     subnetField.setTextFormatter(new TextFormatter<String>(new IpFilter()));
 
     mediator = ControllerMediator.getInstance();
-    mediator.setUploadController(this);
     this.targetAddressLabel.setText(mediator.getConnector().getName());
 
     setDisplaySettingsDefaultValues();
@@ -174,7 +161,6 @@ public class UploadScreenController {
 
   @FXML
   private void handleDisconnect() {
-
     ControllerMediator.getInstance().disconnectFromDevice();
   }
 
@@ -183,140 +169,166 @@ public class UploadScreenController {
    */
   @FXML
   private void handleUpload() {
-    if(!mediator.getConnector().isConnected()) {
-      MainApp.showInfoMessage("Device is not connected anymore...");
+    LOGGER.info("Starting Upload.");
+    if (!mediator.getConnector().isConnected()) {
+      LOGGER.info("Upload aborted as device is not connected anymore.");
+      new Alert(Alert.AlertType.NONE, "Device is not connected anymore...", ButtonType.OK).showAndWait();
     }
 
-    try {
+    if (!validateFields()) {
 
-      if (!validateFields()) {
+      return;
+    }
+    List<UploadFile> systemFilesForUpload = new ArrayList<>();
+
+    // create and upload display.xml
+    if (this.uploadDisplaySettingsCheckbox.isSelected()) {
+      String interlaced = interlacedCheckbox.isSelected() ? "i" : "p";
+      String brightSignResolutionString = widthField.getText() + "x" + heightField.getText()
+              + "x" + frequencyField.getText() + interlaced;
+      if (autoDisplaySolutionCheckbox.isSelected() || mediator.getConnector().isResolutionSupported(brightSignResolutionString)) {
+        UploadFile displaySettingsXML = createDisplaySettingsXML();
+        systemFilesForUpload.add(displaySettingsXML);
+      } else {
+        new Alert(Alert.AlertType.NONE, "Video format not supported by connected player. Try another one or use autoformat",
+                ButtonType.OK).showAndWait();
         return;
       }
-      List<UploadFile> systemFilesForUpload = new ArrayList<UploadFile>();
-
-      // create and upload display.xml
-      if (this.uploadDisplaySettingsCheckbox.isSelected()) {
-        String interlaced = interlacedCheckbox.isSelected() ? "i" : "p";
-        String brightSignResolutionString = widthField.getText() + "x" + heightField.getText()
-                + "x" + frequencyField.getText() + interlaced;
-        if (autoDisplaySolutionCheckbox.isSelected() || mediator.getConnector().isResolutionSupported(brightSignResolutionString)) {
-          UploadFile displaySettingsXML = createDisplaySettingsXML();
-          systemFilesForUpload.add(displaySettingsXML);
-        } else {
-          MainApp.showInfoMessage("Video format not supported by connected player. Try another one or use autoformat");
-          return;
-        }
-      }
-
-      // create and upload settings.xml
-      if (this.uploadGeneralSettingsCheckbox.isSelected()) {
-        UploadFile generalSettingsXml;
-        // if the player will be reset completelty, initialize
-        if (this.uploadDisplaySettingsCheckbox.isSelected() && this.uploadMediaCheckbox.isSelected()) {
-          generalSettingsXml = createInitialGeneralDisplaySettingsXML();
-        } else {
-          generalSettingsXml = createGeneralDisplaySettingsXML();
-        }
-        systemFilesForUpload.add(generalSettingsXml);
-      }
-
-      // upload bs-scripts
-      List<UploadFile> scripts = getScripts();
-      systemFilesForUpload.addAll(scripts);
-
-      // upload jar
-      String jarName = Keys.loadProperty(Keys.APP_NAME_PROPS_KEY) + ".jar";
-      InputStream jarAsStream = this.getClass().getResourceAsStream(
-              "/" + Keys.loadProperty(Keys.INCLUDED_JAR_RELATIVE_PATH) + "/" + jarName);
-      byte[] scriptAsBytes = IOUtils.toByteArray(jarAsStream);
-      systemFilesForUpload.add(new UploadFile(jarName, scriptAsBytes));
-
-      // Create Upload Task and add Events
-      Connector connector = ControllerMediator.getInstance().getConnector();
-      MediaUploadData mediaUploadData = null;
-      if (uploadMediaCheckbox.isSelected()) {
-
-        mediaUploadData = ControllerMediator.getInstance().getRootController().getMediaUploadData();
-
-        UploadFile modeXml = XmlConfigCreator.createModeXml(mediaUploadData.getMode());
-
-        systemFilesForUpload.add(modeXml);
-        if (mediaUploadData.getUploadList().size() < 1) {
-          MainApp.showErrorMessage("no Files", "No media files for upload added!");
-          return;
-        }
-      }
-
-      // Show waitscreen
-      waitScreen = new WaitScreen();
-      waitScreen.setOnCancel(event -> uploadTask.cancel());
-      waitScreen.setOnClose(event -> uploadTask.cancel());
-
-      uploadTask = connector.upload(mediaUploadData, systemFilesForUpload);
-
-      uploadTask.setOnSucceeded(event -> uploadTaskSucceedFinish());
-      uploadTask.setOnCancelled(event -> uploadTaskCancelledFinish());
-      uploadTask.setOnFailed(event -> uploadTaskAbortFinish(uploadTask.getMessage()));
-
-      uploadThread = new Thread(uploadTask);
-      uploadThread.start();
-
-    } catch (Exception e) {
-      MainApp.showExceptionMessage(e);
     }
+
+    // create and upload settings.xml
+    if (this.uploadGeneralSettingsCheckbox.isSelected()) {
+      UploadFile generalSettingsXml;
+      // if the player will be reset completelty, initialize
+      if (this.uploadDisplaySettingsCheckbox.isSelected() && this.uploadMediaCheckbox.isSelected()) {
+        generalSettingsXml = createInitialGeneralDisplaySettingsXML();
+      } else {
+        generalSettingsXml = createGeneralDisplaySettingsXML();
+      }
+      systemFilesForUpload.add(generalSettingsXml);
+    }
+
+    // upload bs-scripts
+    List<UploadFile> scripts = getScripts();
+    systemFilesForUpload.addAll(scripts);
+
+    // upload jar
+    String jarName = Keys.loadProperty(Keys.APP_NAME_PROPS_KEY) + ".jar";
+    InputStream jarAsStream = this.getClass().getResourceAsStream(
+            "/" + Keys.loadProperty(Keys.INCLUDED_JAR_RELATIVE_PATH) + "/" + jarName);
+    byte[] scriptAsBytes = new byte[0];
+    try {
+      scriptAsBytes = IOUtils.toByteArray(jarAsStream);
+    } catch (IOException e) {
+      LOGGER.severe("Can't convert TweaklabBrightSignTool.jar-InputStream to byte[].");
+    }
+    systemFilesForUpload.add(new UploadFile(jarName, scriptAsBytes));
+
+    // Create Upload Task and add Events
+    Connector connector = ControllerMediator.getInstance().getConnector();
+    MediaUploadData mediaUploadData = null;
+    if (uploadMediaCheckbox.isSelected()) {
+
+      mediaUploadData = ControllerMediator.getInstance().getRootController().getMediaUploadData();
+
+      UploadFile modeXml = XmlConfigCreator.createModeXml(mediaUploadData.getMode());
+
+      systemFilesForUpload.add(modeXml);
+      if (mediaUploadData.getUploadList().size() < 1) {
+        new Alert(Alert.AlertType.NONE, "No media was selected.", ButtonType.OK).showAndWait();
+        return;
+      }
+    }
+
+    // Show waitscreen
+    waitScreen = new WaitScreen();
+    waitScreen.setOnCancel(event -> uploadTask.cancel());
+    waitScreen.setOnClose(event -> uploadTask.cancel());
+
+    uploadTask = connector.upload(mediaUploadData, systemFilesForUpload);
+
+    uploadTask.setOnSucceeded(event -> uploadTaskSucceedFinish(uploadTask));
+    uploadTask.setOnCancelled(event -> uploadTaskCancelledFinish(uploadTask));
+    uploadTask.setOnFailed(event -> uploadTaskAbortFinish(uploadTask));
+
+    uploadThread = new Thread(uploadTask);
+    uploadThread.start();
   }
 
-  private void uploadTaskSucceedFinish() {
+  private void uploadTaskSucceedFinish(Task<Boolean> task) {
     try {
       if (uploadTask.get()) {
         waitScreen.closeScreen();
-        MainApp.showInfoMessage("Upload finished!");
+        new Alert(Alert.AlertType.NONE, "Upload finished!", ButtonType.OK).showAndWait();
       } else {
-        uploadTaskCancelledFinish();
+        uploadTaskCancelledFinish(task);
       }
     } catch (Exception e) {
-      MainApp.showExceptionMessage(e);
+      LOGGER.log(Level.SEVERE, "An exception occured. ", e);
     }
   }
 
-  private void uploadTaskCancelledFinish() {
+  private void uploadTaskCancelledFinish(Task<Boolean> task) {
     waitScreen.closeScreen();
+    if (task.getMessage().equals("")) {
+      new Alert(Alert.AlertType.NONE, "Upload cancelled. Parts might be uploaded.", ButtonType.OK).showAndWait();
+    } else {
+      new Alert(Alert.AlertType.NONE, task.getMessage(), ButtonType.OK).showAndWait();
+    }
   }
 
-  private void uploadTaskAbortFinish(String message) {
+  private void uploadTaskAbortFinish(Task<Boolean> task) {
     waitScreen.closeScreen();
-    MainApp.showInfoMessage(message);
+    try {
+      throw task.getException();
+    } catch (Throwable throwable) {
+      LOGGER.log(Level.SEVERE, "An unhandled exception occured while uploading.", throwable);
+      new Alert(Alert.AlertType.NONE, "Sorry. A unknown error occured.", ButtonType.OK).showAndWait();
+    }
   }
 
   private Boolean validateFields() {
-    if (uploadDisplaySettingsCheckbox.isSelected() == false && uploadGeneralSettingsCheckbox.isSelected() == false
-        && uploadMediaCheckbox.isSelected() == false) {
-      MainApp.showInfoMessage("Only BrightSign scripts will be uploaded!");
+    if (!uploadDisplaySettingsCheckbox.isSelected() && !uploadGeneralSettingsCheckbox.isSelected()
+            && !uploadMediaCheckbox.isSelected()) {
+      new Alert(Alert.AlertType.NONE, "Only BrightSign scripts will be uploaded!", ButtonType.OK).showAndWait();
+      LOGGER.info("Only BrightSign scripts will be uploaded!");
     }
 
     boolean result = true;
 
     if (uploadDisplaySettingsCheckbox.isSelected()) {
-      if (this.autoDisplaySolutionCheckbox.isSelected() == false
+      if (!this.autoDisplaySolutionCheckbox.isSelected()
               && (this.widthField.getText().equals("") || this.frequencyField.getText().equals("") || this.heightField.getText().equals(""))) {
-        MainApp.showErrorMessage("Empty field in display settings", "Please select Auto Resolution or set height, width and frequency.");
+        new Alert(Alert.AlertType.NONE,
+                "Empty field in display settings. Please select Auto Resolution or set height, width and frequency.",
+                ButtonType.OK).showAndWait();
+        LOGGER.info("Empty field in display settings.");
         result = false;
       }
     }
 
     if (uploadGeneralSettingsCheckbox.isSelected()) {
       if (newHostnameField.getText().equals("") || volumeField.getText().equals("")) {
-        MainApp.showErrorMessage("Empty field in system settings", "Please choose a hostname and a Volume.");
+        new Alert(Alert.AlertType.NONE,
+                "Empty field in system settings. Please choose a hostname and a Volume.",
+                ButtonType.OK).showAndWait();
+        LOGGER.info("Empty field in system settings.");
         result = false;
       }
-      if (dhcpCheckbox.isSelected() == false && (newIPField.getText().equals("") || subnetField.getText().equals(""))) {
-        MainApp.showErrorMessage("Empty field", "Please select DHCP or set IP and subnet.");
+      if (!dhcpCheckbox.isSelected() && (newIPField.getText().equals("") || subnetField.getText().equals(""))) {
+        new Alert(Alert.AlertType.NONE,
+                "Empty field. Please select DHCP or set IP and subnet.",
+                ButtonType.OK).showAndWait();
+        LOGGER.info("Neither DHCP or IP is set.");
         result = false;
       }
     }
 
+    // TODO Find another way to verify validity of media upload settings. Bad solution for ex. becaus it generates an extra log entry everytime the xml is generated.
     if (uploadMediaCheckbox.isSelected() && ControllerMediator.getInstance().getRootController().getMediaUploadData() == null) {
-      MainApp.showErrorMessage("No Media Data", "Please add a media config to upload!");
+      new Alert(Alert.AlertType.NONE, "No Media Data. Please add a media config to upload!",
+              ButtonType.OK).showAndWait();
+      LOGGER.info("No media data set.");
       result = false;
     }
 
@@ -330,26 +342,22 @@ public class UploadScreenController {
     displaySettings.setHeight(this.heightField.getText());
     displaySettings.setFreq(this.frequencyField.getText());
     displaySettings.setInterlaced(this.interlacedCheckbox.isSelected());
-    UploadFile xmlFile = XmlConfigCreator.createDisplaySettingsXml(displaySettings);
-    return xmlFile;
+    return XmlConfigCreator.createDisplaySettingsXml(displaySettings);
   }
 
   private UploadFile createInitialGeneralDisplaySettingsXML() {
-    PlayerGeneralSettings defaultSettings = PlayerGeneralSettings.getDefaulGeneralSettings();
-    PlayerGeneralSettings newSettings = defaultSettings;
+    PlayerGeneralSettings newSettings = PlayerGeneralSettings.getDefaulGeneralSettings();
     newSettings.setHostname(this.newHostnameField.getText());
     newSettings.setIp(this.newIPField.getText());
     newSettings.setVolume(Integer.parseInt(this.volumeField.getText()));
     newSettings.setNetmask(this.subnetField.getText());
     newSettings.setGateway(this.newIPField.getText());
     newSettings.setDhcp(this.dhcpCheckbox.isSelected());
-    UploadFile xmlFile = XmlConfigCreator.createGeneralSettingsXml(newSettings);
-    return xmlFile;
+    return XmlConfigCreator.createGeneralSettingsXml(newSettings);
   }
 
   private UploadFile createGeneralDisplaySettingsXML() {
-    PlayerGeneralSettings defaultSettings = PlayerGeneralSettings.getDefaulGeneralSettings();
-    PlayerGeneralSettings newSettings = defaultSettings;
+    PlayerGeneralSettings newSettings = PlayerGeneralSettings.getDefaulGeneralSettings();
     newSettings.setHostname(this.newHostnameField.getText());
     newSettings.setIp(this.newIPField.getText());
     newSettings.setVolume(Integer.parseInt(this.volumeField.getText()));
@@ -357,25 +365,24 @@ public class UploadScreenController {
     newSettings.setGateway(this.newIPField.getText());
     newSettings.setDhcp(this.dhcpCheckbox.isSelected());
     newSettings.setInitialize(false);
-    UploadFile xmlFile = XmlConfigCreator.createGeneralSettingsXml(newSettings);
-    return xmlFile;
+    return XmlConfigCreator.createGeneralSettingsXml(newSettings);
   }
 
   private List<UploadFile> getScripts() {
     String[] scriptFileNames = Keys.loadProperty(Keys.BS_SCRIPTS_PROPS_KEY).split(";");
-    List<UploadFile> scriptFiles = new ArrayList<UploadFile>();
+    List<UploadFile> scriptFiles = new ArrayList<>();
 
     for (String scriptName : scriptFileNames) {
+      InputStream scriptInputStream = Keys.class.getResourceAsStream("/" + Keys.SCRIPTS_DIRECTORY + "/" + scriptName);
+      byte[] scriptAsBytes = null;
       try {
-        InputStream scriptInputStream = Keys.class.getResourceAsStream("/" + Keys.SCRIPTS_DIRECTORY + "/" + scriptName);
-        byte[] scriptAsBytes = IOUtils.toByteArray(scriptInputStream);
-        UploadFile configFile = new UploadFile(scriptName, scriptAsBytes);
-        scriptFiles.add(configFile);
+        scriptAsBytes = IOUtils.toByteArray(scriptInputStream);
       } catch (Exception e) {
-        MainApp.showErrorMessage("File not found!", "BrightSign Script " + scriptName + " not found!");
-        e.printStackTrace();
+        new Alert(Alert.AlertType.NONE, "BrightSign Script " + scriptName + " not found!", ButtonType.OK).showAndWait();
+        LOGGER.severe("BrightSign Script " + scriptName + " not found!");
       }
-
+      UploadFile configFile = new UploadFile(scriptName, scriptAsBytes);
+      scriptFiles.add(configFile);
     }
 
     return scriptFiles;
@@ -419,6 +426,8 @@ public class UploadScreenController {
     this.volumeField.setText(settings.getVolume());
 
     disableIpField(settings.getDhcp());
+
+    LOGGER.info("General settings set to default values.");
   }
 
   private void setDisplaySettingsDefaultValues() {
@@ -431,37 +440,25 @@ public class UploadScreenController {
     this.frequencyField.setText(String.valueOf(displaySettings.getFreq()));
 
     disableDisplayResolutionElements(displaySettings.getAuto());
-  }
 
-  public void updateCurrentUploadSetLabel(String playType) {
-    this.currentUploadSetLabel.setText(playType);
+    LOGGER.info("Display settings set to default values");
   }
 
   private void addListenerToCheckboxes() {
-    autoDisplaySolutionCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
-      public void changed(ObservableValue ov, Boolean old_val, Boolean new_val) {
-        disableDisplayResolutionElements(new_val);
-      }
+    autoDisplaySolutionCheckbox.selectedProperty().addListener((ov, old_val, new_val) -> {
+      disableDisplayResolutionElements(new_val);
     });
 
-    uploadDisplaySettingsCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
-      public void changed(ObservableValue ov, Boolean old_val, Boolean new_val) {
-        displaySettingsPane.setDisable(!new_val);
-      }
+    uploadDisplaySettingsCheckbox.selectedProperty().addListener((ov, old_val, new_val) -> {
+      displaySettingsPane.setDisable(!new_val);
     });
 
-
-    dhcpCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
-      public void changed(ObservableValue ov, Boolean old_val, Boolean new_val) {
-        disableIpField(new_val);
-      }
+    dhcpCheckbox.selectedProperty().addListener((ov, old_val, new_val) -> {
+      disableIpField(new_val);
     });
 
-    uploadGeneralSettingsCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
-      @Override
-      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-        generalSettingsPane.setDisable(!newValue);
-      }
+    uploadGeneralSettingsCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      generalSettingsPane.setDisable(!newValue);
     });
   }
 

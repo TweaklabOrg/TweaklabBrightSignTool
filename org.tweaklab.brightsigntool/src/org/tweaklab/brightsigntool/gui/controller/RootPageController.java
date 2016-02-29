@@ -1,9 +1,5 @@
 package org.tweaklab.brightsigntool.gui.controller;
 
-import org.tweaklab.brightsigntool.model.Keys;
-import org.tweaklab.brightsigntool.model.MediaUploadData;
-import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -12,19 +8,22 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
+import org.tweaklab.brightsigntool.model.Keys;
+import org.tweaklab.brightsigntool.model.MediaUploadData;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * Controller of RootPage.fxml Contains Connections Components and Tabview
- * 
- * @author Alain
  *
+ * @author Alain + Stephan
  */
-public class RootPageController  {
+public class RootPageController {
+  private static final Logger LOGGER = Logger.getLogger(RootPageController.class.getName());
 
   @FXML
   BorderPane rootBorderPane;
@@ -35,7 +34,7 @@ public class RootPageController  {
   @FXML
   private TabPane tabPane;
 
-  private List<TabController> tabControllers = new ArrayList<TabController>();
+  private List<TabController> tabControllers = new ArrayList<>();
   private TabController currentTabController;
 
   /**
@@ -59,86 +58,76 @@ public class RootPageController  {
   }
 
   private void loadUploadItems(Map<String, String> settingsOnDevice) {
-    try {
-      if (splitPane.getItems().size() > 1) {
-        splitPane.getItems().remove(1);
-      }
-      // Load root layout from fxml file.
-      FXMLLoader loader = new FXMLLoader();
-      loader.setLocation(this.getClass().getResource(Keys.UPLOAD_SCREEN_FXML_PATH));
-      AnchorPane connectLayout = (AnchorPane) loader.load();
-
-      UploadScreenController controller = loader.<UploadScreenController>getController();
-      controller.initData(settingsOnDevice);
-
-      splitPane.getItems().add(connectLayout);
-      splitPane.setDividerPosition(0, 0.7);
-
-    } catch (IOException e) {
-      e.printStackTrace();
+    if (splitPane.getItems().size() > 1) {
+      splitPane.getItems().remove(1);
     }
-
+    // Load root layout from fxml file.
+    FXMLLoader loader = new FXMLLoader();
+    loader.setLocation(this.getClass().getResource(Keys.UPLOAD_SCREEN_FXML_PATH));
+    AnchorPane connectLayout = null;
+    try {
+      connectLayout = loader.load();
+    } catch (IOException e) {
+      LOGGER.severe("FXMLLoader can't load UploadScreen.fxml.");
+    }
+    UploadScreenController controller = loader.<UploadScreenController>getController();
+    controller.initData(settingsOnDevice);
+    splitPane.getItems().add(connectLayout);
+    splitPane.setDividerPosition(0, 0.7);
   }
 
   private void loadConnectItems() {
-    try {
-      if (splitPane.getItems().size() > 1) {
-        splitPane.getItems().remove(1);
-      }
-      // Load root layout from fxml file.
-      FXMLLoader loader = new FXMLLoader(getClass().getResource(Keys.CONNECT_SCREEN_FXML_PATH));
-      AnchorPane connectLayout = (AnchorPane) loader.load();
-
-      splitPane.setDividerPosition(0, 0.7);
-      splitPane.getItems().add(connectLayout);
-
-    } catch (IOException e) {
-      e.printStackTrace();
+    if (splitPane.getItems().size() > 1) {
+      splitPane.getItems().remove(1);
     }
+    // Load root layout from fxml file.
+    FXMLLoader loader = new FXMLLoader(getClass().getResource(Keys.CONNECT_SCREEN_FXML_PATH));
+    AnchorPane connectLayout = null;
+    try {
+      connectLayout = loader.load();
+    } catch (IOException e) {
+      LOGGER.severe("FXMLLoader can't load ConnectScreen.fxml.");
+    }
+    splitPane.setDividerPosition(0, 0.7);
+    splitPane.getItems().add(connectLayout);
 
   }
 
   private void addTabs() {
+    FXMLLoader playlistLoader = new FXMLLoader(getClass().getResource(Keys.PLAYLIST_TAB_FXML_PATH));
+    Node node = null;
     try {
-      FXMLLoader playlistLoader = new FXMLLoader(getClass().getResource(Keys.PLAYLIST_TAB_FXML_PATH));
-      Node node = (Node) playlistLoader.load();
-      PlaylistTabController playlistController = playlistLoader.<PlaylistTabController> getController();
-      tabControllers.add(playlistController);
-      Tab playlistTab = new Tab();
-      playlistTab.setText("Playlist Config");
-      tabPane.getTabs().add(playlistTab);
-      playlistTab.setContent(node);
-      playlistTab.setOnSelectionChanged(new EventHandler<Event>() {
-        @Override
-        public void handle(Event t) {
-          handleTabChange();
-        }
-      });
-
-      FXMLLoader gpioLoader = new FXMLLoader(getClass().getResource(Keys.GPIO_TAB_FXML_PATH));
-      Node gpioTabContent = (Node) gpioLoader.load();
-      GpioTabController gpioTabController = gpioLoader.<GpioTabController> getController();
-      tabControllers.add(gpioTabController);
-      Tab gpioTab = new Tab();
-      gpioTab.setText("GPIO Config");
-      tabPane.getTabs().add(gpioTab);
-      gpioTab.setContent(gpioTabContent);
-      gpioTab.setOnSelectionChanged(new EventHandler<Event>() {
-        @Override
-        public void handle(Event t) {
-          handleTabChange();
-        }
-      });
-
-      handleTabChange();
+      node = playlistLoader.load();
     } catch (IOException e) {
-      MainApp.showExceptionMessage(e);
+      LOGGER.severe("FXMLLoader can't load PlaylistTab.fxml.");
     }
-
+    PlaylistTabController playlistController = playlistLoader.<PlaylistTabController>getController();
+    tabControllers.add(playlistController);
+    Tab playlistTab = new Tab();
+    playlistTab.setText("Playlist Config");
+    tabPane.getTabs().add(playlistTab);
+    playlistTab.setContent(node);
+    playlistTab.setOnSelectionChanged(t -> handleTabChange());
+    FXMLLoader gpioLoader = new FXMLLoader(getClass().getResource(Keys.GPIO_TAB_FXML_PATH));
+    Node gpioTabContent = null;
+    try {
+      gpioTabContent = gpioLoader.load();
+    } catch (IOException e) {
+      LOGGER.severe("FXMLLoader can't load GpioTab.fxml.");
+    }
+    GpioTabController gpioTabController = gpioLoader.<GpioTabController>getController();
+    tabControllers.add(gpioTabController);
+    Tab gpioTab = new Tab();
+    gpioTab.setText("GPIO Config");
+    tabPane.getTabs().add(gpioTab);
+    gpioTab.setContent(gpioTabContent);
+    gpioTab.setOnSelectionChanged(t -> handleTabChange());
+    handleTabChange();
   }
 
   private void handleTabChange() {
     currentTabController = tabControllers.get(tabPane.getSelectionModel().getSelectedIndex());
+    LOGGER.info("Tab changes to " + currentTabController.getClass().getName());
   }
 
   public MediaUploadData getMediaUploadData() {

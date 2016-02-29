@@ -2,10 +2,7 @@ package org.tweaklab.brightsigntool.gui.controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
 import org.tweaklab.brightsigntool.configurator.UploadFile;
@@ -24,7 +21,7 @@ import java.util.logging.Logger;
 /**
  * Controller of PushButton Configuration View
  *
- * @author Alain
+ * @author Alain + Stephan
  */
 public class GpioTabController extends TabController {
   private static final Logger LOGGER = Logger.getLogger(GpioTabController.class.getName());
@@ -93,8 +90,8 @@ public class GpioTabController extends TabController {
     File chosenFile = fileChooser.showOpenDialog(MainApp.primaryStage);
     if (chosenFile != null) {
       loopFile = new MediaFile(chosenFile);
-      if (this.validateFileFormat(chosenFile.getName()) == false) {
-        MainApp.showErrorMessage("Wrong File", "This filetype is not supported. Add this type in the property file if you need it.");
+      if (!this.validateFileFormat(chosenFile.getName())) {
+        new Alert(Alert.AlertType.NONE, "Filetype not supported: " + chosenFile.getName());
         LOGGER.log(Level.INFO, "Format of chosen file is not mentioned in properties: " + chosenFile.getName());
         return;
       }
@@ -104,6 +101,7 @@ public class GpioTabController extends TabController {
         fileNameToDisplay = fileNameToDisplay.substring(0, 22) + "...";
       }
       loopfileNameLabel.setText(fileNameToDisplay);
+      LOGGER.info("Loop file was chosen: " + chosenFile.getName());
     }
 
   }
@@ -118,7 +116,6 @@ public class GpioTabController extends TabController {
       buttonNumber = Integer.parseInt(((Button) source).getId().substring(13));
     }
 
-
     if (buttonNumber < 0 || buttonNumber > NUMBER_OF_BUTTONS)
       throw new RuntimeException("Invalid Button ID");
 
@@ -127,8 +124,8 @@ public class GpioTabController extends TabController {
     File chosenFile = fileChooser.showOpenDialog(MainApp.primaryStage);
 
     if (chosenFile != null) {
-      if (this.validateFileFormat(chosenFile.getName()) == false) {
-        MainApp.showErrorMessage("Wrong File", "This filetype is not supported.");
+      if (!this.validateFileFormat(chosenFile.getName())) {
+        new Alert(Alert.AlertType.NONE, "Filetype not supportet: " + chosenFile.getName(), ButtonType.OK).showAndWait();
         LOGGER.log(Level.INFO, "Format of chosen file is not mentioned in properties: " + chosenFile.getName());
         return;
       }
@@ -159,17 +156,18 @@ public class GpioTabController extends TabController {
 
     retriggerDelayField.setText("2000");
     retriggerEnabledCheckbox.setSelected(true);
+    LOGGER.info("All media settings resetted.");
   }
 
   @Override
   public MediaUploadData getMediaUploadData() {
-    UploadFile gpioConfigFile = XmlConfigCreator.createGpioXML(loopFile, gpioFiles, retriggerEnabledCheckbox.isSelected(), retriggerDelayField.getText());
+    UploadFile gpioConfigFile = XmlConfigCreator.createGpioXML(loopFile, gpioFiles,
+            retriggerEnabledCheckbox.isSelected(), retriggerDelayField.getText());
 
-    ArrayList<MediaFile> uploadList = new ArrayList<MediaFile>(Arrays.asList(gpioFiles));
+    ArrayList<MediaFile> uploadList = new ArrayList<>(Arrays.asList(gpioFiles));
     uploadList.add(loopFile);
 
-    MediaUploadData mediaUploadData = new MediaUploadData(uploadList, gpioConfigFile, ModeType.GPIO);
-    return mediaUploadData;
+    return new MediaUploadData(uploadList, gpioConfigFile, ModeType.GPIO);
   }
 
 }

@@ -1,11 +1,12 @@
 package org.tweaklab.brightsigntool.model;
 
-import org.tweaklab.brightsigntool.gui.controller.MainApp;
-
 import java.io.InputStream;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Keys {
+  private static final Logger LOGGER = Logger.getLogger(Keys.class.getName());
 
   // Application Keys
   public static final String SCRIPTS_DIRECTORY = "bs-scripts";
@@ -49,14 +50,13 @@ public class Keys {
   public static String loadProperty(String key) {
     Properties configFile = new Properties();
     String value = "";
+    InputStream resource = Keys.class.getResourceAsStream("/" + CONFIG_FILE_NAME);
     try {
-      InputStream resource = Keys.class.getResourceAsStream("/" + CONFIG_FILE_NAME);
       configFile.load(resource);
-      value = configFile.getProperty(key);
     } catch (Exception e) {
-      e.printStackTrace();
-      MainApp.showExceptionMessage(e);
+      LOGGER.log(Level.SEVERE, "Can't load " + CONFIG_FILE_NAME, e);
     }
+    value = configFile.getProperty(key);
     return value;
   }
 }

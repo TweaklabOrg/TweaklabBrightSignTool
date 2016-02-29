@@ -1,5 +1,7 @@
 package org.tweaklab.brightsigntool.gui.controller;
 
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import org.tweaklab.brightsigntool.connector.Connector;
 
 import java.util.logging.Level;
@@ -7,27 +9,23 @@ import java.util.logging.Logger;
 
 /**
  * singelton class which contains data to communicate over the applications
- * 
- * @author Alain
  *
+ * @author Alain + Stephan
  */
 public class ControllerMediator {
   private static final Logger LOGGER = Logger.getLogger(ControllerMediator.class.getName());
 
   private RootPageController rootController;
-  private UploadScreenController uploadController;
- 
+
   private Boolean isConnected = false;
 
   private Connector connector;
 
-
-  public UploadScreenController getUploadController() {
-    return uploadController;
+  private ControllerMediator() {
   }
 
-  public void setUploadController(UploadScreenController uploadController) {
-    this.uploadController = uploadController;
+  public static ControllerMediator getInstance() {
+    return MediatorHolder.INSTANCE;
   }
 
   public RootPageController getRootController() {
@@ -46,12 +44,13 @@ public class ControllerMediator {
     this.connector = connector;
   }
 
-
   public void disconnectFromDevice() {
     isConnected = false;
     if (!connector.disconnect()) {
-      MainApp.showInfoMessage("Device might not have been disconnected correctly.");
       LOGGER.log(Level.INFO, "Tried to disconnect " + connector.getTarget() + ", but still seems to be connected.");
+      new Alert(Alert.AlertType.NONE,
+              "Tried to disconnect " + connector.getTarget() + ", but still seems to be connected.",
+              ButtonType.OK).showAndWait();
     }
     rootController.disconnectFromDevice();
   }
@@ -61,20 +60,9 @@ public class ControllerMediator {
     if (isConnected) {
       rootController.connectToDevice(connector.getSettingsOnDevice());
     } else {
-      MainApp.showErrorMessage("Connection failed!", "Please verify the target address.");
       LOGGER.log(Level.WARNING, "An error occurred while connecting to device " + target);
+      new Alert(Alert.AlertType.NONE, "Connection failed! Please verify the target address.", ButtonType.OK).showAndWait();
     }
-  }
-
-  /**
-   * Everything below here is in support of Singleton pattern
-   */
-  private ControllerMediator() {
-
-  }
-
-  public static ControllerMediator getInstance() {
-    return MediatorHolder.INSTANCE;
   }
 
   private static class MediatorHolder {

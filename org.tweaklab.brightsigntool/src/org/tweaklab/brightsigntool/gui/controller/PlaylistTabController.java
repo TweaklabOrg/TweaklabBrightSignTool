@@ -1,27 +1,30 @@
 package org.tweaklab.brightsigntool.gui.controller;
 
+import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.ListView;
+import javafx.stage.FileChooser;
 import org.tweaklab.brightsigntool.configurator.UploadFile;
 import org.tweaklab.brightsigntool.configurator.XmlConfigCreator;
 import org.tweaklab.brightsigntool.model.MediaFile;
 import org.tweaklab.brightsigntool.model.MediaUploadData;
 import org.tweaklab.brightsigntool.model.ModeType;
-import javafx.fxml.FXML;
-import javafx.scene.control.ListView;
-import javafx.stage.FileChooser;
 
 import java.io.File;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * Controller Class for ContentManagerTab.fxml Manages Upload of a playlist to device
- * 
- * @author Alf
  *
+ * @author Alain + Stephan
  */
 public class PlaylistTabController extends TabController {
+  private static final Logger LOGGER = Logger.getLogger(PlaylistTabController.class.getName());
 
   @FXML
   private ListView<MediaFile> listView;
@@ -53,16 +56,17 @@ public class PlaylistTabController extends TabController {
     final FileChooser fileChooser = new FileChooser();
     List<File> choosenFiles = fileChooser.showOpenMultipleDialog(MainApp.primaryStage);
     choosenFiles = (choosenFiles == null ? new LinkedList<>() : choosenFiles);
-    // choosenFiles Stephan: handle no files where chosen
     for (File choosenFile : choosenFiles) {
       if (choosenFile != null) {
-        if (this.validateFileFormat(choosenFile.getName()) == false) {
-          MainApp.showErrorMessage("Wrong File", "This filetype is not supported.");
+        if (!this.validateFileFormat(choosenFile.getName())) {
+          LOGGER.warning("Filetype not supported: " + choosenFile.getName());
+          new Alert(Alert.AlertType.NONE, "Filetype not supported: " + choosenFile.getName(), ButtonType.OK).showAndWait();
           return;
         }
         MediaFile mediaFile = new MediaFile(choosenFile);
         listView.getItems().add(mediaFile);
         listView.getSelectionModel().selectLast();
+        LOGGER.info(choosenFile.getName() + " added to playlist.");
       }
     }
   }
@@ -71,6 +75,7 @@ public class PlaylistTabController extends TabController {
   private void handleRemove() {
     int selectedIndex = listView.getSelectionModel().getSelectedIndex();
     listView.getItems().remove(selectedIndex);
+    LOGGER.info(listView.getSelectionModel().getSelectedItem() + "removed.");
   }
 
   @FXML
@@ -92,8 +97,9 @@ public class PlaylistTabController extends TabController {
 
   @Override
   public MediaUploadData getMediaUploadData() {
-	UploadFile configFile = XmlConfigCreator.createPlayListXML(listView.getItems());
-    MediaUploadData mediaUploadData = new MediaUploadData(listView.getItems(), configFile,ModeType.PLAYLIST);
+    UploadFile configFile = XmlConfigCreator.createPlayListXML(listView.getItems());
+    MediaUploadData mediaUploadData = new MediaUploadData(listView.getItems(), configFile, ModeType.PLAYLIST);
+    LOGGER.info(mediaUploadData.getUploadList().size() + " files collected to upload.");
     return mediaUploadData;
   }
 

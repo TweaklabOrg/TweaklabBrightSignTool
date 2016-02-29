@@ -5,7 +5,6 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import org.apache.commons.io.FileUtils;
 import org.tweaklab.brightsigntool.configurator.UploadFile;
-import org.tweaklab.brightsigntool.gui.controller.MainApp;
 import org.tweaklab.brightsigntool.model.Keys;
 import org.tweaklab.brightsigntool.model.MediaFile;
 import org.tweaklab.brightsigntool.model.MediaUploadData;
@@ -25,7 +24,7 @@ import java.util.logging.Logger;
 /**
  * Connects to a SD Card of Bright Sign Device
  *
- * @author Alain
+ * @author Alain + Stephan
  */
 public class BrightSignSdCardConnector extends Connector {
   public static final String CLASS_DISPLAY_NAME = "BS SD-Card Connector";
@@ -85,17 +84,13 @@ public class BrightSignSdCardConnector extends Connector {
           File targetRoot = new File(target);
           long totalSize = 0;
           for (MediaFile m : uploadData.getUploadList()) {
-            totalSize += m.getFileSizeAsNumber();
+            if (m != null) {
+              totalSize += m.getFileSizeAsNumber();
+            }
           }
           if (targetRoot.getTotalSpace() < totalSize) {
             LOGGER.log(Level.WARNING, "Files are too big to fit on " + target + ". Nothing is copied.");
             updateMessage("Files are too big to fit on " + target + ". Nothing is copied.");
-            Alert alert = new Alert(Alert.AlertType.INFORMATION, "blabla", new ButtonType("bu"));
-            alert.showAndWait().ifPresent(response -> {
-              if (response == ButtonType.OK) {
-//                formatSystem();
-              }
-            });
             return false;
           }
         }
@@ -107,6 +102,7 @@ public class BrightSignSdCardConnector extends Connector {
             // write file to root folder
             try {
               FileUtils.writeByteArrayToFile(targetFile, systemFile.getFileAsBytes());
+              LOGGER.info(systemFile.getFileName() + " written.");
             } catch (IOException e) {
               LOGGER.log(Level.WARNING, "Couldn't write to target!", e);
               updateMessage("Couldn't write to target!");
@@ -123,8 +119,9 @@ public class BrightSignSdCardConnector extends Connector {
         if (mediaFolder.exists()) {
           try {
             FileUtils.deleteDirectory(mediaFolder);
+            LOGGER.info("Mediafolder deleted.");
           } catch (IOException e) {
-            LOGGER.log(Level.WARNING, "Couldn't delete mediaFolder!", e);
+            LOGGER.log(Level.SEVERE, "Couldn't delete mediaFolder!", e);
             updateMessage("Couldn't delete mediaFolder!");
             return false;
           }
@@ -133,23 +130,34 @@ public class BrightSignSdCardConnector extends Connector {
           LOGGER.warning("Wasn't able to create media folder.");
           updateMessage("Wasn't able to create media folder.");
           return false;
+        } else {
+          LOGGER.info("Mediafolder created.");
         }
 
         // TODO Some strange behaviour here. If for ex. display changes are made, the xml is handled via systemFiles. Is that part really needed?
         // copy xml config file
-        if (uploadData != null && !copyOrReplaceFile(uploadData.getConfigFile(), target)) {
-          return false;
+        if (uploadData != null) {
+          if (!copyOrReplaceFile(uploadData.getConfigFile(), target)) {
+            LOGGER.severe("Can't write " + uploadData.getConfigFile().getFileName());
+            return false;
+          } else {
+            LOGGER.info(uploadData.getConfigFile().getFileName() + " written.");
+          }
         }
 
         // copy each mediafile
         if (uploadData != null) {
           for (MediaFile mediaFile : uploadData.getUploadList()) {
             if (this.isCancelled()) {
+              LOGGER.info("Upload cancelled.");
               return false;
             }
             if (mediaFile != null) {
               if (!copyOrReplaceFile(mediaFile.getFile(), mediaFolder.getPath())) {
+                LOGGER.severe("Can't write " + mediaFile.getFile().getName());
                 return false;
+              } else {
+                LOGGER.info(mediaFile.getFile().getName() + " written.");
               }
             }
           }
@@ -213,7 +221,7 @@ public class BrightSignSdCardConnector extends Connector {
             }
           } else {
             LOGGER.info("Folder /Volumes not found.");
-            MainApp.showInfoMessage("Folder /Volumes not found.");
+            new Alert(Alert.AlertType.NONE, "Folder /Volumes not found.", ButtonType.OK).showAndWait();
           }
         }
 
@@ -285,7 +293,7 @@ public class BrightSignSdCardConnector extends Connector {
     if (destFile.exists()) {
       if (!destFile.delete()) {
         LOGGER.warning("" + destPath + " could not be deleted.");
-        MainApp.showInfoMessage("" + destPath + " could not be deleted.");
+        new Alert(Alert.AlertType.NONE, "" + destPath + " could not be deleted.", ButtonType.OK).showAndWait();
         return false;
       }
     }
@@ -293,12 +301,12 @@ public class BrightSignSdCardConnector extends Connector {
     try {
       if (!destFile.createNewFile()) {
         LOGGER.log(Level.WARNING, "Couldn't create " + destFile.getName());
-        MainApp.showInfoMessage("" + destPath + " could bot be created.");
+        new Alert(Alert.AlertType.NONE, "Couldn't create " + destFile.getName(), ButtonType.OK).showAndWait();
         return false;
       }
     } catch (IOException e) {
       LOGGER.log(Level.WARNING, "Couldn't create " + destFile.getName(), e);
-      MainApp.showInfoMessage("" + destPath + " could bot be created.");
+      new Alert(Alert.AlertType.NONE, "Couldn't create " + destFile.getName(), ButtonType.OK).showAndWait();
       return false;
     }
 
@@ -346,7 +354,7 @@ public class BrightSignSdCardConnector extends Connector {
     if (destFile.exists()) {
       if (!destFile.delete()) {
         LOGGER.warning("" + destPath + " could not have been deleted.");
-        MainApp.showInfoMessage("" + destPath + " could not have been deleted.");
+        new Alert(Alert.AlertType.NONE, "" + destPath + " could not have been deleted.", ButtonType.OK).showAndWait();
         return false;
       }
     }

@@ -26,9 +26,12 @@ public class CommandlineTool {
     try {
       Thread.sleep(timeoutInMillis);
     } catch (InterruptedException e) {
+      LOGGER.warning("Commandline thread was interrupted.");
     }
 
     searcher.stopSearching();
+
+    LOGGER.info("Commandline result: " + output.toString());
 
     return output.toString();
   }

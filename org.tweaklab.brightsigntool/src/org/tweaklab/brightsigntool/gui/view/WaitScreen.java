@@ -1,7 +1,5 @@
 package org.tweaklab.brightsigntool.gui.view;
 
-import java.io.IOException;
-
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -13,6 +11,10 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import org.tweaklab.brightsigntool.gui.controller.MainApp;
 
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  * This class contains a window with a wait screen and blocks the main windows.
  * 
@@ -20,30 +22,31 @@ import org.tweaklab.brightsigntool.gui.controller.MainApp;
  *
  */
 public class WaitScreen {
+  private static final Logger LOGGER = Logger.getLogger(WaitScreen.class.getName());
 
   Stage stage;
   Button button;
 
   public WaitScreen() {
 
-    AnchorPane layout;
+    AnchorPane layout = null;
     stage = new Stage();
     stage.setResizable(false);
     stage.initModality(Modality.WINDOW_MODAL);
     stage.initOwner(MainApp.primaryStage);
     try {
       layout = (AnchorPane) FXMLLoader.load(getClass().getResource("WaitScreen.fxml"));
-      Scene scene = new Scene(layout);
-      button = new Button();
-      button.setText("Cancel Upload");
-      layout.getChildren().add(button);
-      button.setLayoutX(90);
-      button.setLayoutY(200);
-      stage.setScene(scene);
-      stage.show();
     } catch (IOException e) {
-      MainApp.showExceptionMessage(e);
+      LOGGER.log(Level.SEVERE, "FXMLLoader can't load WaitScreen.fxml.", e);
     }
+    Scene scene = new Scene(layout);
+    button = new Button();
+    button.setText("Cancel Upload");
+    layout.getChildren().add(button);
+    button.setLayoutX(90);
+    button.setLayoutY(200);
+    stage.setScene(scene);
+    stage.show();
   }
 
   /**

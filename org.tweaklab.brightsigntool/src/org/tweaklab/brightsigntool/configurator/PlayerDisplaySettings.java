@@ -27,36 +27,36 @@ public class PlayerDisplaySettings {
     return auto;
   }
 
-  public String getWidth() {
-    return width;
-  }
-
-  public String getHeight() {
-    return height;
-  }
-
-  public String getFreq() {
-    return freq;
-  }
-
-  public Boolean getInterlaced() {
-    return interlaced;
-  }
-
   public void setAuto(Boolean auto) {
     this.auto = auto;
+  }
+
+  public String getWidth() {
+    return width;
   }
 
   public void setWidth(String width) {
     this.width = width;
   }
 
+  public String getHeight() {
+    return height;
+  }
+
   public void setHeight(String height) {
     this.height = height;
   }
 
+  public String getFreq() {
+    return freq;
+  }
+
   public void setFreq(String freq) {
     this.freq = freq;
+  }
+
+  public Boolean getInterlaced() {
+    return interlaced;
   }
 
   public void setInterlaced(Boolean interlaced) {

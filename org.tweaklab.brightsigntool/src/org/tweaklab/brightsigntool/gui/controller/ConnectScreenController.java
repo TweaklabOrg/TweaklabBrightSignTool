@@ -1,17 +1,15 @@
 package org.tweaklab.brightsigntool.gui.controller;
 
+import javafx.collections.FXCollections;
+import javafx.concurrent.Task;
+import javafx.fxml.FXML;
+import javafx.scene.Cursor;
+import javafx.scene.control.*;
 import org.tweaklab.brightsigntool.connector.BrightSignSdCardConnector;
 import org.tweaklab.brightsigntool.connector.BrightSignWebConnector;
 import org.tweaklab.brightsigntool.connector.Connector;
 import org.tweaklab.brightsigntool.model.Keys;
 import org.tweaklab.brightsigntool.util.KeyValueData;
-import javafx.collections.FXCollections;
-import javafx.concurrent.Task;
-import javafx.fxml.FXML;
-import javafx.scene.Cursor;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
 
 import java.util.List;
 import java.util.logging.Level;
@@ -19,16 +17,15 @@ import java.util.logging.Logger;
 
 /**
  * Controller of ConnectScreen.fxml
- * 
- * @author Alain
  *
+ * @author Alain + Stephan
  */
 public class ConnectScreenController {
   private static final Logger LOGGER = Logger.getLogger(ConnectScreenController.class.getName());
 
   @FXML
   private Label targetDescriptionLabel;
-  
+
   @FXML
   private ComboBox<KeyValueData> connectorComboBox;
 
@@ -52,9 +49,9 @@ public class ConnectScreenController {
   }
 
   @FXML
-  private void scanPossibleTargets(){
+  private void scanPossibleTargets() {
     MainApp.primaryStage.getScene().setCursor(Cursor.WAIT);
-    Task<List<String>> possibleTargetsTask =  ControllerMediator.getInstance().getConnector().getPossibleTargets();   
+    Task<List<String>> possibleTargetsTask = ControllerMediator.getInstance().getConnector().getPossibleTargets();
     possibleTargetsTask.setOnSucceeded(event -> ScanTargetFinished(possibleTargetsTask));
     Thread uploadThread = new Thread(possibleTargetsTask);
     uploadThread.start();
@@ -85,15 +82,16 @@ public class ConnectScreenController {
       LOGGER.log(Level.SEVERE, "The " + className + "connector class couldn't be constructed.", e);
     }
     ControllerMediator.getInstance().setConnector(connector);
-    if(connector instanceof BrightSignWebConnector){
+    if (connector instanceof BrightSignWebConnector) {
       this.targetDescriptionLabel.setText("Name:");
       targetComboBox.getItems().add(Keys.loadProperty(Keys.DEFAULT_HOSTNAME_PROPS_KEY));
       targetComboBox.getSelectionModel().selectLast();
       targetComboBox.setEditable(true);
-    }
-    else if(connector instanceof BrightSignSdCardConnector){
+      LOGGER.log(Level.INFO, "BrightSignWebConnector was chosen.");
+    } else if (connector instanceof BrightSignSdCardConnector) {
       this.targetDescriptionLabel.setText("Path to SD-Card:");
       targetComboBox.setEditable(false);
+      LOGGER.log(Level.INFO, "BrightSignSDCardConnector was chosen.");
     }
   }
 
@@ -105,8 +103,9 @@ public class ConnectScreenController {
     String target = targetComboBox.getSelectionModel().getSelectedItem();
 
     if (target == null || target.length() < 1) {
-      MainApp.showErrorMessage("Target not valid!", "Please enter a valid target address.");
-      LOGGER.log(Level.INFO, target + " not valid!");
+      new Alert(Alert.AlertType.NONE, "Empty target field. Please enter a valid target.",
+              ButtonType.OK).showAndWait();
+      LOGGER.log(Level.INFO, "Empty target field.");
       return;
     }
     ControllerMediator.getInstance().connectToDevice(target);

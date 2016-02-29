@@ -25,7 +25,6 @@ import java.util.logging.Logger;
 public abstract class Connector {
 
   public static final Logger LOGGER = Logger.getLogger(Connector.class.getName());
-  public static final String CLASS_DISPLAY_NAME = "Abstract Connector (Field not overwritten)";
   protected String target = "";
   protected String name = "";
  
@@ -33,36 +32,24 @@ public abstract class Connector {
 
  /**
   * connect to a device
-  * @return
-  * @throws Exception
   */
   public abstract boolean connect(String target); 
   
   /**
    * disconnect from current device
-   * @return
    */
   public abstract boolean disconnect();
   
- /**
-  * 
-  * 
-  * @param uploadData
-  * @return
-  * @throws Exception
-  */
   public abstract Task<Boolean> upload(MediaUploadData uploadData, List<UploadFile> systemFiles);
 
 
   /**
    * Check if Device is currently connected
-   * @return
    */
   abstract public Boolean isConnected();
 
   /**
    * get the current host
-   * @return
    */
   public String getTarget() {
     return target;
@@ -86,7 +73,7 @@ public abstract class Connector {
       Node entry = settings.getChildNodes().item(0);
       while (entry != null) {
         if (entry.getNodeType() == Node.ELEMENT_NODE) {
-          result.put(entry.getNodeName(), ((Element) entry).getTextContent());
+          result.put(entry.getNodeName(), entry.getTextContent());
         }
         entry = entry.getNextSibling();
       }
@@ -98,22 +85,6 @@ public abstract class Connector {
     if (xml != null) {
       Element mode = xml.getDocumentElement();
       result.put(mode.getTagName(), mode.getTextContent());
-    }
-  }
-
-  protected void collectPlaylist(InputStream file, Map<String, String> result, DocumentBuilder builder) {
-    Document xml = getDocFromXML(file, builder);
-    if (xml != null) {
-      Element root = xml.getDocumentElement();
-      Node entry = root.getChildNodes().item(0);
-      int i = 0;
-      while (entry != null) {
-        if (entry.getNodeType() == Node.ELEMENT_NODE) {
-          result.put(entry.getNodeName() + i, ((Element) entry).getTextContent());
-          i++;
-        }
-        entry = entry.getNextSibling();
-      }
     }
   }
 

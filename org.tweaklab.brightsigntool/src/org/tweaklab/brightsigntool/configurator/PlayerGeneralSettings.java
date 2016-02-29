@@ -7,17 +7,17 @@ public class PlayerGeneralSettings {
   private String mediaFolder;
 
   private String hostname = "";
-  private String ip= "";
-  private String netmask= "";
-  private String gateway= "";
+  private String ip = "";
+  private String netmask = "";
+  private String gateway = "";
   private Boolean dhcp;
 
-  private String sshPassword= "";
+  private String sshPassword = "";
   private String tcpPort;
   private Boolean debug;
   private String volume;
-  private Boolean initialize= true;
-  private String scriptVersion= "";
+  private Boolean initialize = true;
+  private String scriptVersion = "";
 
   public static PlayerGeneralSettings getDefaulGeneralSettings() {
 
@@ -53,20 +53,40 @@ public class PlayerGeneralSettings {
     return hostname;
   }
 
+  public void setHostname(String hostname) {
+    this.hostname = hostname;
+  }
+
   public String getIp() {
     return ip;
+  }
+
+  public void setIp(String ip) {
+    this.ip = ip;
   }
 
   public String getNetmask() {
     return netmask;
   }
 
+  public void setNetmask(String netmask) {
+    this.netmask = netmask;
+  }
+
   public String getGateway() {
     return gateway;
   }
 
+  public void setGateway(String gateway) {
+    this.gateway = gateway;
+  }
+
   public Boolean getDhcp() {
     return dhcp;
+  }
+
+  public void setDhcp(Boolean dhcp) {
+    this.dhcp = dhcp;
   }
 
   public String getSshPassword() {
@@ -81,55 +101,9 @@ public class PlayerGeneralSettings {
     return debug;
   }
 
-
   public String getVolume() {
     return volume;
   }
-
-  public Boolean getInitialize() {
-    return initialize;
-  }
-
-  public String getScriptVersion() {
-    return scriptVersion;
-  }
-
-  public void setMediaFolder(String mediaFolder) {
-    this.mediaFolder = mediaFolder;
-  }
-
-  public void setHostname(String hostname) {
-    this.hostname = hostname;
-  }
-
-  public void setIp(String ip) {
-    this.ip = ip;
-  }
-
-  public void setNetmask(String netmask) {
-    this.netmask = netmask;
-  }
-
-  public void setGateway(String gateway) {
-    this.gateway = gateway;
-  }
-
-  public void setDhcp(Boolean dhcp) {
-    this.dhcp = dhcp;
-  }
-
-  public void setSshPassword(String sshPassword) {
-    this.sshPassword = sshPassword;
-  }
-
-  public void setTcpPort(int tcpPort) {
-    this.tcpPort = String.valueOf(tcpPort);
-  }
-
-  public void setDebug(Boolean debug) {
-    this.debug = debug;
-  }
-
 
   public void setVolume(int volume) {
     if (volume > 100) {
@@ -139,12 +113,16 @@ public class PlayerGeneralSettings {
     }
   }
 
+  public Boolean getInitialize() {
+    return initialize;
+  }
+
   public void setInitialize(Boolean initialize) {
     this.initialize = initialize;
   }
 
-  public void setScriptVersion(String scriptVersion) {
-    this.scriptVersion = scriptVersion;
+  public String getScriptVersion() {
+    return scriptVersion;
   }
 
   @Override

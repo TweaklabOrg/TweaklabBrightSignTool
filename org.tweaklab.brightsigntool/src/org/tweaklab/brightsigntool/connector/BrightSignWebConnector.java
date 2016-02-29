@@ -6,9 +6,10 @@ package org.tweaklab.brightsigntool.connector;
  */
 
 import javafx.concurrent.Task;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
@@ -23,7 +24,6 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.tweaklab.brightsigntool.configurator.UploadFile;
-import org.tweaklab.brightsigntool.gui.controller.MainApp;
 import org.tweaklab.brightsigntool.model.Keys;
 import org.tweaklab.brightsigntool.model.MediaFile;
 import org.tweaklab.brightsigntool.model.MediaUploadData;
@@ -44,10 +44,8 @@ import java.util.logging.Logger;
 
 public class BrightSignWebConnector extends Connector {
 
-  private static final Logger LOGGER = Logger.getLogger(BrightSignSdCardConnector.class.getName());
-
   public static final String CLASS_DISPLAY_NAME = "BS Web Connector";
-
+  private static final Logger LOGGER = Logger.getLogger(BrightSignSdCardConnector.class.getName());
   private String uploadRootUrl;
   private String mediaFolder;
 
@@ -85,73 +83,89 @@ public class BrightSignWebConnector extends Connector {
     // stop player and signal that data is comming
     sendTCPCommand("receiveData");
 
-    Task<Boolean> uploadTask = new Task<Boolean>() {
+    return new Task<Boolean>() {
       @Override
       public Boolean call() throws Exception {
-        Boolean success = true;
-
         // uploadSystemFiles
         for (UploadFile systemFile : systemFiles) {
           if (systemFile != null) {
-            success = deleteFile("/", systemFile.getFileName());
-            if (!success)
+            boolean success = deleteFile("/", systemFile.getFileName());
+            if (!success) {
+              LOGGER.log(Level.SEVERE, "Can't delete " + systemFile.getFileName());
+              updateMessage("Can't delete " + systemFile.getFileName());
               return false;
+            } else {
+              LOGGER.info(systemFile.getFileName() + " deleted.");
+            }
 
             // upload new file system file to root folder
             success = uploadFile("", systemFile);
-            if (!success)
+            if (!success) {
+              updateMessage("Couldn't write " + systemFile.getFileName());
               return false;
+            }
           }
-
         }
 
-        //skip mediata upload if null
+        //skip media upload if null
         if (mediaUploadData != null) {
           // run script to delete whole media folder
           String answer = sendTCPCommand("resetFilestructure");
           if (!answer.equals("OK")) {
+            LOGGER.log(Level.SEVERE, "Can't reset filestrucutre.");
+            updateMessage("Can't reset filestrucutre.");
             return false;
+          } else {
+            LOGGER.info("Filestructure resetted.");
           }
 
-          success = deleteFile("/", mediaUploadData.getConfigFile().getFileName());
-          if (!success)
+          // delete media config file
+          boolean success = deleteFile("/", mediaUploadData.getConfigFile().getFileName());
+          if (!success) {
+            LOGGER.log(Level.SEVERE, "Can't delete file " + mediaUploadData.getConfigFile().getFileName());
+            updateMessage("Can't delete file " + mediaUploadData.getConfigFile().getFileName());
             return false;
+          } else {
+            LOGGER.info(mediaUploadData.getConfigFile().getFileName() + "deleted.");
+          }
+
           // upload media config file
           success = uploadFile("/", mediaUploadData.getConfigFile());
           if (!success) {
+            updateMessage("Can't write " + mediaUploadData.getConfigFile().getFileName());
             return false;
           }
 
           // upload Media
           for (MediaFile mediaFile : mediaUploadData.getUploadList()) {
             if (this.isCancelled()) {
+              LOGGER.info("Upload was cancelled.");
               return false;
             }
 
             if (mediaFile != null) {
-              // TODO: zzAlain: just needed while uploading config File, Remove if finished
-              // delete file in rootpath
-              success = deleteFile(mediaFolder, mediaFile.getFile().getName());
-              if (!success)
-                return false;
-
               // upload new file to mediafolder
               success = uploadFile(mediaFolder, mediaFile.getFile());
-              if (!success)
+              if (!success) {
+                updateMessage("Can't write " + mediaFile.toString());
                 return false;
+              }
             }
           }
         }
-        
-        
+
+
         String answer = sendTCPCommand("reboot");
         if (!answer.equals("OK")) {
+          LOGGER.severe("Can't reboot target.");
+          updateMessage("Can't reboot target.");
           return false;
+        } else {
+          LOGGER.info("Rebooting target.");
         }
-        return success;
+        return true;
       }
     };
-    return uploadTask;
   }
 
   @Override
@@ -160,7 +174,6 @@ public class BrightSignWebConnector extends Connector {
   }
 
   private Boolean uploadFile(String destinationFolder, File file) {
-
     MultipartEntityBuilder multiPartBuilder = MultipartEntityBuilder.create();
     multiPartBuilder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
     FileBody fileBody = new FileBody(file);
@@ -168,18 +181,21 @@ public class BrightSignWebConnector extends Connector {
     HttpPost request = new HttpPost(uploadRootUrl + destinationFolder);
     request.setEntity(multiPartBuilder.build());
     HttpClient client = HttpClientBuilder.create().build();
-    HttpResponse response = null;
+    HttpResponse response;
     try {
       response = client.execute(request);
     } catch (IOException e) {
       LOGGER.log(Level.WARNING, "There's a problem with the connection.", e);
+      return false;
     }
     if (!response.getStatusLine().toString().contains("200")) {
       LOGGER.warning("Upload Error: Error while uploading " + file.getName() + ". Status was:" + response.getStatusLine().toString());
-      MainApp.showErrorMessage("Upload Error", "Error while uploading " + file.getName() + ". Status was:" + response.getStatusLine().toString());
+      new Alert(Alert.AlertType.NONE,
+              "Error while uploading " + file.getName() + ". Status was:" + response.getStatusLine().toString(),
+              ButtonType.OK).showAndWait();
       return false;
     }
-    LOGGER.info("File successfully uploaded: " + file);
+    LOGGER.info("File successfully uploaded: " + file.getName());
     return true;
   }
 
@@ -194,15 +210,18 @@ public class BrightSignWebConnector extends Connector {
 
     request.setEntity(multiPartBuilder.build());
     HttpClient client = HttpClientBuilder.create().build();
-    HttpResponse response = null;
+    HttpResponse response;
     try {
       response = client.execute(request);
     } catch (IOException e) {
       LOGGER.log(Level.WARNING, "There's a problem with the connection.", e);
+      return false;
     }
     if (!response.getStatusLine().toString().contains("200")) {
       LOGGER.warning("Upload Error: Error while uploading " + uploadFile.getFileName() + ". Status was: " + response.getStatusLine().toString());
-      MainApp.showErrorMessage("Upload Error", "Error while uploading " + uploadFile.getFileName() + ". Status was: " + response.getStatusLine().toString());
+      new Alert(Alert.AlertType.NONE,
+              "Error while uploading " + uploadFile.getFileName() + ". Status was: " + response.getStatusLine().toString(),
+              ButtonType.OK).showAndWait();
       return false;
     }
     LOGGER.info("File successfully uploaded: " + uploadFile.getFileName());
@@ -226,7 +245,8 @@ public class BrightSignWebConnector extends Connector {
       int returnCode = huc.getResponseCode();
       if (returnCode != 200) {
         LOGGER.warning("URL Error: Wrong return code for url " + url + ". Code was:" + returnCode);
-        MainApp.showErrorMessage("URL Error", "Wrong return code for url " + url + ". Code was:" + returnCode);
+        new Alert(Alert.AlertType.NONE, "Error return code for url " + url + ". Code was:" + returnCode,
+                ButtonType.OK).showAndWait();
         return false;
       }
     } catch (IOException e) {
@@ -241,18 +261,15 @@ public class BrightSignWebConnector extends Connector {
     CloseableHttpClient httpclient = HttpClients.createDefault();
     HttpGet httpGet = new HttpGet(url);
 
-    ResponseHandler<String> handler = new ResponseHandler<String>() {
-      @Override
-      public String handleResponse(HttpResponse httpResponse) throws ClientProtocolException, IOException {
-        int status = httpResponse.getStatusLine().getStatusCode();
-        if (status >= 200 && status < 300) {
-          HttpEntity entity = httpResponse.getEntity();
-          return entity != null ? EntityUtils.toString(entity) : null;
-        } else {
-          LOGGER.log(Level.WARNING, "BS returned a error: " + status);
-        }
-        return "";
+    ResponseHandler<String> handler = httpResponse -> {
+      int status = httpResponse.getStatusLine().getStatusCode();
+      if (status >= 200 && status < 300) {
+        HttpEntity entity = httpResponse.getEntity();
+        return entity != null ? EntityUtils.toString(entity) : null;
+      } else {
+        LOGGER.log(Level.WARNING, "BS returned a error: " + status);
       }
+      return "";
     };
 
     String respond = "";
@@ -274,8 +291,8 @@ public class BrightSignWebConnector extends Connector {
   private String sendTCPCommand(String command) {
     String answer = "";
     Socket tcpSocket = null;
-    DataOutputStream outToTcpServer = null;
-    BufferedReader inFromTcpServer = null;
+    DataOutputStream outToTcpServer;
+    BufferedReader inFromTcpServer;
     try {
       tcpSocket = new Socket(this.target, tcpPort);
       outToTcpServer = new DataOutputStream(tcpSocket.getOutputStream());
@@ -302,16 +319,16 @@ public class BrightSignWebConnector extends Connector {
   public Task<List<String>> getPossibleTargets() {
     // TODO: Stephan: reaction if no target found.
     // TODO: Stephan: Somehow the app reacts strange after first scan. Divices are not selectable.
-    Task<List<String>> getTargetTask = new Task<List<String>>() {
-      private final Logger LOGGER = Logger.getLogger(getClass().getName());
+    return new Task<List<String>>() {
+      private final Logger LOGGER1 = Logger.getLogger(getClass().getName());
+
       @Override
-      public List<String> call() throws Exception{
+      public List<String> call() throws Exception {
         List<String> result = DiscoverServices.searchServices("_tl");
-        LOGGER.info("Done collecting Targets. " + result.size() + " found");
+        LOGGER1.info("Done collecting Targets. " + result.size() + " found");
         return result;
       }
     };
-    return getTargetTask;
   }
 
   @Override
@@ -334,7 +351,7 @@ public class BrightSignWebConnector extends Connector {
     }
 
     collectEntries(settingsXMLAsFile, result, builder);
-    collectMode(modeXMLAsFile,result, builder);
+    collectMode(modeXMLAsFile, result, builder);
     collectEntries(displayXMLAsFile, result, builder);
     // TODO: building filemanagement to make that possible. For ex. skip mediaupload of already existing files, but allow modifications on settings.
 //    collectEntries("gpio.xml", result, builder);
