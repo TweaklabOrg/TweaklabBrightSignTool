@@ -86,6 +86,10 @@ public class MediaFile {
     return fileSize;
   }
 
+  public long getFileSizeAsNumber() {
+    return file.length();
+  }
+
   public MediaType getMediaType() {
     return mediaType;
   }

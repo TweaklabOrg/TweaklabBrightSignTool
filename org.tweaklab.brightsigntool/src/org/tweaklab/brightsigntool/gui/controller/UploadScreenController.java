@@ -225,7 +225,7 @@ public class UploadScreenController {
       systemFilesForUpload.addAll(scripts);
 
       // upload jar
-      String jarName = Keys.loadProperty(Keys.APP_NAME_PROPS_KEY) + "_" + Keys.loadProperty(Keys.ClIENT_VERSION_PROPS_KEY) +  + ".jar";
+      String jarName = Keys.loadProperty(Keys.APP_NAME_PROPS_KEY) + ".jar";
       InputStream jarAsStream = this.getClass().getResourceAsStream(
               "/" + Keys.loadProperty(Keys.INCLUDED_JAR_RELATIVE_PATH) + "/" + jarName);
       byte[] scriptAsBytes = IOUtils.toByteArray(jarAsStream);
@@ -255,8 +255,8 @@ public class UploadScreenController {
       uploadTask = connector.upload(mediaUploadData, systemFilesForUpload);
 
       uploadTask.setOnSucceeded(event -> uploadTaskSucceedFinish());
-      uploadTask.setOnCancelled(event -> uploadTaskAbortFinish());
-      uploadTask.setOnFailed(event -> uploadTaskAbortFinish());
+      uploadTask.setOnCancelled(event -> uploadTaskCancelledFinish());
+      uploadTask.setOnFailed(event -> uploadTaskAbortFinish(uploadTask.getMessage()));
 
       uploadThread = new Thread(uploadTask);
       uploadThread.start();
@@ -272,16 +272,20 @@ public class UploadScreenController {
         waitScreen.closeScreen();
         MainApp.showInfoMessage("Upload finished!");
       } else {
-        uploadTaskAbortFinish();
+        uploadTaskCancelledFinish();
       }
     } catch (Exception e) {
       MainApp.showExceptionMessage(e);
     }
   }
 
-  private void uploadTaskAbortFinish() {
+  private void uploadTaskCancelledFinish() {
     waitScreen.closeScreen();
-    MainApp.showErrorMessage("Upload Failed", "An error occured during upload. Some files are not uploaded!");
+  }
+
+  private void uploadTaskAbortFinish(String message) {
+    waitScreen.closeScreen();
+    MainApp.showInfoMessage(message);
   }
 
   private Boolean validateFields() {
@@ -363,7 +367,7 @@ public class UploadScreenController {
 
     for (String scriptName : scriptFileNames) {
       try {
-        InputStream scriptInputStream = Keys.class.getResourceAsStream("/bs-scripts/" + scriptName);
+        InputStream scriptInputStream = Keys.class.getResourceAsStream("/" + Keys.SCRIPTS_DIRECTORY + "/" + scriptName);
         byte[] scriptAsBytes = IOUtils.toByteArray(scriptInputStream);
         UploadFile configFile = new UploadFile(scriptName, scriptAsBytes);
         scriptFiles.add(configFile);

@@ -60,8 +60,9 @@
 
         <!--copy the jar that will be included into a resource folder defined by config.properties, so it will be included into the final jar.-->
         <mkdir dir="${res.dir}/${included_jar_relative_path}"/>
+        <!--destination file has no version and build number, as build number is not accessable from the java client.-->
         <copyfile src="${build.dir}/${app_name}_${client_version}.${build.number}.jar"
-                  dest="${res.dir}/${included_jar_relative_path}/${app_name}_${client_version}.${build.number}.jar"/>
+                  dest="${res.dir}/${included_jar_relative_path}/${app_name}.jar"/>
 
         <!--now we can build the final jar, including the jar in resouces-->
         <jar destfile="${dist.dir}/${app_name}_${client_version}.${build.number}.jar" >

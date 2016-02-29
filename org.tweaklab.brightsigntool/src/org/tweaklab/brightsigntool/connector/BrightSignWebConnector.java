@@ -349,5 +349,4 @@ public class BrightSignWebConnector extends Connector {
   public boolean isResolutionSupported(String brightSignResolutionString) {
     return sendTCPCommand(brightSignResolutionString).equals("supported");
   }
-
 }
