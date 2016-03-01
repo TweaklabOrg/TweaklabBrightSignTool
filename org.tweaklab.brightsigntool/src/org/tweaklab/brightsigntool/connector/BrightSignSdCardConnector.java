@@ -20,6 +20,7 @@ import java.nio.channels.FileChannel;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 /**
  * Connects to a SD Card of Bright Sign Device
@@ -30,6 +31,11 @@ public class BrightSignSdCardConnector extends Connector {
   public static final String CLASS_DISPLAY_NAME = "BS SD-Card Connector";
   private static final Logger LOGGER = Logger.getLogger(BrightSignSdCardConnector.class.getName());
   private static final int TIMEOUT_DISKUTIL_IN_MILLIS = 1000;
+  private static final Pattern FAT32_PATTERN = Pattern.compile("[\\s\\S]*File System Personality:( *)MS-DOS FAT32[\\s\\S]*");
+  private static final Pattern HFS_PATTERN = Pattern.compile("[\\s\\S]*File System Personality:( *)HFS+[\\s\\S]*");;
+  private static final Pattern J_HFS_PATTERN = Pattern.compile("[\\s\\S]*File System Personality:( *)Journaled HFS+[\\s\\S]*");;
+  private static final Pattern CS_J_HFS_PATTERN = Pattern.compile("[\\s\\S]*File System Personality:( *)Case-sensitive Journaled HFS+[\\s\\S]*");;
+  private static final Pattern NTFS_PATTERN = Pattern.compile("[\\s\\S]*File System Personality:( *)NTFS[\\s\\S]*");;
 
 
   private String mediaFolderPath;
@@ -40,6 +46,38 @@ public class BrightSignSdCardConnector extends Connector {
 
   @Override
   public boolean connect(String path) {
+    // Find out if file system has a valid format concerning platform.
+    if (OSValidator.isMac()) {
+      final List<String> command = new LinkedList<>();
+      command.add("diskutil");
+      command.add("info");
+      command.add(path);
+      final String result = CommandlineTool.executeCommand(command, 1000);
+      if (FAT32_PATTERN.matcher(result).matches()) {
+        // TODO move that test to file upload, as it would be necessary only there.
+        new Alert(Alert.AlertType.NONE, "SD is formatted to FAT32. " +
+                "This format is recommended although files can't be bigger than 4GB.", ButtonType.OK).showAndWait();
+      } else if (J_HFS_PATTERN.matcher(result).matches() ||
+              CS_J_HFS_PATTERN.matcher(result).matches() ||
+              HFS_PATTERN.matcher(result).matches()) {
+        new Alert(Alert.AlertType.NONE, "SD is formatted to HFS+. " +
+                "This is recommended if you work with files bigger than 4GB but programming " +
+                "device remotely is no supported by BrightSign manufacture.", ButtonType.OK).showAndWait();
+      } else if (NTFS_PATTERN.matcher(result).matches()) {
+        new Alert(Alert.AlertType.NONE, "SD is formatted to NTFS and can't be used on a Mac. " +
+                "Recommended format is FAT32. If you use files bigger than 4GB, use HFS+ (Mac only) or NTFS (Windows only).",
+                ButtonType.OK).showAndWait();
+        return false;
+      } else {
+        new Alert(Alert.AlertType.NONE, "SD file system is not supported. " +
+                "Recommended format is FAT32. If you use files bigger than 4GB, use HFS+ (Mac only) or NTFS (Windows only).",
+                ButtonType.OK).showAndWait();
+        return false;
+      }
+    } else if (OSValidator.isWindows()){
+
+    }
+    
     // set path first, as we need it to be set for the isConnected method.
     name = path;
     target = path;

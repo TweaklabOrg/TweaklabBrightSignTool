@@ -9,6 +9,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import org.tweaklab.brightsigntool.model.Keys;
 import org.tweaklab.brightsigntool.util.LoggerSetup;
+import org.tweaklab.brightsigntool.util.OSValidator;
 
 import java.io.IOException;
 import java.util.logging.Level;
@@ -38,6 +39,23 @@ public class MainApp extends Application {
   public void start(Stage primaryStage) {
     // start logging environment
     LoggerSetup.setup();
+
+    //     Verify if platform is supported
+    if(OSValidator.isMac()) {
+      // ok
+    } else if(OSValidator.isWindows()) {
+      LOGGER.info("Running on Windows. Limited support.");
+      new Alert(Alert.AlertType.NONE,
+              "Windows has limited support at the moment. Some parts might work anyway.\n" +
+                      "Feel free to extend support. Find the code on github.",
+              ButtonType.OK).showAndWait();
+    } else {
+      LOGGER.info("Aborting as platform is neither mac or windows.");
+      new Alert(Alert.AlertType.NONE,
+              "Sorry. Platform currently not supported. Some parts might work anyway.\n " +
+                      "Feel free to extend support. Find the code on github.",
+              ButtonType.OK).showAndWait();
+    }
 
     MainApp.primaryStage = primaryStage;
     MainApp.primaryStage.setTitle(Keys.loadProperty(Keys.APP_NICE_NAME_PROPS_KEY) + " " + Keys.loadProperty(Keys.ClIENT_VERSION_PROPS_KEY));
