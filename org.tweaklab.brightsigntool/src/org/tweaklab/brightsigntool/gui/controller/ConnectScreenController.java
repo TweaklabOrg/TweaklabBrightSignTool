@@ -52,19 +52,44 @@ public class ConnectScreenController {
   private void scanPossibleTargets() {
     MainApp.primaryStage.getScene().setCursor(Cursor.WAIT);
     Task<List<String>> possibleTargetsTask = ControllerMediator.getInstance().getConnector().getPossibleTargets();
-    possibleTargetsTask.setOnSucceeded(event -> ScanTargetFinished(possibleTargetsTask));
+    possibleTargetsTask.setOnSucceeded(event -> scanTargetFinished(possibleTargetsTask));
+    possibleTargetsTask.setOnCancelled(event -> scanTargetCancelled(possibleTargetsTask));
+    possibleTargetsTask.setOnFailed(event -> scanTargetFailed(possibleTargetsTask));
     Thread uploadThread = new Thread(possibleTargetsTask);
     uploadThread.start();
   }
 
-  private void ScanTargetFinished(Task<List<String>> possibleTargetsTask) {
+  private void scanTargetFinished(Task<List<String>> possibleTargetsTask) {
+    if (!possibleTargetsTask.getMessage().equals("")) {
+      new Alert(Alert.AlertType.NONE, possibleTargetsTask.getMessage(), ButtonType.OK).showAndWait();
+    }
+
     try {
       targetComboBox.getItems().setAll(possibleTargetsTask.get());
     } catch (Exception e) {
       LOGGER.log(Level.WARNING, "Not able to collect results.", e);
     }
+
     targetComboBox.getSelectionModel().selectFirst();
+
     MainApp.primaryStage.getScene().setCursor(Cursor.DEFAULT);
+  }
+
+  private void scanTargetCancelled(Task<List<String>> possibleTargetsTask) {
+    if (possibleTargetsTask.getMessage().equals("")) {
+      new Alert(Alert.AlertType.NONE, "Upload cancelled. Parts might be uploaded.", ButtonType.OK).showAndWait();
+    } else {
+      new Alert(Alert.AlertType.NONE, possibleTargetsTask.getMessage(), ButtonType.OK).showAndWait();
+    }
+  }
+
+  private void scanTargetFailed(Task<List<String>> possibleTargetsTask) {
+    try {
+      throw possibleTargetsTask.getException();
+    } catch (Throwable throwable) {
+      LOGGER.log(Level.SEVERE, "An unhandled exception occured while uploading.", throwable);
+      new Alert(Alert.AlertType.NONE, "Sorry. A unknown error occured.", ButtonType.OK).showAndWait();
+    }
   }
 
   @FXML
