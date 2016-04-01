@@ -61,6 +61,7 @@ public class ControllerMediator {
       rootController.connectToDevice(connector.getSettingsOnDevice());
     } else {
       LOGGER.log(Level.WARNING, "An error occurred while connecting to device " + target);
+      // TODO move that message to connect, as now sometimes it shows two messages for one error.
       new Alert(Alert.AlertType.NONE, "Connection failed! Please verify the target address.", ButtonType.OK).showAndWait();
     }
   }

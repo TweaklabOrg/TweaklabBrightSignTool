@@ -224,6 +224,7 @@ public class BrightSignWebConnector extends Connector {
               ButtonType.OK).showAndWait();
       return false;
     }
+    // TODO More errors to handle
     LOGGER.info("File successfully uploaded: " + uploadFile.getFileName());
     return true;
   }

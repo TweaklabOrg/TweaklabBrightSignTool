@@ -36,43 +36,143 @@ public class SdUploadTask extends Task<Boolean> {
 
   @Override
   public Boolean call() {
-    // check, if there is enough space on target
-    if (uploadData != null) {
-      File targetRoot = new File(target);
-      long totalSize = 0;
-      for (MediaFile m : uploadData.getUploadList()) {
-        if (m != null) {
-          totalSize += m.getFileSizeAsNumber();
-        }
+    // writeSystemFiles
+    if (!writeSystemFiles()) return false;
+
+    if (uploadData != null && enoughSpaceOnTarget()) {
+      // delete media folder on sd card
+      if (!(target.endsWith("/") || target.endsWith("\\"))) {
+        target = target + "/";
       }
-      if (targetRoot.getTotalSpace() < totalSize) {
-        LOGGER.log(Level.WARNING, "Files are too big to fit on " + target + ". Nothing is copied.");
-        updateMessage("Files are too big to fit on " + target + ". Nothing is copied.");
+
+      // create media folder
+      File mediaFolder = new File(target + "/" + mediaFolderPath);
+      if (!createMediaFolder(mediaFolder)) return false;
+
+      // copy xml config file
+      // TODO Some strange behaviour here. If for ex. display changes are made, the xml is handled via systemFiles. Is that part really needed?
+      if (!copyMediaXML()) return false;
+
+      // copy each mediafile
+      if (!copyMediaFiles(mediaFolder)) return false;
+    }
+
+    LOGGER.info("Done uploading to SD.");
+    return true;
+  }
+
+  private boolean copyMediaFiles(File mediaFolder) {
+    for (MediaFile mediaFile : uploadData.getUploadList()) {
+      if (this.isCancelled()) {
+        LOGGER.info("Upload cancelled.");
+        return false;
+      }
+
+      if (mediaFile != null) {
+        String destPath = mediaFolder.getPath();
+        if (!destPath.endsWith("/")) {
+          destPath = destPath + "/";
+        }
+
+        File destFile = new File(destPath + mediaFile.getFile().getName());
+
+        if (fileSystemFormat == FileSystemFormat.FAT_32 && mediaFile.getFile().length() > FAT_32_MAX_FILESIZE) {
+          updateMessage("File to big for FAT_32 format. Format SD to HFS+ (Mac OSX Extended).");
+          return false;
+        }
+
+        if (destFile.exists()) {
+          if (!destFile.delete()) {
+            LOGGER.warning("" + destPath + " could not be deleted.");
+            updateMessage(destPath + " could not be deleted.");
+            return false;
+          }
+        }
+
+        try {
+          if (!destFile.createNewFile()) {
+            LOGGER.log(Level.WARNING, "Can't create " + destFile.getName());
+            updateMessage("Can't create " + destFile.getName());
+            return false;
+          }
+        } catch (IOException e) {
+          LOGGER.log(Level.WARNING, "Can't create " + destFile.getName(), e);
+          updateMessage("Can't create " + destFile.getName());
+          return false;
+        }
+
+        FileChannel source;
+        FileChannel destination;
+
+        try {
+          source = new FileInputStream(mediaFile.getFile()).getChannel();
+        } catch (FileNotFoundException e) {
+          LOGGER.log(Level.WARNING, "Can't find " + mediaFile.getFile().getName(), e);
+          updateMessage("Can't find " + mediaFile.getFile().getPath());
+          return false;
+        }
+
+        try {
+          destination = new FileOutputStream(destFile).getChannel();
+        } catch (FileNotFoundException e) {
+          LOGGER.log(Level.WARNING, "Can't find " + destFile.getName(), e);
+          updateMessage("Can't find " + destFile.getPath());
+          return false;
+        }
+
+        try {
+          destination.transferFrom(source, 0, source.size());
+        } catch (IOException e) {
+          LOGGER.log(Level.WARNING, "Can't write data to " + destFile.getPath(), e);
+          updateMessage("Can't write data to " + destFile.getPath());
+          return false;
+        }
+
+        try {
+          source.close();
+        } catch (IOException e) {
+          LOGGER.log(Level.WARNING, "Can't close " + mediaFile.getFile().getName(), e);
+          updateMessage("Can't close " + mediaFile.getFile().getName());
+        }
+
+        try {
+          destination.close();
+        } catch (IOException e) {
+          LOGGER.log(Level.WARNING, "Can't close " + destFile.getName(), e);
+          updateMessage("Can't close " + destFile.getName());
+        }
+
+        LOGGER.info(mediaFile + " written to " + destFile.getPath());
+      }
+    }
+    return true;
+  }
+
+  private boolean copyMediaXML() {
+    String destPath = target;
+    if (!destPath.endsWith(File.separator)) {
+      destPath += File.separator;
+    }
+    final File destFile = new File(destPath + uploadData.getConfigFile().getFileName());
+    if (destFile.exists()) {
+      if (!destFile.delete()) {
+        LOGGER.warning(destPath + " could not have been deleted.");
+        updateMessage(destPath + " could not have been deleted.");
         return false;
       }
     }
-
-    // writeSystemFiles
-    for (UploadFile systemFile : systemFiles) {
-      if (systemFile != null) {
-        File targetFile = new File(target + "/" + systemFile.getFileName());
-        // write file to root folder
-        try {
-          FileUtils.writeByteArrayToFile(targetFile, systemFile.getFileAsBytes());
-          LOGGER.info(systemFile.getFileName() + " written.");
-        } catch (IOException e) {
-          LOGGER.log(Level.WARNING, "Can't write to target!", e);
-          updateMessage("Can't write to target!");
-          return false;
-        }
-      }
+    try {
+      FileUtils.writeByteArrayToFile(destFile, uploadData.getConfigFile().getFileAsBytes());
+    } catch (IOException e) {
+      LOGGER.log(Level.WARNING, "Can't write to " + destFile.getName(), e);
+      updateMessage("Can't write to " + destFile.getName());
+      return false;
     }
+    LOGGER.info(uploadData.getConfigFile().getFileName() + " written.");
+    return true;
+  }
 
-    // reset media folder on sd card
-    if (!(target.endsWith("/") || target.endsWith("\\"))) {
-      target = target + "/";
-    }
-    File mediaFolder = new File(target + "/" + mediaFolderPath);
+  private boolean createMediaFolder(File mediaFolder) {
     if (mediaFolder.exists()) {
       try {
         FileUtils.deleteDirectory(mediaFolder);
@@ -90,125 +190,40 @@ public class SdUploadTask extends Task<Boolean> {
     } else {
       LOGGER.info("Mediafolder created.");
     }
+    return true;
+  }
 
-    // TODO Some strange behaviour here. If for ex. display changes are made, the xml is handled via systemFiles. Is that part really needed?
-    // copy xml config file
-    if (uploadData != null) {
-      String destPath = target;
-      if (!destPath.endsWith(File.separator)) {
-        destPath += File.separator;
+  private boolean enoughSpaceOnTarget() {
+    File targetRoot = new File(target);
+    long totalSize = 0;
+    for (MediaFile m : uploadData.getUploadList()) {
+      if (m != null) {
+        totalSize += m.getFileSizeAsNumber();
       }
+    }
+    if (targetRoot.getTotalSpace() < totalSize) {
+      LOGGER.log(Level.WARNING, "Files are too big to fit on " + target + ". Nothing is copied.");
+      updateMessage("Files are too big to fit on " + target + ". Nothing is copied.");
+      return false;
+    }
+    return true;
+  }
 
-      final File destFile = new File(destPath + uploadData.getConfigFile().getFileName());
-
-      if (destFile.exists()) {
-        if (!destFile.delete()) {
-          LOGGER.warning(destPath + " could not have been deleted.");
-          updateMessage(destPath + " could not have been deleted.");
+  private boolean writeSystemFiles() {
+    for (UploadFile systemFile : systemFiles) {
+      if (systemFile != null) {
+        File targetFile = new File(target + "/" + systemFile.getFileName());
+        // write file to root folder
+        try {
+          FileUtils.writeByteArrayToFile(targetFile, systemFile.getFileAsBytes());
+          LOGGER.info(systemFile.getFileName() + " written.");
+        } catch (IOException e) {
+          LOGGER.log(Level.WARNING, "Can't write to target!", e);
+          updateMessage("Can't write to target!");
           return false;
         }
       }
-
-      try {
-        FileUtils.writeByteArrayToFile(destFile, uploadData.getConfigFile().getFileAsBytes());
-      } catch (IOException e) {
-        LOGGER.log(Level.WARNING, "Can't write to " + destFile.getName(), e);
-        updateMessage("Can't write to " + destFile.getName());
-        return false;
-      }
-
-      LOGGER.info(uploadData.getConfigFile().getFileName() + " written.");
     }
-
-    // copy each mediafile
-    if (uploadData != null) {
-      for (MediaFile mediaFile : uploadData.getUploadList()) {
-        if (this.isCancelled()) {
-          LOGGER.info("Upload cancelled.");
-          return false;
-        }
-
-        if (mediaFile != null) {
-          String destPath = mediaFolder.getPath();
-          if (!destPath.endsWith("/")) {
-            destPath = destPath + "/";
-          }
-
-          File destFile = new File(destPath + mediaFile.getFile().getName());
-
-          if (fileSystemFormat == FileSystemFormat.FAT_32 && mediaFile.getFile().length() > FAT_32_MAX_FILESIZE) {
-            updateMessage("File to big for FAT_32 format. Format SD to HFS+ (Mac OSX Extended).");
-            return false;
-          }
-
-          if (destFile.exists()) {
-            if (!destFile.delete()) {
-              LOGGER.warning("" + destPath + " could not be deleted.");
-              updateMessage(destPath + " could not be deleted.");
-              return false;
-            }
-          }
-
-          try {
-            if (!destFile.createNewFile()) {
-              LOGGER.log(Level.WARNING, "Can't create " + destFile.getName());
-              updateMessage("Can't create " + destFile.getName());
-              return false;
-            }
-          } catch (IOException e) {
-            LOGGER.log(Level.WARNING, "Can't create " + destFile.getName(), e);
-            updateMessage("Can't create " + destFile.getName());
-            return false;
-          }
-
-          FileChannel source;
-          FileChannel destination;
-
-          try {
-            source = new FileInputStream(mediaFile.getFile()).getChannel();
-          } catch (FileNotFoundException e) {
-            LOGGER.log(Level.WARNING, "Can't find " + mediaFile.getFile().getName(), e);
-            updateMessage("Can't find " + mediaFile.getFile().getPath());
-            return false;
-          }
-
-          try {
-            destination = new FileOutputStream(destFile).getChannel();
-          } catch (FileNotFoundException e) {
-            LOGGER.log(Level.WARNING, "Can't find " + destFile.getName(), e);
-            updateMessage("Can't find " + destFile.getPath());
-            return false;
-          }
-
-          try {
-            destination.transferFrom(source, 0, source.size());
-          } catch (IOException e) {
-            LOGGER.log(Level.WARNING, "Can't write data to " + destFile.getPath(), e);
-            updateMessage("Can't write data to " + destFile.getPath());
-            return false;
-          }
-
-          try {
-            source.close();
-          } catch (IOException e) {
-            LOGGER.log(Level.WARNING, "Can't close " + mediaFile.getFile().getName(), e);
-            updateMessage("Can't close " + mediaFile.getFile().getName());
-          }
-
-          try {
-            destination.close();
-          } catch (IOException e) {
-            LOGGER.log(Level.WARNING, "Can't close " + destFile.getName(), e);
-            updateMessage("Can't close " + destFile.getName());
-          }
-
-          LOGGER.info(mediaFile + " written to " + destFile.getPath());
-          return true;
-        }
-      }
-    }
-
-    LOGGER.info("Done uploading to SD.");
     return true;
   }
 }
