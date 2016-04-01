@@ -17,37 +17,45 @@ End Sub
 Sub UpdateNetworkSettings(settings As Object)
     netConf = CreateObject("roNetworkConfiguration", 0)
     current = netConf.GetCurrentConfig()
+    changed = false
     if settings.dhcp.getText() = "true" then
         if current.dhcp = false then
             info("changing dhcp to enabled")
             ScreenMessage("changing dhcp to enabled", 3000)
             netConf.setDHCP()
+            changed = true
         end if
     else
         if current.ip4_address <> settings.ip.getText() then
             info("changing ip from " + current.ip4_address + " to " + settings.ip.getText())
             ScreenMessage("changing ip from " + current.ip4_address + " to " + settings.ip.getText(), 3000)
             netConf.setIP4Address(settings.ip.getText())
+            changed = true
         end if
         if current.ip4_netmask <> settings.netmask.getText() then
             info("changing netmask from " + current.ip4_netmask + " to " + settings.netmask.getText())
             ScreenMessage("changing netmask from " + current.ip4_netmask + " to " + settings.netmask.getText(), 3000)
             netConf.setIP4Netmask(settings.netmask.getText())
+            changed = true
         end if
         if current.ip4_gateway <> settings.gateway.getText() then
             info("changing gateway from " + current.ip4_gateway + " to " + settings.gateway.getText())
             netConf.setIP4Gateway(settings.gateway.getText())
+            changed = true
         end if
     end if
     if netConf.getHostName() <> settings.name.getText() then
         info("changing name from " + netConf.getHostName() + " to " + settings.name.getText())
         ScreenMessage("changing name from " + netConf.getHostName() + " to " + settings.name.getText(), 3000)
         netConf.setHostName(settings.name.getText())
+        changed = true
     end if
-
+    if changed then
+        netConf.apply()
+    end if
 End Sub
 
-Sub WriteDefaultRegistry()
+Sub WriteDefaultRegistry(settings As Object)
     section = CreateObject("roRegistrySection", "networking")
     section.Write("ple", "yes") 'playbackLoggingEnabled'
     section.Write("ele", "yes") 'eventLoggingEnabled'
@@ -58,11 +66,15 @@ Sub WriteDefaultRegistry()
     section.Write("ut", "0")    'uploadLogFilesTime'
 
     ' enable diagnostic web server
-    section = createObject("roRegistrySection", "networking")
     section.write("http_server", "80")
-    
+
+    ' mark player as "setup as tweaklab player"
+    tweaklabRegistry = CreateObject("roRegistrySection", "tweaklab")
+    tweaklabRegistry.Write("dummy", "yes")
+
     ' write changes
     section.flush()
+    tweaklabRegistry.flush()
 End Sub
 
 ' @param tweaklabRegistry The tweaklab Registry.

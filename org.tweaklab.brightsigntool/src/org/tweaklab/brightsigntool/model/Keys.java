@@ -31,7 +31,6 @@ public class Keys {
   public static final String DEFAULT_VOLUME_PROPS_KEY = "default_volume";
   public static final String DEFAULT_SSH_PASSWORD_PROPS_KEY = "default_ssh_password";
   public static final String DEFAULT_DHCP_PROPS_KEY = "default_dhcp";
-  public static final String DEFAULT_INITIALIZE_PROPS_KEY = "default_initialize";
   // DISPLAY PROPS KEY
   public static final String DEFAULT_DISPLAY_AUTO_PROPS_KEY = "default_display_auto";
   public static final String DEFAULT_DISPLAY_WIDTH_PROPS_KEY = "default_display_width";

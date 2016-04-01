@@ -89,12 +89,6 @@ public class XmlConfigCreator {
     volumeElement.appendChild(doc.createTextNode(String.valueOf(generalSettings.getVolume())));
     rootElement.appendChild(volumeElement);
 
-    Element initializeElement = doc.createElement("initialize");
-    initializeElement.appendChild(doc.createTextNode(generalSettings.getInitialize().toString()));
-    rootElement.appendChild(initializeElement);
-    comment = doc.createComment(" If <initialize> is set to true, the registry will be cleared and all settings will be set as configured in the xmls.");
-    sshPasswordElement.getParentNode().insertBefore(comment, initializeElement);
-
     Element tcpPortElement = doc.createElement("tcp_port");
     tcpPortElement.appendChild(doc.createTextNode(String.valueOf(generalSettings.getTcpPort())));
     rootElement.appendChild(tcpPortElement);

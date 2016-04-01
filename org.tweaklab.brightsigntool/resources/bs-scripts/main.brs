@@ -78,26 +78,28 @@ sub tweaklabPlayer()
     ' Version 6.0.51 changed the server communication and is - for now - not supporting uploading via our the Tweaklab BrightSign Tool
     unsupportedFirmwareVersion = 6*65536 + 0*256 + 51
     if deviceInfo.GetVersionNumber() = unsupportedFirmwareVersion then
-        info("You will not be able to use the Tweaklab BrightSign Tool with that firmware version!")
+        info("Version 6.0.51 is currently not supported. Downgrade to 6.0.25.")
         info("")
-        ScreenMessage("You will not be able to use the Tweaklab BrightSign Tool with that firmware version!", 3000) ' from tools_messaging.brs
+        ScreenMessage("Version 6.0.51 is currently not supported. Downgrade to 6.0.25.", 3000) ' from tools_messaging.brs
     end if
 
-    ' a reboot might be necessary depending on changes. In this case this variable can be set to true and the reboot 
-    ' will be executed when all settings are up to date.
-    reboot = false
+    ' write default content to registry if registry is empty
+    if createObject("roRegistry").GetSectionList().Count() = 0 then    
+        WriteDefaultRegistry(settings) ' from tools_setup.brs
+    end if
 
-    ' if a initialization is wanted, all registry entries are cleared and reset to a appropriate state.
-    if settings.initialize.getText() = "true" 
-        ' set initialize back to false in settings.xml (to avoid reboot loop)
-        ' TODO unfortunately this kills the formating and makes the xml almost unreadable
-        settings.initialize.simplify().setbody("false")
-        out = CreateObject("roByteArray")
-        out.FromASCIIString(settings.GenXML(true))
-        out.WriteFile("settings.xml")
-
-        info("setting player back to initial settings.")
-        ScreenMessage("setting player back to initial settings.", 3000) ' from tools_messaging.brs
+    ' if tweaklab registry isn't available, factory reset, as player seems not to be set up as tweaklab player.
+    registrylist = createObject("roRegistry").GetSectionList()
+    registrylist.Reset() ' unfortunately has to be reset manually as it seemed
+    found = false
+    while registrylist.IsNext()
+        if registrylist.Next() = "tweaklab" then
+            found = true
+        end if
+    end while
+    if not found then
+        info("Tweaklab settings not available. Setting player to initial state.")
+        ScreenMessage("Tweaklab settings not available. Setting player to initial state.", 3000) ' from tools_messaging.brs
 
         info("rebooting...")
         ' store the next message in a variable, to make it visible until the player reboots.
@@ -106,15 +108,11 @@ sub tweaklabPlayer()
         ' set device back to factory configuration
         deviceCust = CreateObject("roDeviceCustomization")
         deviceCust.FactoryReset("confirm")
-
-        reboot = true
     end if
 
-    ' write default content to registry if registry is empty
-    if createObject("roRegistry").GetSectionList().Count() = 0 then    
-        WriteDefaultRegistry()
-    end if
-
+    ' a reboot might be necessary depending on changes. In this case this variable can be set to true and the reboot 
+    ' will be executed when all settings are up to date.
+    reboot = false
 
     ' If display.xml changed and Player can play video, update settings. needs a reboot
     if deviceInfo.HasFeature("hdmi") or deviceInfo.HasFeature("vga") or deviceInfo.HasFeature("component video") then
@@ -129,13 +127,13 @@ sub tweaklabPlayer()
         reboot = true
     end if
 
-    ' If network settings changed, update settings, and always update password. 
+    ' If network settings changed, update settings.
     '
     ' Doesn't need a reboot but must be before the rebootSystem() to have the right network settings set 
     ' after the reboot. They might be used. For example if someone wants to connect via ssh.
     UpdateNetworkSettings(settings) ' method from tools_setup.brs
 
-    if (reboot) then
+    if reboot then
         info("rebooting...")
         ' store the next message in a variable, to make it visible until the player reboots.
         temp = ScreenMessage("rebooting...", 1000)

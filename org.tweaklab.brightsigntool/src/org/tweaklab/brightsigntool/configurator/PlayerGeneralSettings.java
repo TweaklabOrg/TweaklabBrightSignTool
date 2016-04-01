@@ -16,7 +16,6 @@ public class PlayerGeneralSettings {
   private String tcpPort;
   private Boolean debug;
   private String volume;
-  private Boolean initialize = true;
   private String scriptVersion = "";
 
   public static PlayerGeneralSettings getDefaulGeneralSettings() {
@@ -40,7 +39,6 @@ public class PlayerGeneralSettings {
 
     settings.sshPassword = Keys.loadProperty(Keys.DEFAULT_SSH_PASSWORD_PROPS_KEY);
     settings.debug = Boolean.parseBoolean((Keys.loadProperty(Keys.DEFAULT_DEBUG_PROPS_KEY)));
-    settings.initialize = Boolean.parseBoolean((Keys.loadProperty(Keys.DEFAULT_INITIALIZE_PROPS_KEY)));
 
     return settings;
   }
@@ -113,14 +111,6 @@ public class PlayerGeneralSettings {
     }
   }
 
-  public Boolean getInitialize() {
-    return initialize;
-  }
-
-  public void setInitialize(Boolean initialize) {
-    this.initialize = initialize;
-  }
-
   public String getScriptVersion() {
     return scriptVersion;
   }
@@ -133,7 +123,6 @@ public class PlayerGeneralSettings {
     result = prime * result + ((dhcp == null) ? 0 : dhcp.hashCode());
     result = prime * result + ((gateway == null) ? 0 : gateway.hashCode());
     result = prime * result + ((hostname == null) ? 0 : hostname.hashCode());
-    result = prime * result + ((initialize == null) ? 0 : initialize.hashCode());
     result = prime * result + ((ip == null) ? 0 : ip.hashCode());
     result = prime * result + ((mediaFolder == null) ? 0 : mediaFolder.hashCode());
     result = prime * result + ((netmask == null) ? 0 : netmask.hashCode());
@@ -172,11 +161,6 @@ public class PlayerGeneralSettings {
       if (other.hostname != null)
         return false;
     } else if (!hostname.equals(other.hostname))
-      return false;
-    if (initialize == null) {
-      if (other.initialize != null)
-        return false;
-    } else if (!initialize.equals(other.initialize))
       return false;
     if (ip == null) {
       if (other.ip != null)

@@ -255,7 +255,7 @@ public class UploadScreenController {
     uploadThread.start();
   }
 
-  private void uploadTaskSucceedFinish(Task<Boolean> task) {
+  private void uploadTaskSucceedFinish(final Task<Boolean> task) {
     try {
       if (uploadTask.get()) {
         waitScreen.closeScreen();
@@ -268,7 +268,7 @@ public class UploadScreenController {
     }
   }
 
-  private void uploadTaskCancelledFinish(Task<Boolean> task) {
+  private void uploadTaskCancelledFinish(final Task<Boolean> task) {
     waitScreen.closeScreen();
     if (task.getMessage().equals("")) {
       new Alert(Alert.AlertType.NONE, "Upload cancelled. Parts might be uploaded.", ButtonType.OK).showAndWait();
@@ -277,7 +277,7 @@ public class UploadScreenController {
     }
   }
 
-  private void uploadTaskAbortFinish(Task<Boolean> task) {
+  private void uploadTaskAbortFinish(final Task<Boolean> task) {
     waitScreen.closeScreen();
     try {
       throw task.getException();
@@ -364,7 +364,6 @@ public class UploadScreenController {
     newSettings.setNetmask(this.subnetField.getText());
     newSettings.setGateway(this.newIPField.getText());
     newSettings.setDhcp(this.dhcpCheckbox.isSelected());
-    newSettings.setInitialize(false);
     return XmlConfigCreator.createGeneralSettingsXml(newSettings);
   }
 
