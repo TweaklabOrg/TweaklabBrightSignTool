@@ -32,6 +32,13 @@ Sub UpdateNetworkSettings(settings As Object)
     if netConf.getHostName() <> settings.name.getText() then
         info("changing name from " + netConf.getHostName() + " to " + settings.name.getText())
         ScreenMessage("changing name from " + netConf.getHostName() + " to " + settings.name.getText(), 3000)
+
+        ' unpublish bonjour service under old name
+        deviceInfo = createObject("roDeviceInfo")
+        props = { name: netConf.GetHostName(), type: "_tl._tcp", port: int(val(settings.tcp_port.getText())), _serial: deviceInfo.GetDeviceUniqueId() }
+        advert = CreateObject("roNetworkAdvertisement", props)
+        advert = invalid
+
         netConf.setHostName(settings.name.getText())
         changed = true
     end if
