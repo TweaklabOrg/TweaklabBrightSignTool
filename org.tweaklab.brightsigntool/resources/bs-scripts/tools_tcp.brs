@@ -26,7 +26,7 @@ sub handleStreamLineEvent(msg as Object, port as Object, videoplayer as Object)
         connection.stream.SendLine("OK")
         connection.stream.Flush()
         info("Received clearSD command from client.")
-    ' play a video file
+    ' signal that player is receiving data
     else if msg.GetString() = "receiveData" then
         connection = msg.GetUserData()
         connection.stream.SendLine("OK")
@@ -34,6 +34,7 @@ sub handleStreamLineEvent(msg as Object, port as Object, videoplayer as Object)
         videoPlayer.StopClear()
         info("Received receiving data command from client.")
         ScreenMessage("receiving data... ", 3000)
+    ' play a video file
     else if msg.GetString().Left(6) = "play: " then
         info("Received play command from client.")
         file = msg.GetString().Mid(6)

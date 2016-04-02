@@ -32,10 +32,8 @@ end function
 ' Shows a message in the console and the log. You must store the returned roTextWidget to make 
 ' the message persist on screen. It will pesist as long as the roTextWidget is refereced. 
 sub info(message As String) 
-    if (m.DEBUG) then
-        print message
-        m.sysLog.SendLine("From Script: " + message)
-    end if
+    print message
+    m.sysLog.SendLine("From Script: " + message)
 end sub
 
 ' Shows a Simple welcome header. You must store the returned roTextWidget to make the message 
@@ -75,7 +73,7 @@ function SimpelHeader() as Object
     app("", content)
     app("", content)
     ' Title and script version
-    app("TWEAKLAB Custom BrightScript Version " + settings.scriptVersion.getText(), content)
+    app("TWEAKLAB BrightSign Player " + settings.scriptVersion.getText(), content)
     app("in " + mode.getText() + "-mode", content)
     app("", content)
     app("", content)
@@ -124,7 +122,7 @@ function DeviceInfos() as Object
     app("", content)
     app("", content)
     ' Title and script version
-    app("TWEAKLAB Custom BrightScript Version " + settings.scriptVersion.getText(), content)
+    app("TWEAKLAB BrightSign Player " + settings.scriptVersion.getText(), content)
     app("in " + mode.getText() + "-mode", content)
     app("", content)
     app("", content)

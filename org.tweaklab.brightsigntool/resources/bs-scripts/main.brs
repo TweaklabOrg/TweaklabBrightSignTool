@@ -83,9 +83,14 @@ sub tweaklabPlayer()
         ScreenMessage("Version 6.0.51 is currently not supported. Downgrade to 6.0.25.", 3000) ' from tools_messaging.brs
     end if
 
+    ' a reboot might be necessary depending on changes. In this case this variable can be set to true and the reboot 
+    ' will be executed when all settings are up to date.
+    reboot = false
+
     ' write default content to registry if registry is empty
     if createObject("roRegistry").GetSectionList().Count() = 0 then    
         WriteDefaultRegistry(settings) ' from tools_setup.brs
+        reboot = true
     end if
 
     ' if tweaklab registry isn't available, factory reset, as player seems not to be set up as tweaklab player.
@@ -109,10 +114,6 @@ sub tweaklabPlayer()
         deviceCust = CreateObject("roDeviceCustomization")
         deviceCust.FactoryReset("confirm")
     end if
-
-    ' a reboot might be necessary depending on changes. In this case this variable can be set to true and the reboot 
-    ' will be executed when all settings are up to date.
-    reboot = false
 
     ' If display.xml changed and Player can play video, update settings. needs a reboot
     if deviceInfo.HasFeature("hdmi") or deviceInfo.HasFeature("vga") or deviceInfo.HasFeature("component video") then
@@ -154,9 +155,7 @@ sub tweaklabPlayer()
     props = { name: settings.name.getText(), type: "_tl._tcp", port: int(val(settings.tcp_port.getText())), _serial: deviceInfo.GetDeviceUniqueId() }
     advert = CreateObject("roNetworkAdvertisement", props)
 
-    ' shoe device info
-    ' screenContent = invalid
-    ' sleep(500)
+    ' show device info
     screenContent = DeviceInfos() ' from tools_messaging.brs
     screenContent.show()
     sleep(10000) ' show Diagnostic screen for ... milliseconds

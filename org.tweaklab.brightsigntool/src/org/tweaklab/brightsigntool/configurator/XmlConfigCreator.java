@@ -66,7 +66,7 @@ public class XmlConfigCreator {
     rootElement.appendChild(gatewayElement);
     Comment comment = doc.createComment("Unfortunately the gateway must be defined to make the network diagnostics happy.");
     gatewayElement.getParentNode().insertBefore(comment, gatewayElement);
-    comment = doc.createComment("Chose any reachable ip if you don't have a gateway.");
+    comment = doc.createComment("Leave empty to use the current own IP.");
     gatewayElement.getParentNode().insertBefore(comment, gatewayElement);
 
     Element dhcpElement = doc.createElement("dhcp");

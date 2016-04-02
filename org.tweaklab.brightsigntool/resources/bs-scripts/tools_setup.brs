@@ -1,18 +1,3 @@
-' Iterates through the registry and clears all entries.
-Sub ClearRegistry()
-    ' The registry has two levels. The sections, and the keys. Iterate through each key in each section.
-    reg = CreateObject("roRegistry")
-    for each sectionName in reg.GetSectionList()
-        section = CreateObject("roRegistrySection", sectionName)
-        for each key in section.getKeyList()
-            section.Delete(key)
-            section.flush() ' TODO: might not be necessary?
-        end for
-        reg.Delete(sectionName)
-        reg.flush()
-    end for
-End Sub
-
 ' @param settings The settings.xml converted into a roXMLElement.
 Sub UpdateNetworkSettings(settings As Object)
     netConf = CreateObject("roNetworkConfiguration", 0)

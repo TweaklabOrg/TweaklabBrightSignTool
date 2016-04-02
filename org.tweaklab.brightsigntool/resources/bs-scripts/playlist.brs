@@ -41,7 +41,7 @@ Sub playlistMain(settings as Object, server as Object, connections as Object)
         end while
     end if
 
-    ' evaluate if we are in loop mode
+    ' evaluate if we are in loop mode. Loopmode allows seamless repetition.
     if files.count() = 1 then
         LoopMode = 1
         videoPlayer.SetLoopMode(true)

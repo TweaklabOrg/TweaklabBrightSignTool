@@ -75,7 +75,7 @@ public class BrightSignWebConnector extends Connector {
     this.target = "";
     this.name = "";
     uploadRootUrl = "";
-    return !isConnected();
+    return true;
   }
 
   @Override
@@ -286,6 +286,8 @@ public class BrightSignWebConnector extends Connector {
     } catch (IOException e) {
       LOGGER.log(Level.WARNING, "Couldn't close tcp connection: " + httpclient.toString(), e);
     }
+
+    LOGGER.log(Level.INFO, "Player answered: " + respond);
     return respond;
   }
 
