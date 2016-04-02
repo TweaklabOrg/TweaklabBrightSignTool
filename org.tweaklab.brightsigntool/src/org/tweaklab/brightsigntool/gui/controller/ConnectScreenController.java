@@ -125,7 +125,7 @@ public class ConnectScreenController {
    */
   @FXML
   private void handleConnect() {
-    String target = targetComboBox.getSelectionModel().getSelectedItem();
+    String target = targetComboBox.getEditor().getText();
 
     if (target == null || target.length() < 1) {
       new Alert(Alert.AlertType.NONE, "Empty target field. Please enter a valid target.",
