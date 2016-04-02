@@ -49,6 +49,13 @@ sub handleStreamLineEvent(msg as Object, port as Object, videoplayer as Object, 
             info("not able to play " + file)
             ScreenMessage("not able to play " + file, 3000)
         end if
+    ' get SD format
+    else if msg.GetString() = "SDFormat" then
+        storageInfo = CreateObject("roStorageInfo", "SD:/")
+        connection = msg.GetUserData()
+        connection.stream.SendLine(storageInfo.GetFileSystemType())
+        connection.stream.Flush()
+        info("Received clearSD command from client.")
     ' validate requested video format
     else 
         videoMode = createObject("roVideoMode")

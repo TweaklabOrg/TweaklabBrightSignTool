@@ -57,14 +57,23 @@ public class BrightSignWebConnector extends Connector {
   }
 
   public boolean connect(String host) {
+    String hostWithoutSpaces = host.replaceAll("\\s","");
     try {
-      this.target = host + ".local";
+      this.target = hostWithoutSpaces + ".local";
       this.name = host;
       Socket tcpSocket = new Socket(this.target, tcpPort);
       tcpSocket.close();
       uploadRootUrl = "http://" + this.target + "/upload.html?rp=sd";
     } catch (IOException e) {
-      LOGGER.log(Level.WARNING, "There was an issue connection to " + host, e);
+      LOGGER.log(Level.WARNING, "There was an issue connection to " + hostWithoutSpaces, e);
+    }
+
+    // check, if SD in Player is writable
+    String format = sendTCPCommand("SDFormat");
+    if (format.equals("ntfs") || format.equals("hfs") || format.equals("hfsplus")) {
+      new Alert(Alert.AlertType.NONE,
+              "SD card in player is formatted to " + format + ". You will not be able to write via remote connection.",
+              ButtonType.OK).showAndWait();
     }
 
     return isConnected();
