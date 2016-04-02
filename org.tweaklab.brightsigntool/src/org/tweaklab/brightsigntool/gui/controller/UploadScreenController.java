@@ -149,7 +149,7 @@ public class UploadScreenController {
       uploadDisplaySettingsCheckbox.setSelected(false);
       uploadMediaCheckbox.setSelected(false);
     }
-    if (data.containsKey("volume") && data.containsKey("name")
+    if (data.containsKey("volume") && data.containsKey("name") && data.get("name") != ""
             && ((data.containsKey("ip") && data.containsKey("netmask")) || data.containsKey("dhcp"))) {
       uploadGeneralSettingsCheckbox.setSelected(false);
       uploadMediaCheckbox.setSelected(false);
