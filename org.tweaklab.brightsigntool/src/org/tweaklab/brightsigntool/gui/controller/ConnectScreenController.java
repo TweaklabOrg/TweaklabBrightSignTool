@@ -125,7 +125,12 @@ public class ConnectScreenController {
    */
   @FXML
   private void handleConnect() {
-    String target = targetComboBox.getEditor().getText();
+    String target = "";
+    if (targetComboBox.isEditable()) {
+      target = targetComboBox.getEditor().getText();
+    } else {
+      target = targetComboBox.getSelectionModel().getSelectedItem();
+    }
 
     if (target == null || target.length() < 1) {
       new Alert(Alert.AlertType.NONE, "Empty target field. Please enter a valid target.",
