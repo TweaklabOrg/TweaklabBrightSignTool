@@ -1,7 +1,7 @@
 ' Handles commands sent from the client. Can be easyly extended by adding other else ifs
 ' 
 ' @param msg The occured roStreamLineEvent.
-sub handleStreamLineEvent(msg as Object, port as Object, videoplayer as Object)
+sub handleStreamLineEvent(msg as Object, port as Object, videoplayer as Object, settings as Object)
     MEDIA_ENDED = 8
 
     ' reboot player
@@ -37,7 +37,7 @@ sub handleStreamLineEvent(msg as Object, port as Object, videoplayer as Object)
     ' play a video file
     else if msg.GetString().Left(6) = "play: " then
         info("Received play command from client.")
-        file = msg.GetString().Mid(6)
+        file = settings.mediaFolder.getText() + "/" + msg.GetString().Mid(6)
         videoPlayer.StopClear()
         if videoPlayer.playFile(file) then
             info("playing " + file)

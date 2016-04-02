@@ -134,7 +134,7 @@ sub gpioMain(settings as Object, server as Object, connections as Object)
             handleTCPConnectEvent(msg, port, connections) ' script frim tools_tcp.brs
         ' roStremLineEvent signals, that a open connection recieved a sting, terminated with a LF (0x0A)
         else if type(msg) = "roStreamLineEvent" then 
-            handleStreamLineEvent(msg, port, videoPlayer) ' script from tools_tcp.brs
+            handleStreamLineEvent(msg, port, videoPlayer, settings) ' script from tools_tcp.brs
         ' roStreamEndEvent signals, that a connection has been closed by a client.
         else if type(msg) = "roStreamEndEvent" then
             handleStreamEndEvent(msg) ' script frim tools_tcp.brs
