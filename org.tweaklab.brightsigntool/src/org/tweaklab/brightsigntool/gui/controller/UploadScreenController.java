@@ -9,12 +9,10 @@ import org.tweaklab.brightsigntool.configurator.PlayerDisplaySettings;
 import org.tweaklab.brightsigntool.configurator.PlayerGeneralSettings;
 import org.tweaklab.brightsigntool.configurator.UploadFile;
 import org.tweaklab.brightsigntool.configurator.XmlConfigCreator;
-import org.tweaklab.brightsigntool.connector.BrightSignWebConnector;
 import org.tweaklab.brightsigntool.connector.Connector;
 import org.tweaklab.brightsigntool.gui.view.WaitScreen;
 import org.tweaklab.brightsigntool.model.Keys;
 import org.tweaklab.brightsigntool.model.MediaUploadData;
-import org.tweaklab.brightsigntool.util.NetworkUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -81,9 +79,11 @@ public class UploadScreenController {
   private TextField subnetField;
   @FXML
   private CheckBox dhcpCheckbox;
-  private Thread uploadThread;
   @FXML
   private Label currentUploadSetLabel;
+  @FXML
+  private CheckBox factoryResetCheckbox;
+  private Thread uploadThread;
 
   /**
    * Initializes the controller class. This method is automatically called after the fxml file has
@@ -101,8 +101,7 @@ public class UploadScreenController {
     mediator = ControllerMediator.getInstance();
     this.targetAddressLabel.setText(mediator.getConnector().getName());
 
-    setDisplaySettingsDefaultValues();
-    setGeneralSettingsDefaultValues();
+    setComponentsToDefaultValues();
 
     disableDisplayResolutionElements(this.autoDisplaySolutionCheckbox.isSelected());
 
@@ -156,7 +155,7 @@ public class UploadScreenController {
       uploadMediaCheckbox.setSelected(false);
     }
 
-
+    LOGGER.log(Level.INFO, "UI components set to collected settings if possible.");
   }
 
   @FXML
@@ -198,19 +197,26 @@ public class UploadScreenController {
 
     // create and upload settings.xml
     if (this.uploadGeneralSettingsCheckbox.isSelected()) {
-      UploadFile generalSettingsXml;
-      // if the player will be reset completelty, initialize
-      if (this.uploadDisplaySettingsCheckbox.isSelected() && this.uploadMediaCheckbox.isSelected()) {
-        generalSettingsXml = createInitialGeneralDisplaySettingsXML();
-      } else {
-        generalSettingsXml = createGeneralDisplaySettingsXML();
-      }
-      systemFilesForUpload.add(generalSettingsXml);
+      systemFilesForUpload.add(createGeneralSettingsXML());
     }
 
-    // upload bs-scripts
-    List<UploadFile> scripts = getScripts();
-    systemFilesForUpload.addAll(scripts);
+
+    // upload scripts
+    if (factoryResetCheckbox.isSelected()) {
+      List<UploadFile> scripts = getScripts(Keys.loadProperty(Keys.RESET_SCRIPTS_PROPS_KEY).split(";"));
+
+      // rename factory_reset.brs to autorun.brs
+      byte[] resetScriptContent = scripts.get(0).getFileAsBytes();
+      scripts.remove(0);
+      scripts.add(new UploadFile("autorun.brs", resetScriptContent));
+
+      systemFilesForUpload.addAll(scripts);
+      // settings.xml is also needed
+      systemFilesForUpload.add(createDefaultGeneralSettingsXML());
+    } else {
+      List<UploadFile> scripts = getScripts(Keys.loadProperty(Keys.BS_SCRIPTS_PROPS_KEY).split(";"));
+      systemFilesForUpload.addAll(scripts);
+    }
 
     // upload jar
     String jarName = Keys.loadProperty(Keys.APP_NAME_PROPS_KEY) + ".jar";
@@ -243,7 +249,7 @@ public class UploadScreenController {
     // Show waitscreen
     waitScreen = new WaitScreen();
     waitScreen.setOnCancel(event -> uploadTask.cancel());
-    waitScreen.setOnClose(event -> uploadTask.cancel());
+    waitScreen.setOnClose(event ->   uploadTask.cancel());
 
     uploadTask = connector.upload(mediaUploadData, systemFilesForUpload);
 
@@ -289,9 +295,14 @@ public class UploadScreenController {
 
   private Boolean validateFields() {
     if (!uploadDisplaySettingsCheckbox.isSelected() && !uploadGeneralSettingsCheckbox.isSelected()
-            && !uploadMediaCheckbox.isSelected()) {
+            && !uploadMediaCheckbox.isSelected() && !factoryResetCheckbox.isSelected()) {
       new Alert(Alert.AlertType.NONE, "Only BrightSign scripts will be uploaded!", ButtonType.OK).showAndWait();
       LOGGER.info("Only BrightSign scripts will be uploaded!");
+    }
+
+    if (factoryResetCheckbox.isSelected()) {
+      new Alert(Alert.AlertType.NONE, "Player will be resetted. After reboot you can upload your configuration.", ButtonType.OK).showAndWait();
+      LOGGER.info("Player will be resetted. After reboot you can upload your configuration.");
     }
 
     boolean result = true;
@@ -345,7 +356,7 @@ public class UploadScreenController {
     return XmlConfigCreator.createDisplaySettingsXml(displaySettings);
   }
 
-  private UploadFile createInitialGeneralDisplaySettingsXML() {
+  private UploadFile createGeneralSettingsXML() {
     PlayerGeneralSettings newSettings = PlayerGeneralSettings.getDefaulGeneralSettings();
     newSettings.setHostname(this.newHostnameField.getText());
     newSettings.setIp(this.newIPField.getText());
@@ -356,19 +367,12 @@ public class UploadScreenController {
     return XmlConfigCreator.createGeneralSettingsXml(newSettings);
   }
 
-  private UploadFile createGeneralDisplaySettingsXML() {
+  private UploadFile createDefaultGeneralSettingsXML() {
     PlayerGeneralSettings newSettings = PlayerGeneralSettings.getDefaulGeneralSettings();
-    newSettings.setHostname(this.newHostnameField.getText());
-    newSettings.setIp(this.newIPField.getText());
-    newSettings.setVolume(Integer.parseInt(this.volumeField.getText()));
-    newSettings.setNetmask(this.subnetField.getText());
-    newSettings.setGateway(this.newIPField.getText());
-    newSettings.setDhcp(this.dhcpCheckbox.isSelected());
     return XmlConfigCreator.createGeneralSettingsXml(newSettings);
   }
 
-  private List<UploadFile> getScripts() {
-    String[] scriptFileNames = Keys.loadProperty(Keys.BS_SCRIPTS_PROPS_KEY).split(";");
+  private List<UploadFile> getScripts(String[] scriptFileNames) {
     List<UploadFile> scriptFiles = new ArrayList<>();
 
     for (String scriptName : scriptFileNames) {
@@ -405,59 +409,60 @@ public class UploadScreenController {
     this.interlacedCheckbox.setDisable(disable);
   }
 
-  private void setGeneralSettingsDefaultValues() {
+  private void setComponentsToDefaultValues() {
     PlayerGeneralSettings settings = PlayerGeneralSettings.getDefaulGeneralSettings();
-
-    Connector currentConnector = ControllerMediator.getInstance().getConnector();
-    if (currentConnector instanceof BrightSignWebConnector) {
-      this.newHostnameField.setText(currentConnector.getName());
-      String ip = NetworkUtils.resolveHostName(this.newHostnameField.getText());
-      if (!ip.equals("")) {
-        this.newIPField.setText(ip);
-      }
-    } else {
-      this.newHostnameField.setText(settings.getHostname());
-      this.newIPField.setText(settings.getIp());
-    }
-
+    this.newHostnameField.setText(settings.getHostname());
+    this.newIPField.setText(settings.getIp());
     this.dhcpCheckbox.setSelected(settings.getDhcp());
     this.subnetField.setText(settings.getNetmask());
     this.volumeField.setText(settings.getVolume());
-
     disableIpField(settings.getDhcp());
 
-    LOGGER.info("General settings set to default values.");
-  }
-
-  private void setDisplaySettingsDefaultValues() {
     PlayerDisplaySettings displaySettings = PlayerDisplaySettings.getDefaultDisplaySettings();
-
     this.autoDisplaySolutionCheckbox.setSelected(displaySettings.getAuto());
     this.widthField.setText(String.valueOf(displaySettings.getWidth()));
     this.heightField.setText(String.valueOf(displaySettings.getHeight()));
     this.interlacedCheckbox.setSelected(displaySettings.getInterlaced());
     this.frequencyField.setText(String.valueOf(displaySettings.getFreq()));
-
     disableDisplayResolutionElements(displaySettings.getAuto());
 
-    LOGGER.info("Display settings set to default values");
+    LOGGER.info("UI components set to default values.");
   }
 
   private void addListenerToCheckboxes() {
+    uploadDisplaySettingsCheckbox.selectedProperty().addListener((ov, old_val, new_val) -> {
+      displaySettingsPane.setDisable(!new_val);
+      if (new_val) {
+        factoryResetCheckbox.setSelected(false);
+      }    });
+
     autoDisplaySolutionCheckbox.selectedProperty().addListener((ov, old_val, new_val) -> {
       disableDisplayResolutionElements(new_val);
     });
 
-    uploadDisplaySettingsCheckbox.selectedProperty().addListener((ov, old_val, new_val) -> {
-      displaySettingsPane.setDisable(!new_val);
+    uploadGeneralSettingsCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      generalSettingsPane.setDisable(!newValue);
+      if (newValue) {
+        factoryResetCheckbox.setSelected(false);
+      }
     });
 
     dhcpCheckbox.selectedProperty().addListener((ov, old_val, new_val) -> {
       disableIpField(new_val);
     });
 
-    uploadGeneralSettingsCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      generalSettingsPane.setDisable(!newValue);
+    uploadMediaCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      if (newValue) {
+        factoryResetCheckbox.setSelected(false);
+      }
+    });
+
+    factoryResetCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      if (newValue) {
+        uploadDisplaySettingsCheckbox.setSelected(false);
+        uploadGeneralSettingsCheckbox.setSelected(false);
+        uploadMediaCheckbox.setSelected(false);
+      }
     });
   }
 

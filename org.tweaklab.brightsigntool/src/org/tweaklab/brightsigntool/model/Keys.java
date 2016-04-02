@@ -13,6 +13,7 @@ public class Keys {
   public static final String INCLUDED_JAR_RELATIVE_PATH = "included_jar_relative_path";
   // PROPS KEY
   public static final String BS_SCRIPTS_PROPS_KEY = "scriptsToUpload";
+  public static final String RESET_SCRIPTS_PROPS_KEY = "factoryResetScripts";
   public static final String SCRIPT_VERSION_PROPS_KEY = "script_version";
   public static final String ClIENT_VERSION_PROPS_KEY = "client_version";
   public static final String APP_NAME_PROPS_KEY = "app_name";

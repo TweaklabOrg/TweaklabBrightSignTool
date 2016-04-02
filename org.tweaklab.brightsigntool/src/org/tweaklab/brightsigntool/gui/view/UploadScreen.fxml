@@ -71,7 +71,7 @@
             </GridPane>
          </children>
       </Pane>
-      <Pane layoutX="15.0" layoutY="503.0" prefHeight="79.0" prefWidth="286.0">
+      <Pane layoutX="15.0" layoutY="502.0" prefHeight="47.0" prefWidth="286.0">
          <children>
             <Label layoutX="9.0" layoutY="18.0" text="Media">
                <font>
@@ -117,5 +117,20 @@
       <Line endX="150.0" layoutX="136.0" layoutY="97.0" startX="-110.0" stroke="#00000080" strokeWidth="0.5" />
       <Line endX="150.0" layoutX="136.0" layoutY="43.0" startX="-110.0" stroke="#00000080" strokeWidth="0.5" />
       <Line endX="150.0" layoutX="141.0" layoutY="280.0" startX="-110.0" stroke="#00000080" strokeWidth="0.5" />
+      <Pane layoutX="15.0" layoutY="549.0" prefHeight="47.0" prefWidth="286.0">
+         <children>
+            <Label layoutX="9.0" layoutY="18.0" text="Reset Player">
+               <font>
+                  <Font name="System Bold" size="15.0" />
+               </font>
+            </Label>
+            <Line endX="150.0" layoutX="123.0" layoutY="39.0" startX="-110.0" stroke="#00000080" strokeWidth="0.5" />
+            <CheckBox fx:id="factoryResetCheckbox" layoutX="214.0" layoutY="20.0" mnemonicParsing="false">
+               <font>
+                  <Font size="12.0" />
+               </font>
+            </CheckBox>
+         </children>
+      </Pane>
    </children>
 </AnchorPane>
