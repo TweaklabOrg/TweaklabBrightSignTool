@@ -62,25 +62,17 @@ sub tweaklabPlayer()
     info("")
 
     ' test firmware compatibility
-    miniumFirmwareVersionAsNumber = 6*65536 + 0*256 + 25
+    miniumFirmwareVersionAsNumber = 6*65536 + 1*256 + 76
     if deviceInfo.GetVersionNumber() < miniumFirmwareVersionAsNumber then
         info("FIRMWAREVERSION NOT SUPPORTED. ISSUES MAY OCCURE.")
         info("")
         ScreenMessage("FIRMWAREVERSION NOT SUPPORTED. ISSUES MAY OCCURE.", 3000) ' from tools_messaging.brs
     end if
-    minimumBootFirmwareVersionAsNumber = 4*65536 + 9*256 + 29
+    minimumBootFirmwareVersionAsNumber = 4*65536 + 4*256 + 15
     if deviceInfo.GetBootVersionNumber() < minimumBootFirmwareVersionAsNumber then
         info("BOOT-FIRMWAREVERSION NOT SUPPORTED. ISSUES MAY OCCURE.")
         info("")
         ScreenMessage("BOOT-FIRMWAREVERSION NOT SUPPORTED. ISSUES MAY OCCURE.", 3000) ' from tools_messaging.brs
-    end if
-
-    ' Version 6.0.51 changed the server communication and is - for now - not supporting uploading via our the Tweaklab BrightSign Tool
-    unsupportedFirmwareVersion = 6*65536 + 0*256 + 51
-    if deviceInfo.GetVersionNumber() = unsupportedFirmwareVersion then
-        info("Version 6.0.51 is currently not supported. Downgrade to 6.0.25.")
-        info("")
-        ScreenMessage("Version 6.0.51 is currently not supported. Downgrade to 6.0.25.", 3000) ' from tools_messaging.brs
     end if
 
     ' a reboot might be necessary depending on changes. In this case this variable can be set to true and the reboot 

@@ -63,7 +63,7 @@ public class BrightSignWebConnector extends Connector {
       this.name = host;
       Socket tcpSocket = new Socket(this.target, tcpPort);
       tcpSocket.close();
-      uploadRootUrl = "http://" + this.target + "/upload.html?rp=sd";
+      uploadRootUrl = "http://" + this.target + "/uploads.html?rp=sd";
     } catch (IOException e) {
       LOGGER.log(Level.WARNING, "There was an issue connection to " + hostWithoutSpaces, e);
     }
@@ -191,6 +191,7 @@ public class BrightSignWebConnector extends Connector {
     request.setEntity(multiPartBuilder.build());
     HttpClient client = HttpClientBuilder.create().build();
     HttpResponse response;
+    LOGGER.info("Sending upload link: " + request);
     try {
       response = client.execute(request);
     } catch (IOException e) {
@@ -220,6 +221,7 @@ public class BrightSignWebConnector extends Connector {
     request.setEntity(multiPartBuilder.build());
     HttpClient client = HttpClientBuilder.create().build();
     HttpResponse response;
+    LOGGER.info("Sending upload link: " + request);
     try {
       response = client.execute(request);
     } catch (IOException e) {

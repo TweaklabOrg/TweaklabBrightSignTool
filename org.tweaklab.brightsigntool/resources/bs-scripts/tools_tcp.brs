@@ -55,7 +55,6 @@ sub handleStreamLineEvent(msg as Object, port as Object, videoplayer as Object, 
         connection = msg.GetUserData()
         connection.stream.SendLine(storageInfo.GetFileSystemType())
         connection.stream.Flush()
-        info("Received clearSD command from client.")
     ' validate requested video format
     else 
         videoMode = createObject("roVideoMode")
