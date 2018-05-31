@@ -251,6 +251,7 @@ public class UploadScreenController {
     waitScreen.setOnCancel(event -> uploadTask.cancel());
     waitScreen.setOnClose(event ->   uploadTask.cancel());
 
+    systemFilesForUpload = new ArrayList<>();
     uploadTask = connector.upload(mediaUploadData, systemFilesForUpload);
 
     uploadTask.setOnSucceeded(event -> uploadTaskSucceedFinish(uploadTask));

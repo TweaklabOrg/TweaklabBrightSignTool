@@ -58,23 +58,23 @@ public class BrightSignWebConnector extends Connector {
 
   public boolean connect(String host) {
     String hostWithoutSpaces = host.replaceAll("\\s","");
-    try {
-      this.target = hostWithoutSpaces + ".local";
+//    try {
+      this.target = hostWithoutSpaces;// + ".local";
       this.name = host;
-      Socket tcpSocket = new Socket(this.target, tcpPort);
-      tcpSocket.close();
+//      Socket tcpSocket = new Socket(this.target, tcpPort);
+//      tcpSocket.close();
       uploadRootUrl = "http://" + this.target + "/uploads.html?rp=sd";
-    } catch (IOException e) {
-      LOGGER.log(Level.WARNING, "There was an issue connection to " + hostWithoutSpaces, e);
-    }
+//    } catch (IOException e) {
+//      LOGGER.log(Level.WARNING, "There was an issue connecting to " + hostWithoutSpaces, e);
+//    }
 
     // check, if SD in Player is writable
-    String format = sendTCPCommand("SDFormat");
-    if (format.equals("ntfs") || format.equals("hfs") || format.equals("hfsplus")) {
-      new Alert(Alert.AlertType.NONE,
-              "SD card in player is formatted to " + format + ". You will not be able to write via remote connection.",
-              ButtonType.OK).showAndWait();
-    }
+//    String format = sendTCPCommand("SDFormat");
+//    if (format.equals("ntfs") || format.equals("hfs") || format.equals("hfsplus")) {
+//      new Alert(Alert.AlertType.NONE,
+//              "SD card in player is formatted to " + format + ". You will not be able to write via remote connection.",
+//              ButtonType.OK).showAndWait();
+//    }
 
     return isConnected();
   }
@@ -90,7 +90,7 @@ public class BrightSignWebConnector extends Connector {
   @Override
   public Task<Boolean> upload(MediaUploadData mediaUploadData, List<UploadFile> systemFiles) {
     // stop player and signal that data is comming
-    sendTCPCommand("receiveData");
+//    sendTCPCommand("receiveData");
 
     return new Task<Boolean>() {
       @Override
@@ -119,14 +119,14 @@ public class BrightSignWebConnector extends Connector {
         //skip media upload if null
         if (mediaUploadData != null) {
           // run script to delete whole media folder
-          String answer = sendTCPCommand("resetFilestructure");
-          if (!answer.equals("OK")) {
-            LOGGER.log(Level.SEVERE, "Can't reset filestrucutre.");
-            updateMessage("Can't reset filestrucutre.");
-            return false;
-          } else {
-            LOGGER.info("Filestructure resetted.");
-          }
+//          String answer = sendTCPCommand("resetFilestructure");
+//          if (!answer.equals("OK")) {
+//            LOGGER.log(Level.SEVERE, "Can't reset filestrucutre.");
+//            updateMessage("Can't reset filestrucutre.");
+//            return false;
+//          } else {
+//            LOGGER.info("Filestructure resetted.");
+//          }
 
           // delete media config file
           boolean success = deleteFile("/", mediaUploadData.getConfigFile().getFileName());
@@ -164,14 +164,14 @@ public class BrightSignWebConnector extends Connector {
         }
 
 
-        String answer = sendTCPCommand("reboot");
-        if (!answer.equals("OK")) {
-          LOGGER.severe("Can't reboot target.");
-          updateMessage("Can't reboot target.");
-          return false;
-        } else {
-          LOGGER.info("Rebooting target.");
-        }
+//        String answer = sendTCPCommand("reboot");
+//        if (!answer.equals("OK")) {
+//          LOGGER.severe("Can't reboot target.");
+//          updateMessage("Can't reboot target.");
+//          return false;
+//        } else {
+//          LOGGER.info("Rebooting target.");
+//        }
         return true;
       }
     };
@@ -302,32 +302,32 @@ public class BrightSignWebConnector extends Connector {
     return respond;
   }
 
-  private String sendTCPCommand(String command) {
-    String answer = "";
-    Socket tcpSocket = null;
-    DataOutputStream outToTcpServer;
-    BufferedReader inFromTcpServer;
-    try {
-      tcpSocket = new Socket(this.target, tcpPort);
-      outToTcpServer = new DataOutputStream(tcpSocket.getOutputStream());
-      inFromTcpServer = new BufferedReader(new InputStreamReader(tcpSocket.getInputStream(), "US-ASCII"));
-      outToTcpServer.writeBytes(command + '\n');
-      LOGGER.info("Sent to BS: " + command);
-      answer = inFromTcpServer.readLine();
-      LOGGER.info("Received from BS: " + answer);
-    } catch (IOException e) {
-      LOGGER.log(Level.WARNING, "Couldn't send command: " + command, e);
-    }
-
-    try {
-      if (tcpSocket != null) {
-        tcpSocket.close();
-      }
-    } catch (IOException e) {
-      LOGGER.log(Level.WARNING, "Couldn't close Socket.", e);
-    }
-    return answer;
-  }
+//  private String sendTCPCommand(String command) {
+//    String answer = "";
+//    Socket tcpSocket = null;
+//    DataOutputStream outToTcpServer;
+//    BufferedReader inFromTcpServer;
+//    try {
+//      tcpSocket = new Socket(this.target, tcpPort);
+//      outToTcpServer = new DataOutputStream(tcpSocket.getOutputStream());
+//      inFromTcpServer = new BufferedReader(new InputStreamReader(tcpSocket.getInputStream(), "US-ASCII"));
+//      outToTcpServer.writeBytes(command + '\n');
+//      LOGGER.info("Sent to BS: " + command);
+//      answer = inFromTcpServer.readLine();
+//      LOGGER.info("Received from BS: " + answer);
+//    } catch (IOException e) {
+//      LOGGER.log(Level.WARNING, "Couldn't send command: " + command, e);
+//    }
+//
+//    try {
+//      if (tcpSocket != null) {
+//        tcpSocket.close();
+//      }
+//    } catch (IOException e) {
+//      LOGGER.log(Level.WARNING, "Couldn't close Socket.", e);
+//    }
+//    return answer;
+//  }
 
   @Override
   public Task<List<String>> getPossibleTargets() {
@@ -378,6 +378,7 @@ public class BrightSignWebConnector extends Connector {
 
   @Override
   public boolean isResolutionSupported(String brightSignResolutionString) {
-    return sendTCPCommand(brightSignResolutionString).equals("supported");
+//    return sendTCPCommand(brightSignResolutionString).equals("supported");
+    return false;
   }
 }
